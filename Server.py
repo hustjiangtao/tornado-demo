@@ -2,22 +2,30 @@
 # -*- author: Jiangtao -*-
 
 
+import logging
+import tornado.httpserver
 import tornado.ioloop
+import tornado.options
 import tornado.web
 
+from tornado.options import options
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, world")
+from settings import settings
+from urls import url_handlers as handlers
 
 
-def make_app():
-    return tornado.web.Application([
-        (r"/", MainHandler),
-    ])
+class Application(tornado.web.Application):
+    def __init__(self):
+        tornado.web.Application.__init__(self, handlers, **settings)
+
+
+def main():
+    app = Application()
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(options.port)
+    tornado.ioloop.IOLoop.current().start()
 
 
 if __name__ == "__main__":
-    app = make_app()
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+    logging.info('Tornado server start...')
+    main()
