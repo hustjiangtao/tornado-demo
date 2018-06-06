@@ -21,11 +21,13 @@ enable_pretty_logging()
 path = lambda root,*a: os.path.join(root, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = path(ROOT, 'static')
+TEMPLATE_PATH = path(ROOT, 'templates')
 
 settings = {
     "debug": options.debug,
     "autoreload": False,
     "static_path": STATIC_PATH,
+    "template_path": TEMPLATE_PATH,
     "cookie_secret": 'tornado-demo',
     "xsrf_cookies": True,
 }

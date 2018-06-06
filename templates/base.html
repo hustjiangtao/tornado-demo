@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  {% block head %}
+  {% end %}
+
+  {% block title %}
+  <title>Tornado-demo</title>
+  {% end %}
+
+  {% block css %}
+  {% end %}
+
+  <script src="{{ static_url('js/axios.min.js') }}"></script>
+  <script src="{{ static_url('js/request.js') }}"></script>
+  {% block head_js %}
+  {% end %}
+</head>
+<body>
+{% block content %}
+{% end %}
+
+</body>
+<script>
+    request('post', '/user', {'account': 'jiangtao', 'password': '1233'})
+</script>
+{% block foot_js %}
+{% end %}
+</html>
