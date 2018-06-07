@@ -16,6 +16,9 @@ class BaseDB(object):
     def __init__(self):
         self.db = self.conn.cursor()
 
+    def __del__(self):
+        self.conn.close()
+
     def create_db(self, create_sql):
         if not create_sql:
             return False
@@ -28,8 +31,6 @@ class BaseDB(object):
             logging.info(e)
             self.conn.rollback()
             result = False
-        finally:
-            self.conn.close()
 
         return result
 
@@ -44,8 +45,6 @@ class BaseDB(object):
             logging.info(e)
             self.conn.rollback()
             result = []
-        finally:
-            self.conn.close()
 
         return result
 
@@ -60,8 +59,6 @@ class BaseDB(object):
             logging.info(e)
             self.conn.rollback()
             result = []
-        finally:
-            self.conn.close()
 
         return result
 
@@ -71,13 +68,11 @@ class BaseDB(object):
 
         try:
             self.db.execute(query)
-            result = self.db.fetchall()
+            result = self.db.fetchone()
         except Exception as e:
             logging.info(e)
             self.conn.rollback()
-            result = []
-        finally:
-            self.conn.close()
+            result = None
 
         return result
 
@@ -93,7 +88,5 @@ class BaseDB(object):
             logging.info(e)
             self.conn.rollback()
             result = False
-        finally:
-            self.conn.close()
 
         return result

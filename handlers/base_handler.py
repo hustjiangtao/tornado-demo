@@ -11,6 +11,9 @@ from lib.utils import json_decode
 from tornado.escape import to_unicode
 from tornado.web import MissingArgumentError
 
+from lib.system_code import ERROR
+from lib.system_code import MESSAGE
+
 
 class BaseHandler(tornado.web.RequestHandler):
     """Base class for other request handlers - all other handlers should
@@ -37,6 +40,8 @@ class BaseHandler(tornado.web.RequestHandler):
         # self.set_header('Access-Control-Allow-Origin', self.request.headers.get('Origin') or '*')
 
     def render_json(self, code=0, data=None, message=''):
+        if message == '':
+            message = MESSAGE.get(code, ERROR)
         result = {
             "code": code,
             "message": message,
@@ -48,6 +53,17 @@ class BaseHandler(tornado.web.RequestHandler):
         """Ignore xsrf if ajax"""
         if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return
+
+    def data_received(self, chunk):
+        """Implement this method for tornado.web.RequestHandler"""
+        pass
+
+    def get_current_user(self):
+        """determine the current user from, e.g., a cookie."""
+        user_cookie = self.get_secure_cookie("user")
+        if user_cookie:
+            return json.loads(user_cookie)
+        return None
 
     def get_json_argument(self, name, default=None):
         """Get argument from application/json body"""

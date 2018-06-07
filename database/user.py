@@ -23,6 +23,52 @@ class UserDB(BaseDB):
         else:
             return False
 
+    def get_user_by_name(self, name):
+        """get a user by his name
+        >>> 'jiangtao'
+        True
+        """
+        if not name:
+            return False
+
+        sql = "select id, name, email from user where name = '{name}'".format(name=name)
+        result = self.fetch_one(sql)
+        if result:
+            _id, name, email = result
+            result = {
+                "id": _id,
+                "name": name,
+                "email": email,
+            }
+        else:
+            result = None
+
+        return result
+
+    def get_user_by_id(self, id):
+        """get a user
+        >>> 'jiangtao'
+        True
+        """
+        if not id:
+            return False
+
+        sql = "select * from user where id = '{id}'".format(id=id)
+        result = self.fetch_one(sql)
+        if result:
+            _id, name, email, mobile, create_time = result
+            result = {
+                "id": _id,
+                "name": name,
+                "email": email,
+                "mobile": mobile,
+                "create_time": create_time,
+            }
+        else:
+            result = None
+
+        return result
+
 
 user_db = UserDB()
 

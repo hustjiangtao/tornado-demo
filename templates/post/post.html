@@ -1,0 +1,17 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% set post = data.get('post', {}) %}
+<div>
+  <div class="post">
+    <h3 class="post-title">{{ post.get('title') }}</h3>
+    <p class="post-info">{{ post.get('author') }} &emsp; {{ post.get('create_time').strftime('%Y-%m-%d') }}</p>
+    <p class="post-content">{{ post.get('content') }}</p>
+  </div>
+  <div class="post-add">
+    <input type="text" id="title" name="title" title="title">
+    <textarea id="content" name="content" title="content"></textarea>
+    <button type="button" onclick="add_post()">发布</button>
+  </div>
+</div>
+{% end %}

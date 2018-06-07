@@ -14,7 +14,7 @@
   {% end %}
 
   <script src="{{ static_url('js/axios.min.js') }}"></script>
-  <script src="{{ static_url('js/request.js') }}"></script>
+  <script src="{{ static_url('js/main.js') }}"></script>
   {% block head_js %}
   {% end %}
 </head>
@@ -23,9 +23,6 @@
 {% end %}
 
 </body>
-<script>
-    request('post', '/user', {'account': 'jiangtao', 'password': '1233'})
-</script>
 {% block foot_js %}
 {% end %}
 </html>
