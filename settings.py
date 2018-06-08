@@ -30,4 +30,5 @@ settings = {
     "template_path": TEMPLATE_PATH,
     "cookie_secret": 'tornado-demo',
     "xsrf_cookies": True,
+    "login_url": '/auth',
 }

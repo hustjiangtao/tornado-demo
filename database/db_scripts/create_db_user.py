@@ -12,9 +12,11 @@ class CreateDBUser(BaseDB):
     -- drop table if exists user;
     create table if not exists user (
     id INTEGER primary key AUTOINCREMENT ,
-    name varchar(50) not null ,
+    name varchar(50) not null unique ,
     email varchar(50) not null unique ,
     mobile varchar(20) ,
+    password char(64) ,
+    salt char(10) ,
     create_time timestamp default (datetime('now', 'localtime')) ) ;
     """
 

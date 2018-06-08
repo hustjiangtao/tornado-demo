@@ -6,13 +6,48 @@
 
 import json
 import tornado.web
+import functools
+import urllib.parse as urlparse
 
-from lib.utils import json_decode
+from urllib.parse import urlencode
 from tornado.escape import to_unicode
+from tornado.web import HTTPError
 from tornado.web import MissingArgumentError
 
+from lib.utils import json_decode
+from lib.utils import random_string
+from lib.utils import get_hashed_password
+from lib.utils import compare_digest
 from lib.system_code import ERROR
 from lib.system_code import MESSAGE
+
+
+def authenticated(method):
+    """Decorate methods with this to require that the user be logged in.
+    If the user is not logged in, they will be redirected to the configured
+    `login url <RequestHandler.get_login_url>`.
+    If you configure a login url with a query parameter, Tornado will
+    assume you know what you're doing and use it as-is.  If not, it
+    will add a `next` parameter so the login page knows where to send
+    you once you're logged in.
+    """
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        if not self.current_user:
+            if self.request.method in ("GET", "HEAD"):
+                url = self.get_login_url()
+                if "?" not in url:
+                    if urlparse.urlsplit(url).scheme:
+                        # if login url is absolute, make next absolute too
+                        next_url = self.request.full_url()
+                    else:
+                        next_url = self.request.uri
+                    url += "?" + urlencode(dict(next=next_url))
+                self.redirect(url)
+                return
+            raise HTTPError(403)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -77,3 +112,14 @@ class BaseHandler(tornado.web.RequestHandler):
                 return default
             else:
                 raise MissingArgumentError(name)
+
+    def get_new_password(self, password):
+        """Generate a password"""
+        salt = random_string(10)
+        hashed_password = get_hashed_password(password=password, salt=salt)
+        return hashed_password, salt
+
+    def is_my_password(self, new_password, my_password, my_salt):
+        """Compare if a given password is my password"""
+        hashed_password = get_hashed_password(password=new_password, salt=my_salt)
+        return compare_digest(hashed_password, my_password)
