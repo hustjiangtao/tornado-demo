@@ -1,0 +1,21 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% set user = data.get('user') %}
+<div>
+  <label for="name">账户</label>
+  <input type="text" id="name" name="name" value="{{ user.get('name') }}">
+  <br>
+  <label for="email">邮箱</label>
+  <input type="text" id="email" name="email" value="{{ user.get('email') }}">
+  <br>
+  <label for="mobile">手机号</label>
+  <input type="text" id="mobile" name="mobile" value="{{ user.get('mobile') }}">
+  <br>
+  <label for="create_time">注册时间</label>
+  <input type="text" id="create_time" value="{{ user.get('create_time').strftime('%Y-%m-%d') }}" disabled>
+  <br>
+  <button type="button" id="user_update" onclick="user_update();">修改</button>
+  <button type="button"><a href="/post">去发文</a></button>
+</div>
+{% end %}
