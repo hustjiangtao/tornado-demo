@@ -3,6 +3,9 @@
 {% block content %}
 {% set posts = data.get('posts', []) %}
 <div>
+  <button onclick="to_add_post()">去发文</button>
+  <button onclick="to_user_info()">我的主页</button>
+  <button onclick="do_logout()">注销</button>
   {% for post in posts %}
   <div class="post">
     <h3 class="post-title">{{ post.get('title') }}</h3>

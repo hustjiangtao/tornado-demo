@@ -1,17 +1,31 @@
 {% extends '../base.html' %}
 
 {% block content %}
-{% set post = data.get('post', {}) %}
 <div>
-  <div class="post">
-    <h3 class="post-title">{{ post.get('title') }}</h3>
-    <p class="post-info">{{ post.get('author') }} &emsp; {{ post.get('create_time').strftime('%Y-%m-%d') }}</p>
-    <p class="post-content">{{ post.get('content') }}</p>
+  {% if data %}
+  {% set post = data.get('post', {}) %}
+  <div id="post_info">
+    <h3 class="post_title">{{ post.get('title') }}</h3>
+    <p class="post_info">{{ post.get('author') }} &emsp; {{ post.get('create_time').strftime('%Y-%m-%d') }}</p>
+    <p class="post_content">{{ post.get('content') }}</p>
+    <button type="button" onclick="to_add_post()">发一篇</button>
+    <button type="button" onclick="to_update_post()">去修改</button>
   </div>
-  <div class="post-add">
-    <input type="text" id="title" name="title" title="title">
-    <textarea id="content" name="content" title="content"></textarea>
+  <div id="post_update" style="display: none">
+    <input type="text" id="post_update_title" name="post_update_title" title="post_update_title" value="{{ post.get('title') }}">
+    <br>
+    <textarea id="post_update_content" name="post_update_content" title="post_update_content">{{ post.get('content') }}</textarea>
+    <br>
+    <button type="button" onclick="update_post({{ post.get('id') }})">修改</button>
+  </div>
+  {% else %}
+  <div id="post_add">
+    <input type="text" id="post_add_title" name="post_add_title" title="post_add_title">
+    <br>
+    <textarea id="post_add_content" name="post_add_content" title="post_add_content"></textarea>
+    <br>
     <button type="button" onclick="add_post()">发布</button>
   </div>
+  {% end %}
 </div>
 {% end %}

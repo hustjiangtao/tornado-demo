@@ -24,6 +24,21 @@ class PostDB(BaseDB):
         else:
             return False
 
+    def update_post(self, item):
+        """update a post
+        >>> {"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com'}
+        True
+        """
+        if not isinstance(item, dict):
+            return False
+
+        sql = "update post set title=:title, content=:content where id=:id;"
+        result = self.update_item(sql=sql, params=item)
+        if result:
+            return True
+        else:
+            return False
+
     def get_post_by_id(self, id):
         """get a post by it's id
         >>> 1
@@ -35,13 +50,13 @@ class PostDB(BaseDB):
         sql = "select * from post where id = {id}".format(id=id)
         result = self.fetch_one(sql)
         if result:
-            _id, title, content, author, create_time = result
+            x = result
             result = {
-                "id": _id,
-                "title": title,
-                "content": content,
-                "author": author,
-                "create_time": datetime.strptime(create_time, "%Y-%m-%d %H:%M:%S"),
+                "id": x['id'],
+                "title": x['title'],
+                "content": x['content'],
+                "author": x['author'],
+                "create_time": datetime.strptime(x['create_time'], "%Y-%m-%d %H:%M:%S"),
             }
         else:
             result = {}
@@ -57,12 +72,12 @@ class PostDB(BaseDB):
         result = self.fetch_all(sql)
         if result:
             result = [{
-                "id": _id,
-                "title": title,
-                "content": content,
-                "author": author,
-                "create_time": datetime.strptime(create_time, "%Y-%m-%d %H:%M:%S"),
-            } for _id, title, content, author, create_time in result]
+                "id": x['id'],
+                "title": x['title'],
+                "content": x['content'],
+                "author": x['author'],
+                "create_time": datetime.strptime(x['create_time'], "%Y-%m-%d %H:%M:%S"),
+            } for x in result]
         else:
             result = []
 
