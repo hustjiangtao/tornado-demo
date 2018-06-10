@@ -56,7 +56,6 @@ class UserHandler(BaseHandler):
         """user info page"""
         user_id = self.get_secure_cookie('user')
         user = user_db.get_user_by_id(id=user_id)
-        self.clear_cookie('user')
         if user:
             user = {
                 "name": user.get('name') or '',

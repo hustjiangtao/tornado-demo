@@ -31,7 +31,7 @@ class RegisterHandler(BaseHandler):
         elif password != password_confirm:
             code = PARAMS_MISS
         else:
-            user = user_db.get_user_by_name(name=name)
+            user = user_db.get_user_auth_by_name(name=name)
             if user:
                 code = ACCOUNT_USED
             else:
