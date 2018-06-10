@@ -2,16 +2,22 @@
 
 {% block content %}
 {% set posts = data.get('posts', []) %}
-<div>
+<div class="content_box">
   <button onclick="to_add_post()">去发文</button>
   <button onclick="to_user_info()">我的主页</button>
   <button onclick="do_logout()">注销</button>
   {% for post in posts %}
-  <div class="post">
-    <h3 class="post-title">{{ post.get('title') }}</h3>
-    <p class="post-info">{{ post.get('author') }} &emsp; {{ post.get('create_time').strftime('%Y-%m-%d') }}</p>
-    <p class="post-content">{{ post.get('content') }}</p>
-  </div>
+  <a href="/post?id={{ post.get('id') }}" target="_blank" class="post_box">
+    <div class="post_list">
+      <p class="post_info">
+        <span class="post_author">{{ post.get('author') }}</span>
+        <span>{{ post.get('create_time').strftime('%Y-%m-%d') }}</span>
+      </p>
+      <h3 class="post_title">{{ post.get('title') }}</h3>
+      <p class="post_content">{% raw post.get('content') %}</p>
+    </div>
+    <div class="post_ext">aboxxsasx</div>
+  </a>
   <hr>
   {% end %}
 </div>

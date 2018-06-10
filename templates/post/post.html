@@ -1,31 +1,68 @@
 {% extends '../base.html' %}
 
 {% block content %}
-<div>
+<div class="content_box">
   {% if data %}
   {% set post = data.get('post', {}) %}
-  <div id="post_info">
-    <h3 class="post_title">{{ post.get('title') }}</h3>
-    <p class="post_info">{{ post.get('author') }} &emsp; {{ post.get('create_time').strftime('%Y-%m-%d') }}</p>
-    <p class="post_content">{{ post.get('content') }}</p>
+  <!-- post info -->
+  <div id="post">
+    <p class="post_info">
+      <span class="post_author">{{ post.get('author') }}</span>
+      <br>
+      <span class="post_time">{{ post.get('create_time').strftime('%Y-%m-%d').replace('-', ' 年 ', 1).replace('-', ' 月 ', 1) }} 日</span>
+    </p>
+    <h1 class="post_title">{{ post.get('title') }}</h1>
+    <div class="post_content">{% raw post.get('content') %}</div>
     <button type="button" onclick="to_add_post()">发一篇</button>
     <button type="button" onclick="to_update_post()">去修改</button>
   </div>
+  <!-- post update -->
   <div id="post_update" style="display: none">
-    <input type="text" id="post_update_title" name="post_update_title" title="post_update_title" value="{{ post.get('title') }}">
-    <br>
-    <textarea id="post_update_content" name="post_update_content" title="post_update_content">{{ post.get('content') }}</textarea>
-    <br>
-    <button type="button" onclick="update_post({{ post.get('id') }})">修改</button>
+    <p class="post_update_title">
+      <label for="post_update_title">标题</label>
+      <input type="text" id="post_update_title" name="post_update_title" value="{{ post.get('title') }}">
+    </p>
+    <div class="post_update_content">
+      <span>正文</span>
+      <div id="post_update_content"></div>
+    </div>
+    <p class="post_update_submit"><button type="button" id="post_update_submit">修改</button></p>
   </div>
   {% else %}
+  <!-- post add -->
   <div id="post_add">
-    <input type="text" id="post_add_title" name="post_add_title" title="post_add_title">
-    <br>
-    <textarea id="post_add_content" name="post_add_content" title="post_add_content"></textarea>
-    <br>
-    <button type="button" onclick="add_post()">发布</button>
+    <p class="post_add_title">
+      <label for="post_add_title">标题</label>
+      <input type="text" id="post_add_title" name="post_add_title">
+    </p>
+    <div class="post_add_content">
+      <span>正文</span>
+      <div id="post_add_content"></div>
+    </div>
+    <p class="post_add_submit"><button type="button" id="post_add_submit">发布</button></p>
   </div>
   {% end %}
 </div>
+{% end %}
+{% block foot_js %}
+<script src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script>
+<script>
+    let E = window.wangEditor;
+    {% if data %}
+    // post update
+    let editor_update = new E('#post_update_content');
+    editor_update.create();
+    editor_update.txt.html('{% raw post.get("content") %}');  // 默认自动转义，需手动开启不转义
+    document.getElementById('post_update_submit').addEventListener('click', function () {
+        update_post({{ post.get('id') }}, editor_update.txt.html());
+    });
+    {% else %}
+    // post add
+    let editor_add = new E('#post_add_content');
+    editor_add.create();
+    document.getElementById('post_add_submit').addEventListener('click', function () {
+        add_post(editor_add.txt.html());
+    });
+    {% end %}
+</script>
 {% end %}

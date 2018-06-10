@@ -69,9 +69,8 @@ function do_logout() {
 }
 
 // add post
-function add_post() {
+function add_post(content) {
     let title = document.getElementById('post_add_title').value;
-    let content = document.getElementById('post_add_content').value;
     let data = {
         "title": title,
         "content": content,
@@ -92,9 +91,8 @@ function add_post() {
 }
 
 // update post
-function update_post(id) {
+function update_post(id, content) {
     let title = document.getElementById('post_update_title').value;
-    let content = document.getElementById('post_update_content').value;
     let data = {
         "id": id,
         "title": title,
@@ -155,7 +153,7 @@ function to_add_post() {
 }
 // to_update_post
 function to_update_post() {
-    document.getElementById('post_info').style.display='none';
+    document.getElementById('post').style.display='none';
     document.getElementById('post_update').style.display='';
 }
 // to_user_info
