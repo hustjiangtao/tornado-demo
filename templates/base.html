@@ -10,6 +10,7 @@
   <title>Tornado-demo</title>
   {% end %}
 
+  <link rel="stylesheet" href="{{ static_url('css/layout.css') }}">
   {% block css %}
   {% end %}
 
@@ -20,9 +21,22 @@
   {% end %}
 </head>
 <body>
-{% block content %}
-{% end %}
+<header>
+  {% include 'module/header.html' %}
+</header>
 
+<section class="main">
+  <div class="left"></div>
+  <div class="content">
+    {% block content %}
+    {% end %}
+  </div>
+  <div class="right"></div>
+</section>
+
+<footer>
+  {% include 'module/footer.html' %}
+</footer>
 </body>
 {% block foot_js %}
 {% end %}

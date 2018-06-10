@@ -1,0 +1,274 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    height: 100%;
+    /*color: #F3F4F5;*/
+    /*background-color: #EFEFEF;*/
+    background-color: #f4f5f5;
+}
+
+/*-------------
+	Layout
+--------------*/
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font: 400 15px/1.4 'Open Sans',sans-serif;
+}
+header {
+    flex: 0 0 auto;
+}
+.main {
+    flex: 1 0 auto;
+}
+footer {
+    flex: 0 0 auto;
+}
+
+/*-------------
+	Header
+--------------*/
+
+header {
+    height: 8vh;
+    background: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    transition: all .2s;
+    border-bottom: 1px solid #f1f1f1;
+}
+.header_box {
+    /*max-width: 60vh;*/
+    /*margin: auto;*/
+    margin: 0 15vw;
+    color: #71777c;
+}
+.header_box > ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+}
+.header_box > ul > li {
+    list-style: none;
+    height: 100%;
+    padding: 2vh 3vw;
+    font-size: 1.33rem;
+}
+.header_box > ul > li > input {
+    width: 15vw;
+}
+.header_box > ul > li > .header_nav {
+    text-decoration: none;
+    color: #71777c;
+}
+.header_box > ul > li > .header_nav:hover {
+    color: #005fff;
+}
+.header_box > ul > li > .to_add_post {
+    text-decoration: none;
+    position: absolute;
+    right: 15vw;
+    padding: .35rem .6rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007fff;
+    border-radius: .25rem;
+}
+.header_box > ul > li > .to_add_post:hover {
+    background-color: #005fff;
+}
+
+/*-------------
+	Content layout
+--------------*/
+
+.main {
+    display: flex;
+    padding-top: 8vh;
+}
+.left{
+    width: 15vw;
+    /*background: #f4f5f5;*/
+    order: -1;
+}
+.content{
+    flex-grow: 1;
+    background: #fff;
+    margin: 3vh 0;
+    /*padding: 2.5vh 2.5vw;*/
+}
+.right{
+    width: 15vw;
+    /*background: #f4f5f5;*/
+}
+
+/*-------------
+	Footer
+--------------*/
+
+footer {
+    height: 10vh;
+    background: #fff;
+}
+footer {
+  font-size: small;
+  line-height: 1rem;
+  color: #858585;
+  text-align: center;
+  margin-top: 1rem;
+}
+footer p {
+  text-align: center;
+  font-size: 0.8rem;
+  margin: 1em 0;
+}
+footer a {
+    text-decoration: none;
+    color: #007fff;
+}
+
+/*-------------
+	Posts
+--------------*/
+
+.content_box {
+    padding: 2vh 3vw;
+}
+.post_box {
+    display: flex;
+    text-decoration: none;
+    color: #000;
+}
+.post_list {
+    flex: 1 1 auto;
+    margin: 2vh 1vw;
+    padding: 1vh .5vw;
+}
+.post_ext {
+    flex: 0 0 auto;
+    margin: 2vh 1vw;
+    padding: 1vh .5vw;
+}
+.post_list > .post_info > span {
+    font-size: small;
+    background-color: #f4f5f5;
+}
+.post_list > .post_info > .post_author {
+    margin-right: 1vw;
+}
+.post_list > .post_title, .post_info, .post_content {
+    margin: 1vh 0;
+}
+.post_list > .post_info, .post_content {
+    margin: .5vh 0;
+}
+
+/*-------------
+	Post detail
+--------------*/
+
+#post > .post_info > .post_author {
+    font-size: 2vh;
+  }
+#post > .post_info > .post_time {
+    font-size: 1vh;
+  }
+#post > .post_title {
+    font-size: 4vh;
+    margin: 2vh 0;
+    padding-bottom: 2vh;
+    border-bottom: 1px solid #ececec;
+  }
+#post > .post_content {
+    margin: 2vh 0;
+  }
+
+/*-------------
+	Post add
+--------------*/
+
+#post_add {
+    border: 1px solid silver;
+    padding: 1rem;
+    line-height: 3rem;
+}
+#post_add > p {
+    padding: .5rem 0;
+}
+#post_add > p > input {
+    width: 50rem;
+}
+#post_add > .post_add_content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+#post_add > .post_add_content > span {
+    margin-right: .3rem;
+}
+#post_add > .post_add_content > div {
+    width: 50.3rem;
+}
+#post_add > .post_add_submit {
+    text-align: center;
+}
+#post_add > .post_add_submit > button {
+    width: 3rem;
+    height: 2rem;
+    border-radius: .5rem;
+    outline: none;
+    cursor: pointer;
+    color: #fff;
+    background-color: #008fff;
+}
+#post_add > .post_add_submit > button:hover {
+    background-color: #005fff;
+}
+
+/*-------------
+	Post update
+--------------*/
+
+#post_update {
+    border: 1px solid silver;
+    padding: 1rem;
+    line-height: 3rem;
+}
+#post_update > p {
+    padding: .5rem 0;
+}
+#post_update > p > input {
+    width: 50rem;
+}
+#post_update > .post_update_content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+#post_update > .post_update_content > span {
+    margin-right: .3rem;
+}
+#post_update > .post_update_content > div {
+    width: 50.3rem;
+}
+#post_update > .post_update_submit {
+    text-align: center;
+}
+#post_update > .post_update_submit > button {
+    width: 3rem;
+    height: 2rem;
+    border-radius: .5rem;
+    outline: none;
+    cursor: pointer;
+    color: #fff;
+    background-color: #008fff;
+}
+#post_update > .post_update_submit > button:hover {
+    background-color: #005fff;
+}
