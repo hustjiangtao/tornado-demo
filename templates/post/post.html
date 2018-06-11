@@ -24,7 +24,7 @@
     </p>
     <div class="post_update_content">
       <span>正文</span>
-      <div id="post_update_content"></div>
+      <div id="post_update_content">{% raw post.get("content") %}</div>
     </div>
     <p class="post_update_submit"><button type="button" id="post_update_submit">修改</button></p>
   </div>
@@ -52,7 +52,6 @@
     // post update
     let editor_update = new E('#post_update_content');
     editor_update.create();
-    editor_update.txt.html('{% raw post.get("content") %}');  // 默认自动转义，需手动开启不转义
     document.getElementById('post_update_submit').addEventListener('click', function () {
         update_post({{ post.get('id') }}, editor_update.txt.html());
     });
