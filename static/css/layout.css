@@ -117,16 +117,16 @@ footer {
     background: #fff;
 }
 footer {
-  font-size: small;
-  line-height: 1rem;
-  color: #858585;
-  text-align: center;
-  margin-top: 1rem;
+    font-size: small;
+    line-height: 1rem;
+    color: #858585;
+    text-align: center;
+    margin-top: 1rem;
 }
 footer p {
-  text-align: center;
-  font-size: 0.8rem;
-  margin: 1em 0;
+    text-align: center;
+    font-size: 0.8rem;
+    margin: 1em 0;
 }
 footer a {
     text-decoration: none;
@@ -175,19 +175,19 @@ footer a {
 
 #post > .post_info > .post_author {
     font-size: 2vh;
-  }
+}
 #post > .post_info > .post_time {
     font-size: 1vh;
-  }
+}
 #post > .post_title {
     font-size: 4vh;
     margin: 2vh 0;
     padding-bottom: 2vh;
     border-bottom: 1px solid #ececec;
-  }
+}
 #post > .post_content {
     margin: 2vh 0;
-  }
+}
 
 /*-------------
 	Post add
@@ -271,4 +271,76 @@ footer a {
 }
 #post_update > .post_update_submit > button:hover {
     background-color: #005fff;
+}
+
+/*-------------
+	Login & Register
+--------------*/
+
+.login {
+    text-align: center;
+}
+.login > input {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px dashed silver;
+    outline: none;
+    text-align: center;
+    line-height: 2.2rem;
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+.login > input:focus{
+    font-style: italic;
+    font-weight: lighter;
+}
+.login > input::-webkit-input-placeholder{
+    color: lightcoral;
+    opacity: 0.7;
+}
+.login > button {
+    margin: 1rem 0;
+    padding: .5rem;
+    border-radius: .25rem;
+    color: #fff;
+    background-color: #007fff;
+    opacity: 0.9;
+    transition: width 1s, height 1s;
+}
+.login > button:hover {
+    background-color: #005fff;
+    opacity: 1;
+    /*animation: login-btn .2s;*/
+}
+/*@keyframes login-btn {*/
+    /*0% {transform: rotate(-10deg)}*/
+    /*25% {transform: rotate(10deg)}*/
+    /*50% {transform: rotate(10deg)}*/
+    /*100% {transform: rotate(-10deg)}*/
+/*}*/
+
+/*-------------
+	Normal
+--------------*/
+
+button {
+    margin: 1rem 0;
+    padding: .5rem;
+    border-radius: .25rem;
+    color: #fff;
+    background-color: #007fff;
+    opacity: 0.9;
+    transition: width 1s, height 1s;
+}
+button:hover {
+    background-color: #005fff;
+    opacity: 1;
+    animation: to_animation .2s;
+}
+@keyframes to_animation {
+    0% {transform: rotate(-10deg)}
+    25% {transform: rotate(10deg)}
+    50% {transform: rotate(10deg)}
+    100% {transform: rotate(-10deg)}
 }

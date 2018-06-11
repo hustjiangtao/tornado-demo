@@ -2,33 +2,28 @@
 
 {% block content %}
 {% set next = data.get('next') %}
-<div id="login_box">
-  <label for="account">账户</label>
-  <input type="text" id="account" name="account" required="required">
+<div class="content_box">
+<div id="login_box" class="login">
+  <input type="text" id="account" placeholder="账户" required>
   <br>
-  <label for="password">密码</label>
-  <input type="password" id="password" name="password" required>
+  <input type="password" id="password" name="password" placeholder="密码" required>
   <br>
   <button type="button" id="login" onclick="do_login('{{ next }}');">登录</button>
   <button type="button" id="to_register" onclick="to_register()">去注册</button>
 </div>
-<div id="register_box" style="display: none">
-  <label for="register_name">账户</label>
-  <input type="text" id="register_name" name="register_name" required>
+<div id="register_box" class="login" style="display: none">
+  <input type="text" id="register_name" name="register_name" placeholder="账户" required>
   <br>
-  <label for="register_email">邮箱</label>
-  <input type="text" id="register_email" name="register_email" required>
+  <input type="email" id="register_email" name="register_email" placeholder="邮箱" required>
   <br>
-  <label for="register_mobile">手机号</label>
-  <input type="text" id="register_mobile" name="register_mobile" required>
+  <input type="tel" id="register_mobile" name="register_mobile" placeholder="手机号" required>
   <br>
-  <label for="register_password">密码</label>
-  <input type="password" id="register_password" name="register_password" required>
+  <input type="password" id="register_password" name="register_password" placeholder="密码" required>
   <br>
-  <label for="register_password_confirm">确认密码</label>
-  <input type="password" id="register_password_confirm" name="register_password_confirm" required>
+  <input type="password" id="register_password_confirm" name="register_password_confirm" placeholder="确认密码" required>
   <br>
   <button type="button" id="to_login" onclick="to_login()">去登录</button>
   <button type="button" id="register" onclick="do_register('{{ next }}');">注册</button>
+</div>
 </div>
 {% end %}
