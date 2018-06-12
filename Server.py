@@ -21,7 +21,7 @@ class Application(tornado.web.Application):
 
 def main():
     app = Application()
-    http_server = tornado.httpserver.HTTPServer(app)
+    http_server = tornado.httpserver.HTTPServer(app, xheaders=True)
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.current().start()
 

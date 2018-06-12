@@ -98,6 +98,7 @@ class BaseDB(object):
             self.conn.commit()
             # return id if insert success else 0
             result = self.db.lastrowid
+            logging.info('insert sql={}, the params={}'.format(insert_sql, params))
         except Exception as e:
             logging.info(e)
             self.conn.rollback()
