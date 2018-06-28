@@ -13,6 +13,8 @@ from handlers.auth import AuthHandler
 from handlers.user import UserHandler
 from handlers.post_list import PostListHandler
 from handlers.post import PostHandler
+from handlers.chat import ChatIndexHandler
+from handlers.chat import ChatHandler
 
 
 url_handlers = [
@@ -24,4 +26,6 @@ url_handlers = [
     (r"/user", UserHandler),
     (r"/posts", PostListHandler),
     (r"/post", PostHandler),
+    (r"/chat-index", ChatIndexHandler),
+    (r"/chat", ChatHandler),
 ]
