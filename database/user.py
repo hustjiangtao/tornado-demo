@@ -2,8 +2,8 @@
 # -*- author: Jiangtao -*-
 
 
-from datetime import datetime
 from database.base import BaseDB
+from database.models.model_route import UserModel
 
 
 class UserDB(BaseDB):
@@ -11,79 +11,89 @@ class UserDB(BaseDB):
 
     def add_user(self, item):
         """Add a user
-        >>> {"name": 'jiangtao', "email": 'jiangtao.hu@qq.com'}
+        >>> {'name': 'jiangtao', 'email': 'jiangtao.hu@qq.com', 'mobile': '17612141727', 'password': 'a319c89da307cf078445e00688f903a6d86a7c2cc8d8fd88705db9400c0bcfdd', 'salt': 'wcmd2s8tau'}
         True
         """
         if not isinstance(item, dict):
             return False
 
-        sql = "insert into user (name, email, mobile, password, salt) values (:name, :email, :mobile, :password, :salt);"
-        result = self.add_item(insert_sql=sql, params=item)
-        if result:
-            return result
-        else:
-            return False
+        user_model = UserModel()
+        user_model.name = item.get('name')
+        user_model.email = item.get('email')
+        user_model.mobile = item.get('mobile')
+        user_model.password = item.get('password')
+        user_model.salt = item.get('salt')
 
-    def update_user(self, item):
+        result = self.add(user_model)
+        print(result)
+        if result:
+            result = user_model.id
+            print(result)
+
+        return result
+
+    def update_user(self, _id, item):
         """update a user
         >>> {"name": 'jiangtao', "email": 'jiangtao.hu@qq.com'}
         True
         """
-        if not isinstance(item, dict):
+        if not _id or not isinstance(item, dict):
             return False
 
-        sql = "update user set name=:name, email=:email, mobile=:mobile where id=:id;"
-        result = self.update_item(sql=sql, params=item)
-        if result:
-            return True
-        else:
+        query = self.db_session.query(UserModel).filter_by(id=_id)
+        user = self.fetch_first(query)
+        if not user:
             return False
+
+        user.name = item.get('name')
+        user.email = item.get('email')
+        result = self.save(user)
+
+        return result
 
     def get_user_auth_by_name(self, name):
         """get a user by his name
         >>> 'jiangtao'
-        True
+        {}
         """
         if not name:
-            return False
+            return {}
 
-        sql = "select id, password, salt from user where name = '{name}'".format(name=name)
-        result = self.fetch_one(sql)
-        if result:
-            x = result
+        query = self.db_session.query(UserModel).filter_by(name=name)
+        user = self.fetch_first(query)
+        if user:
             result = {
-                "id": x['id'],
-                "password": x['password'],
-                "salt": x['salt'],
+                "id": user.id,
+                "password": user.password,
+                "salt": user.salt,
             }
         else:
             result = {}
 
         return result
 
-    def get_user_by_id(self, id):
+    def get_user_by_id(self, _id):
         """get a user
-        >>> 'jiangtao'
-        True
+        >>> 1
+        {}
         """
-        if not id:
-            return False
-        elif not isinstance(id, int):
-            id = int(id)
+        if not _id:
+            return {}
+        elif not isinstance(_id, int):
+            _id = int(_id)
 
-        sql = "select * from user where id = {id}".format(id=id)
-        result = self.fetch_one(sql)
-        if result:
-            x = result
+        query = self.db_session.query(UserModel).filter_by(id=_id)
+        user = self.fetch_first(query)
+        if user:
             result = {
-                "id": x['id'],
-                "name": x['name'],
-                "email": x['email'],
-                "mobile": x['mobile'],
-                "create_time": datetime.strptime(x['create_time'], "%Y-%m-%d %H:%M:%S"),
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "mobile": user.mobile,
+                "create_time": user.create_time,
             }
         else:
-            result = None
+            result = {}
 
         return result
 

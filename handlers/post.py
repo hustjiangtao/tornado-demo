@@ -26,7 +26,7 @@ class PostHandler(BaseHandler):
         if not all([title, content]):
             code = PARAMS_MISS
         else:
-            current_user = user_db.get_user_by_id(id=self.current_user)
+            current_user = user_db.get_user_by_id(_id=self.current_user)
             add_item = {
                 "title": title,
                 "content": content,
@@ -75,7 +75,7 @@ class PostHandler(BaseHandler):
     def get(self):
         _id = self.get_query_argument('id', None)
 
-        post = post_db.get_post_by_id(id=_id)
+        post = post_db.get_post_by_id(_id=_id)
 
         if not _id:
             data = None

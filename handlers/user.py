@@ -34,7 +34,7 @@ class UserHandler(BaseHandler):
         elif not all([name, email, mobile]):
             code = PARAMS_MISS
         else:
-            user = user_db.get_user_by_id(id=user_id)
+            user = user_db.get_user_by_id(_id=user_id)
             if not user:
                 code = ACCOUNT_ERROR
             else:
@@ -55,7 +55,7 @@ class UserHandler(BaseHandler):
     def get(self):
         """user info page"""
         user_id = self.get_secure_cookie('user')
-        user = user_db.get_user_by_id(id=user_id)
+        user = user_db.get_user_by_id(_id=user_id)
         if user:
             user = {
                 "name": user.get('name') or '',

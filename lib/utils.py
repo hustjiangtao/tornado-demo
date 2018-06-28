@@ -2,6 +2,7 @@
 # -*- author: Jiangtao -*-
 
 
+import logging
 import random
 import string
 import hmac
@@ -11,6 +12,8 @@ try:
 except Exception as e:
     print(e)
     import json
+
+from datetime import datetime
 
 
 class Json(object):
@@ -63,6 +66,15 @@ class String(object):
         return hmac.compare_digest(a, b)
 
 
+class BaseLogging(object):
+    """Logging service"""
+    logging.basicConfig(level=logging.INFO)
+
+    @staticmethod
+    def do_logging(data):
+        logging.info('\U0001F44D {} @ {}'.format(data, datetime.now()))
+
+
 json_service = Json()
 json_encode = json_service.json_encode
 json_decode = json_service.json_decode
@@ -71,3 +83,6 @@ string_service = String()
 random_string = string_service.random_string
 get_hashed_password = string_service.get_hashed_password
 compare_digest = string_service.compare_digest
+
+logging_service = BaseLogging()
+do_logging = logging_service.do_logging

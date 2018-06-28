@@ -3,19 +3,9 @@
 
 
 import logging
-import sqlite3
+import traceback
 
-
-class RowObj(sqlite3.Row):
-    """格式化sql返回数据为字典格式
-    eg. (4, '111', 'aaa', 'jiangtao', '2018-06-08 09:42:52')
-    -->
-    RowObj({'id': 4, 'title': '111', 'content': 'aaa', 'author': 'jiangtao', 'create_time': '2018-06-08 09:42:52'})
-    """
-
-    def __repr__(self):
-        return '{}({})'.format(
-                self.__class__.__name__, {x: self[x] for x in self.keys()})
+from database.models.base_model import Session
 
 
 class BaseDB(object):
@@ -23,100 +13,96 @@ class BaseDB(object):
     All other sql class should base on this one
     """
 
-    conn = sqlite3.connect('/Users/jiangtao.work/Desktop/test.db')
-    conn.row_factory = RowObj
-
     def __init__(self):
-        self.db = self.conn.cursor()
+        self.db_session = Session()
 
     def __del__(self):
-        self.conn.close()
+        self.db_session.close()
 
-    def create_db(self, create_sql):
-        if not create_sql:
+    def add(self, instance):
+        if not instance:
             return False
 
         try:
-            self.db.execute(create_sql)
-            self.conn.commit()
+            self.db_session.add(instance)
+            self.db_session.commit()
             result = True
         except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
             result = False
 
         return result
 
-    def fetch_all(self, query):
+    def add_all(self, instances):
+        if not instances:
+            return False
+
+        try:
+            self.db_session.add_all(instances)
+            self.db_session.commit()
+            result = True
+        except Exception as e:
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
+            result = False
+
+        return result
+
+    def save(self, instances):
+        if not instances:
+            return False
+
+        try:
+            self.db_session.commit()
+            result = True
+        except Exception as e:
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
+            result = False
+
+        return result
+
+    @staticmethod
+    def fetch_first(query):
         if not query:
             return None
 
         try:
-            self.db.execute(query)
-            result = self.db.fetchall()
+            result = query.first()
         except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
-            result = []
-
-        return result
-
-    def fetch_many(self, query, size):
-        if not all([query, size]):
-            return None
-
-        try:
-            self.db.execute(query)
-            result = self.db.fetchmany(size=size)
-        except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
-            result = []
-
-        return result
-
-    def fetch_one(self, query):
-        if not query:
-            return None
-
-        try:
-            self.db.execute(query)
-            result = self.db.fetchone()
-        except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
+            logging.warning(traceback.format_exc())
             result = None
 
         return result
 
-    def add_item(self, insert_sql, params):
-        if not insert_sql:
+    @staticmethod
+    def fetch_all(query, offset=None, limit=None):
+        if not query:
             return None
 
+        if offset is not None and limit is not None:
+            query = query.offset(offset).limit(limit)
+
         try:
-            self.db.execute(insert_sql, params)
-            self.conn.commit()
-            # return id if insert success else 0
-            result = self.db.lastrowid
-            logging.info('insert sql={}, the params={}'.format(insert_sql, params))
+            result = query.all()
         except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
-            result = False
+            logging.warning(traceback.format_exc())
+            result = []
 
         return result
 
-    def update_item(self, sql, params):
-        if not sql:
+    @staticmethod
+    def count(query):
+        if not query:
             return None
 
         try:
-            self.db.execute(sql, params)
-            self.conn.commit()
-            result = True
+            result = query.first()
+            if result:
+                result = result[0]
         except Exception as e:
-            logging.info(e)
-            self.conn.rollback()
-            result = False
+            logging.warning(traceback.format_exc())
+            result = None
 
         return result

@@ -2,8 +2,8 @@
 # -*- author: Jiangtao -*-
 
 
-from datetime import datetime
 from database.base import BaseDB
+from database.models.model_route import PostModel
 
 
 class PostDB(BaseDB):
@@ -17,46 +17,53 @@ class PostDB(BaseDB):
         if not isinstance(item, dict):
             return False
 
-        sql = "insert into post (title, content, author) values (:title, :content, :author);"
-        result = self.add_item(insert_sql=sql, params=item)
-        if result:
-            return result
-        else:
-            return False
+        post_model = PostModel()
+        post_model.title = item.get('title')
+        post_model.content = item.get('content')
+        post_model.author = item.get('author')
 
-    def update_post(self, item):
+        result = self.add(post_model)
+        if result:
+            result = post_model.id
+
+        return result
+
+    def update_post(self, _id, item):
         """update a post
         >>> {"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com'}
         True
         """
-        if not isinstance(item, dict):
+        if not _id or not isinstance(item, dict):
             return False
 
-        sql = "update post set title=:title, content=:content where id=:id;"
-        result = self.update_item(sql=sql, params=item)
-        if result:
-            return True
-        else:
+        query = self.db_session.query(PostModel).filter_by(id=_id)
+        post = self.fetch_first(query)
+        if not post:
             return False
 
-    def get_post_by_id(self, id):
+        post.title = item.get('title')
+        post.content = item.get('content')
+        result = self.save(post)
+
+        return result
+
+    def get_post_by_id(self, _id):
         """get a post by it's id
         >>> 1
         True
         """
-        if not id:
+        if not _id:
             return {}
 
-        sql = "select * from post where id = {id}".format(id=id)
-        result = self.fetch_one(sql)
-        if result:
-            x = result
+        query = self.db_session.query(PostModel).filter_by(id=_id)
+        post = self.fetch_first(query)
+        if post:
             result = {
-                "id": x['id'],
-                "title": x['title'],
-                "content": x['content'],
-                "author": x['author'],
-                "create_time": datetime.strptime(x['create_time'], "%Y-%m-%d %H:%M:%S"),
+                "id": post.id,
+                "title": post.title,
+                "content": post.content,
+                "author": post.author,
+                "create_time": post.create_time,
             }
         else:
             result = {}
@@ -68,16 +75,16 @@ class PostDB(BaseDB):
         >>>
         True
         """
-        sql = "select * from post where 1"
-        result = self.fetch_all(sql)
-        if result:
+        query = self.db_session.query(PostModel)
+        posts = self.fetch_all(query)
+        if posts:
             result = [{
-                "id": x['id'],
-                "title": x['title'],
-                "content": x['content'],
-                "author": x['author'],
-                "create_time": datetime.strptime(x['create_time'], "%Y-%m-%d %H:%M:%S"),
-            } for x in result]
+                "id": post.id,
+                "title": post.title,
+                "content": post.content,
+                "author": post.v,
+                "create_time": post.create_time,
+            } for post in posts]
         else:
             result = []
 
