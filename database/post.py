@@ -28,6 +28,37 @@ class PostDB(BaseDB):
 
         return result
 
+    def add_crawler_posts(self, items):
+        """Add a post
+        >>> [{"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com', "author": 'jiangtao'}]
+        True
+        """
+        if not isinstance(items, list):
+            return False
+
+        post_models = []
+        for item in items:
+            post_model = PostModel()
+            post_model.title = item.get('title')
+            post_model.intro = item.get('content')
+            post_model.content = item.get('content')
+            post_model.author = item.get('author')
+            post_model.source = item.get('source')
+            post_model.source_id = item.get('source_id')
+            post_model.original_url = item.get('original_url')
+            post_model.collection_count = item.get('collection_count')
+            post_model.comments_count = item.get('comments_count')
+            if item.get('create_time'):
+                post_model.create_time = item.get('create_time')
+
+            post_models.append(post_model)
+
+        result = self.add_all(post_models)
+        if result:
+            result = True
+
+        return result
+
     def update_post(self, _id, item):
         """update a post
         >>> {"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com'}
@@ -82,9 +113,20 @@ class PostDB(BaseDB):
                 "id": post.id,
                 "title": post.title,
                 "content": post.content,
-                "author": post.v,
+                "author": post.author,
                 "create_time": post.create_time,
             } for post in posts]
+        else:
+            result = []
+
+        return result
+
+    def get_all_crawler_original_urls(self):
+        """get all crawler origin urls"""
+        query = self.db_session.query(PostModel.original_url)
+        posts = self.fetch_all(query)
+        if posts:
+            result = [url for url, in posts]
         else:
             result = []
 
