@@ -72,7 +72,11 @@ class BaseLogging(object):
 
     @staticmethod
     def do_logging(data):
-        logging.info('\U0001F44D {} @ {}'.format(data, datetime.now()))
+        logging.info('\U0001F44D {} @ {}'.format(data, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
+    @staticmethod
+    def do_warning(data):
+        logging.warning('\U0001F602'' {} @ {}'.format(data, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
 
 
 json_service = Json()
@@ -86,3 +90,4 @@ compare_digest = string_service.compare_digest
 
 logging_service = BaseLogging()
 do_logging = logging_service.do_logging
+do_warning = logging_service.do_warning

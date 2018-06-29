@@ -27,5 +27,10 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.info('Tornado server start...')
-    main()
+    try:
+        logging.warning('Tornado server start...')
+        main()
+    except KeyboardInterrupt as e:
+        logging.warning("KeyboardInterrupt")
+    except Exception as e:
+        logging.warning(e)
