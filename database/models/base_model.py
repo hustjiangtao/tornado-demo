@@ -2,7 +2,9 @@
 # -*- author: Jiangtao -*-
 
 
+import os
 import json
+import yaml
 
 from datetime import datetime
 
@@ -63,7 +65,11 @@ class MetaModel(object):
 
 
 class Engine(object):
-    path = '/Users/jiangtao.work/Desktop/test.db'
+    db_conf_dir = os.path.join(os.path.dirname(__file__), 'db.yaml')
+    with open(db_conf_dir, encoding='utf-8') as f:
+        db_conf = yaml.safe_load(f)
+
+    path = db_conf.get('sqlite').get('path')
     engine = create_engine('sqlite:///{path}'.format(path=path, encoding='utf8', echo=False))
 
 
