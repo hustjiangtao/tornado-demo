@@ -110,3 +110,4 @@ venv.bak/
 #py3env/
 
 *.yaml
+fabfile.py
