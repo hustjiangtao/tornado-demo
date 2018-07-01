@@ -103,6 +103,7 @@ header {
     order: -1;
 }
 .content{
+    max-width: 70vw;
     flex-grow: 1;
     background: #fff;
     margin: 3vh 0;
@@ -155,7 +156,6 @@ footer a {
     color: #000;
 }
 .post_list {
-    max-width: 60vw;
     flex: 1 1 auto;
     margin: 2vh 1vw;
     padding: 1vh .5vw;
@@ -184,9 +184,6 @@ footer a {
 	Post detail
 --------------*/
 
-#post_detail {
-    max-width: 60vw;
-}
 #post_detail > .post_info > .post_author {
     font-size: 2vh;
     margin-right: 1.5rem;
