@@ -2,6 +2,7 @@
 # -*- author: Jiangtao -*-
 
 
+import sys
 import time
 from datetime import timedelta, datetime
 
@@ -13,6 +14,8 @@ except ImportError:
     from urllib.parse import urljoin, urldefrag
 
 from tornado import httpclient, gen, ioloop, queues
+
+sys.path.append('../')
 
 from lib.utils import json_decode
 from database.post import post_db

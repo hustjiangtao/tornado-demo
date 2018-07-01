@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+
+import sys
+sys.path.append('../../')
+
 from lib.utils import do_logging
 
 from database.models.base_model import BaseModel
