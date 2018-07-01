@@ -1,5 +1,13 @@
 // main js
 
+function $(select) {
+    if (select.startsWith('#')) {
+        return document.getElementById(select.slice(1))
+    } else if (select.startsWith('.')) {
+        return document.getElementsByClassName(select.slice(1))
+    }
+}
+
 // register
 function do_register() {
     let name = document.getElementById('register_name').value;
@@ -147,16 +155,93 @@ function to_login() {
     document.getElementById('register_box').style.display='none';
     document.getElementById('login_box').style.display='';
 }
-// to_add_post
-function to_add_post() {
-    window.location.href = '/post'
-}
 // to_update_post
 function to_update_post() {
-    document.getElementById('post').style.display='none';
+    document.getElementById('post_detail').style.display='none';
     document.getElementById('post_update').style.display='';
 }
-// to_user_info
-function to_user_info() {
-    window.location.href = '/user'
+
+// 滚动到底部刷新
+function scroll_to_reload() {
+    //获取滚动条当前的位置
+    function getScrollTop() {
+        let scrollTop = 0;
+        if (document.documentElement && document.documentElement.scrollTop) {
+            scrollTop = document.documentElement.scrollTop;
+        }
+        else if (document.body) {
+            scrollTop = document.body.scrollTop;
+        }
+        return scrollTop;
+    }
+
+    //获取当前可视范围的高度
+    function getClientHeight() {
+        let clientHeight = 0;
+        if (document.body.clientHeight && document.documentElement.clientHeight) {
+            clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight);
+        }
+        else {
+            clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight);
+        }
+        return clientHeight;
+    }
+
+    //获取文档完整的高度
+    function getScrollHeight() {
+        return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    }
+    window.onscroll = function () {
+        if (getScrollTop() + getClientHeight() === getScrollHeight()) {
+            //ajax从这里开始
+            window.location.reload()
+        }
+    }
+}
+
+// 关键词检测
+function keyWordCheck(keys) {
+    // let keys_list = '{{ data.get("search") }}';
+    let keys_list = keys;
+
+    // title
+    // $('.post_title').each(function () {
+    for (let i=0;i<$('.post_title').length;i++) {
+        // let thisThis = this;
+        let thisThis = $('.post_title')[i];
+        let keys = keys_list.split('|');
+        for (let i = 0; i < keys.length; i++) {
+            heightLight(thisThis, keys[i])
+        }
+    }
+    // });
+
+    // content
+    // $('.post_content').each(function () {
+    for (let i=0;i<$('.post_content').length;i++) {
+        // let thisThis = this;
+        let thisThis = $('.post_content')[i];
+        let keys = keys_list.split('|');
+        for (let i = 0; i < keys.length; i++) {
+            heightLight(thisThis, keys[i])
+        }
+    }
+    // });
+
+    // 字符检测函数
+    function strContainSubstr(str, subStr) {
+        // 不区分大小写
+        let lower_str = str.toLowerCase();
+        let lower_subStr = subStr.toLowerCase();
+        return lower_str.indexOf(lower_subStr) >= 0;
+    }
+
+    // 高亮
+    function heightLight(thisThis, key) {
+        let text = thisThis.innerHTML;
+        if (strContainSubstr(text, key)) {
+            let reg = new RegExp(key.toLowerCase(), 'ig');
+            thisThis.innerHTML = text.replace(reg, '<span style="background-color: lightpink;">' + key + '</span>')
+        }
+    }
 }
