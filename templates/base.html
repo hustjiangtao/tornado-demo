@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   {% block head %}
   {% end %}
@@ -10,12 +11,14 @@
   <title>Tornado-demo</title>
   {% end %}
 
+{#  <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.1/build/pure-min.css">#}
+  <link rel="stylesheet" href="{{ static_url('css/pure-min.css') }}">
   <link rel="stylesheet" href="{{ static_url('css/layout.css') }}">
   {% block css %}
   {% end %}
 
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-{#  <script src="{{ static_url('js/axios.min.js') }}"></script>#}
+{#  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>#}
+  <script src="{{ static_url('js/axios.min.js') }}"></script>
   <script src="{{ static_url('js/main.js') }}"></script>
   {% block head_js %}
   {% end %}

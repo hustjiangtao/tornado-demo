@@ -36,6 +36,7 @@ footer {
 header {
     height: 8vh;
     background: #fff;
+    /*background: #684d92;*/
     position: fixed;
     top: 0;
     left: 0;
@@ -60,8 +61,9 @@ header {
     padding: 2vh 3vw;
     font-size: 1.33rem;
 }
-.header_box > ul > li > input {
+.header_box > ul > li input {
     width: 15vw;
+    font-size: .7rem;
 }
 .header_box > ul > li > .header_nav {
     text-decoration: none;
@@ -70,17 +72,20 @@ header {
 .header_box > ul > li > .header_nav:hover {
     color: #005fff;
 }
-.header_box > ul > li > .to_add_post {
-    text-decoration: none;
+.header_box > ul > li > .head_btn {
     position: absolute;
     right: 15vw;
+}
+.header_box > ul > li > .head_btn > a {
+    text-decoration: none;
     padding: .35rem .6rem;
+    margin: 0 .5rem;
     font-size: 1rem;
     color: #fff;
     background-color: #007fff;
     border-radius: .25rem;
 }
-.header_box > ul > li > .to_add_post:hover {
+.header_box > ul > li > .head_btn > a:hover {
     background-color: #005fff;
 }
 
@@ -145,7 +150,12 @@ footer a {
     text-decoration: none;
     color: #000;
 }
+.post_box a {
+    text-decoration: none;
+    color: #000;
+}
 .post_list {
+    max-width: 60vw;
     flex: 1 1 auto;
     margin: 2vh 1vw;
     padding: 1vh .5vw;
@@ -158,9 +168,10 @@ footer a {
 .post_list > .post_info > span {
     font-size: small;
     background-color: #f4f5f5;
-}
-.post_list > .post_info > .post_author {
     margin-right: 1vw;
+}
+.post_list > .post_info > span > a {
+    color: #444280;
 }
 .post_list > .post_title, .post_info, .post_content {
     margin: 1vh 0;
@@ -173,104 +184,47 @@ footer a {
 	Post detail
 --------------*/
 
-#post > .post_info > .post_author {
-    font-size: 2vh;
+#post_detail {
+    max-width: 60vw;
 }
-#post > .post_info > .post_time {
+#post_detail > .post_info > .post_author {
+    font-size: 2vh;
+    margin-right: 1.5rem;
+}
+#post_detail > .post_info a {
+    font-size: 2vh;
+    text-decoration: none;
+}
+#post_detail > .post_info > .post_time {
     font-size: 1vh;
 }
-#post > .post_title {
+#post_detail > .post_title {
     font-size: 4vh;
     margin: 2vh 0;
     padding-bottom: 2vh;
     border-bottom: 1px solid #ececec;
 }
-#post > .post_content {
+#post_detail > .post_content {
     margin: 2vh 0;
 }
 
 /*-------------
-	Post add
+	Post add & update
 --------------*/
 
-#post_add {
+.post {
     border: 1px solid silver;
     padding: 1rem;
     line-height: 3rem;
 }
-#post_add > p {
+.post > p {
     padding: .5rem 0;
 }
-#post_add > p > input {
-    width: 50rem;
+.post > input {
+    width: 55.5rem;
 }
-#post_add > .post_add_content {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-}
-#post_add > .post_add_content > span {
-    margin-right: .3rem;
-}
-#post_add > .post_add_content > div {
-    width: 50.3rem;
-}
-#post_add > .post_add_submit {
+.post > .post_submit {
     text-align: center;
-}
-#post_add > .post_add_submit > button {
-    width: 3rem;
-    height: 2rem;
-    border-radius: .5rem;
-    outline: none;
-    cursor: pointer;
-    color: #fff;
-    background-color: #008fff;
-}
-#post_add > .post_add_submit > button:hover {
-    background-color: #005fff;
-}
-
-/*-------------
-	Post update
---------------*/
-
-#post_update {
-    border: 1px solid silver;
-    padding: 1rem;
-    line-height: 3rem;
-}
-#post_update > p {
-    padding: .5rem 0;
-}
-#post_update > p > input {
-    width: 50rem;
-}
-#post_update > .post_update_content {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-}
-#post_update > .post_update_content > span {
-    margin-right: .3rem;
-}
-#post_update > .post_update_content > div {
-    width: 50.3rem;
-}
-#post_update > .post_update_submit {
-    text-align: center;
-}
-#post_update > .post_update_submit > button {
-    width: 3rem;
-    height: 2rem;
-    border-radius: .5rem;
-    outline: none;
-    cursor: pointer;
-    color: #fff;
-    background-color: #008fff;
-}
-#post_update > .post_update_submit > button:hover {
-    background-color: #005fff;
 }
 
 /*-------------
@@ -304,15 +258,6 @@ footer a {
 	Normal
 --------------*/
 
-button {
-    margin: 1rem 0;
-    padding: .5rem;
-    border-radius: .25rem;
-    color: #fff;
-    background-color: #007fff;
-    opacity: 0.9;
-    transition: width 1s, height 1s;
-}
 button:hover {
     background-color: #005fff;
     opacity: 1;
