@@ -2,6 +2,8 @@
 # -*- author: Jiangtao -*-
 
 
+from sqlalchemy import or_
+
 from database.base import BaseDB
 from database.models.model_route import PostModel
 
@@ -93,6 +95,7 @@ class PostDB(BaseDB):
                 "id": post.id,
                 "title": post.title,
                 "content": post.content,
+                "original_url": post.original_url,
                 "author": post.author,
                 "create_time": post.create_time,
             }
@@ -101,18 +104,24 @@ class PostDB(BaseDB):
 
         return result
 
-    def get_all_posts(self):
+    def get_all_posts(self, offset, limit, search=None):
         """get all posts
         >>>
         True
         """
         query = self.db_session.query(PostModel)
-        posts = self.fetch_all(query)
+        if search:
+            offset = 0
+            query = query.filter(or_(PostModel.title.contains(search),
+                                     PostModel.intro.contains(search),
+                                     PostModel.content.contains(search)))
+        posts = self.fetch_all(query, offset=offset, limit=limit)
         if posts:
             result = [{
                 "id": post.id,
                 "title": post.title,
                 "content": post.content,
+                "original_url": post.original_url,
                 "author": post.author,
                 "create_time": post.create_time,
             } for post in posts]

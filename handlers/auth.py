@@ -61,7 +61,7 @@ class AuthHandler(BaseHandler):
         """login page"""
         next = self.get_query_argument('next', '')
 
-        user_id = self.get_secure_cookie('user')
+        user_id = self.current_user
         if user_id:
             self.redirect('/user')
         else:

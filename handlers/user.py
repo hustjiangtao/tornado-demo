@@ -27,26 +27,21 @@ class UserHandler(BaseHandler):
         code = SUCCESS
         data = None
 
-        user_id = self.get_secure_cookie('user')
+        user_id = self.current_user
 
         if not user_id:
             code = USER_NOT_LOGIN
         elif not all([name, email, mobile]):
             code = PARAMS_MISS
         else:
-            user = user_db.get_user_by_id(_id=user_id)
-            if not user:
-                code = ACCOUNT_ERROR
-            else:
-                update_item = {
-                    "id": int(user_id),
-                    "name": name,
-                    "email": email,
-                    "mobile": mobile,
-                }
-                result = user_db.update_user(item=update_item)
-                if not result:
-                    code = UPDATE_FAILED
+            update_item = {
+                "name": name,
+                "email": email,
+                "mobile": mobile,
+            }
+            result = user_db.update_user(_id=user_id, item=update_item)
+            if not result:
+                code = UPDATE_FAILED
 
         self.render_json(code=code, data=data)
         return
@@ -54,7 +49,7 @@ class UserHandler(BaseHandler):
     @authenticated
     def get(self):
         """user info page"""
-        user_id = self.get_secure_cookie('user')
+        user_id = self.current_user
         user = user_db.get_user_by_id(_id=user_id)
         if user:
             user = {

@@ -47,6 +47,7 @@ class UserDB(BaseDB):
 
         user.name = item.get('name')
         user.email = item.get('email')
+        user.mobile = item.get('mobile')
         result = self.save(user)
 
         return result
