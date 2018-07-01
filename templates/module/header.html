@@ -1,10 +1,11 @@
 <div class="header_box">
+  <img src="{{ static_url('img/foxy-tinified/foxy.jpg') }}" class="head_logo">
   <ul>
     <li><a href="/user" class="header_nav">主页</a></li>
     <li><a href="/posts" class="header_nav">文章</a></li>
     <li>
       <form class="pure-form">
-        <input type="search" id="header_search" class="pure-input-rounded" name="search" {% if data %}value="{{ data.get('search', '') }}"{% end %} placeholder="🔍">
+        <input type="search" id="header_search" class="pure-input-rounded" name="search" {% if data %}value="{{ data.get('search') or '' }}"{% end %} placeholder="🔍">
       </form>
     </li>
     <li>

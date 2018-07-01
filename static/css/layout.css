@@ -50,6 +50,13 @@ header {
     margin: 0 15vw;
     color: #71777c;
 }
+.head_logo {
+    position: absolute;
+    top: 0;
+    left: 5vw;
+    width: 3.5rem;
+    height: 3.5rem;
+}
 .header_box > ul {
     display: flex;
     flex-direction: row;
