@@ -9,10 +9,10 @@
       <p class="post_info">
         <span class="post_author">{{ post.get('author') }}</span>
         <span>{{ post.get('create_time').strftime('%Y-%m-%d') }}</span>
-        <span><a href="{{ post.get('original_url') }}" target="_blank">&#x1F517;原文链接</a></span>
+{#        <span><a href="{{ post.get('original_url') }}" target="_blank">&#x1F517;原文链接</a></span>#}
       </p>
       <h3 class="post_title">
-        <a href="/post?id={{ post.get('id') }}" target="_blank">{{ post.get('title') }}</a>
+        <a href="{% if post.get('original_url') %}{{ post.get('original_url') }}{% else %}/post?id={{ post.get('id') }}{% end %}" target="_blank">{{ post.get('title') }}</a>
       </h3>
       <p class="post_content">{% raw post.get('content') %}</p>
     </div>
