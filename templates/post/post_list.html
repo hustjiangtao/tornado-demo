@@ -3,6 +3,7 @@
 {% block content %}
 {% set posts = data.get('posts', []) %}
 <div class="content_box">
+  <span>cache: {{ data.get('cached') }}</span>
   {% for post in posts %}
   <div class="post_box">
     <div class="post_list">
