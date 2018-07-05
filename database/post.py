@@ -97,7 +97,7 @@ class PostDB(BaseDB):
                 "content": post.content,
                 "original_url": post.original_url,
                 "author": post.author,
-                "create_time": post.create_time,
+                "create_time": str(post.create_time.date()),
             }
         else:
             result = {}
@@ -123,7 +123,7 @@ class PostDB(BaseDB):
                 "content": post.content,
                 "original_url": post.original_url,
                 "author": post.author,
-                "create_time": post.create_time,
+                "create_time": str(post.create_time.date()),
             } for post in posts]
         else:
             result = []

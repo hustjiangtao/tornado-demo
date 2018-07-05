@@ -10,7 +10,7 @@
       <span class="post_author">{{ post.get('author') }}</span>
       <span><a href="{{ post.get('original_url') }}" target="_blank">&#x1F517;原文链接</a></span>
       <br>
-      <span class="post_time">{{ post.get('create_time').strftime('%Y-%m-%d').replace('-', ' 年 ', 1).replace('-', ' 月 ', 1) }} 日</span>
+      <span class="post_time">{{ post.get('create_time').replace('-', ' 年 ', 1).replace('-', ' 月 ', 1) }} 日</span>
     </p>
     <h1 class="post_title">{{ post.get('title') }}</h1>
     <div class="post_content">{% raw post.get('content') %}</div>

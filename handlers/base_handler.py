@@ -20,6 +20,7 @@ from lib.utils import get_hashed_password
 from lib.utils import compare_digest
 from lib.system_code import ERROR
 from lib.system_code import MESSAGE
+from lib.redis_service import r_cache
 
 
 def authenticated(method):
@@ -54,6 +55,7 @@ class BaseHandler(tornado.web.RequestHandler):
     """Base class for other request handlers - all other handlers should
     base on this one.
     """
+    r = r_cache
 
     def initialize(self):
         self.__set_header()
