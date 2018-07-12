@@ -1,0 +1,20 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% set demo = data.get('demo') %}
+<div class="content_box login">
+  <form class="pure-form pure-form-aligned">
+    <fieldset>
+      <div class="pure-control-group">
+        <label for="name">账户</label>
+        <input type="text" id="name" name="name" value="{{ demo.get('name') }}">
+      </div>
+
+      <div class="pure-control-group">
+        <label for="create_time">注册时间</label>
+        <input type="text" id="create_time" value="{{ demo.get('create_time').strftime('%Y-%m-%d') }}" disabled>
+      </div>
+    </fieldset>
+  </form>
+</div>
+{% end %}
