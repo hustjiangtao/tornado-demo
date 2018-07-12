@@ -1,0 +1,16 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% set demo = data.get('demo') %}
+<div class="content_box login">
+  <form class="pure-form pure-form-aligned" enctype="multipart/form-data" action="/upload" method="post">
+    <fieldset>
+      <div class="pure-control-group">
+        <label for="file">file</label>
+        <input type="file" id="file" name="file">
+      </div>
+      <button>upload</button>
+    </fieldset>
+  </form>
+</div>
+{% end %}
