@@ -5,10 +5,11 @@
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
 
-from database.demo import demo_db
+from database.upload import upload_db
 
 from lib.system_code import SUCCESS
 from lib.system_code import PARAMS_MISS
+from lib.utils import random_string
 
 
 class UploadHandler(BaseHandler):
@@ -26,8 +27,11 @@ class UploadHandler(BaseHandler):
         if not files:
             code = PARAMS_MISS
         else:
-            file_paths = [self.save_file(file, new_name=new_name) for file in files]
-            self.finish('\n'.join(file_paths))
+            file_objs = [self.save_file(file, new_name=new_name) for file in files]
+
+            [upload_db.add_upload(item=obj) for obj in file_objs]
+
+            self.finish('\n'.join([obj.get('url') for obj in file_objs]))
             return
 
             # data = {
@@ -55,7 +59,7 @@ class UploadHandler(BaseHandler):
             update_item = {
                 "name": name,
             }
-            result = demo_db.update_demo(_id=_id, item=update_item)
+            result = upload_db.update_upload(_id=_id, item=update_item)
             if result:
                 data = {
                     "result": True,
@@ -67,16 +71,16 @@ class UploadHandler(BaseHandler):
     @authenticated
     def get(self):
         _id = self.get_json_argument('id', None)
-        demo = demo_db.get_demo_by_id(_id=_id)
-        if demo:
-            demo = {
-                "name": demo.get('name') or '',
-                "create_time": demo.get('create_time'),
+        upload = upload_db.get_upload_by_id(_id=_id)
+        if upload:
+            upload = {
+                "name": upload.get('name') or '',
+                "create_time": upload.get('create_time'),
             }
         else:
-            demo = {}
+            upload = {}
         data = {
-            "demo": demo,
+            "upload": upload,
         }
         self.render('upload/upload.html', data=data)
 
@@ -95,28 +99,37 @@ class UploadHandler(BaseHandler):
         """
         from tornado.httputil import HTTPFile
         if not isinstance(file, HTTPFile):
-            return None
+            return {}
 
         name = file.get('filename')
         body = file.get('body')
         content_type = file.get('content_type')
 
         if not all([name, body, content_type]):
-            return None
+            return {}
 
         import os
         from datetime import date
-        upload_dir = os.path.join(self.application.settings.get('static_path'), 'upload')
-        file_dir = os.path.join(upload_dir, f'{date.today().year}')
-        if not os.path.exists(file_dir):
-            os.mkdir(file_dir)
+        upload_dir = os.path.join(self.application.settings.get('static_path'), 'upload', f'{date.today().year}')
+        if not os.path.exists(upload_dir):
+            os.mkdir(upload_dir)
+            from lib.utils import do_warning
+            do_warning(f'mkdir: {upload_dir}')
 
-        file_name = f'{name if not new_name else new_name}.{content_type.split("/")[-1]}'
-        file_path = os.path.join(file_dir, file_name)
+        sign = random_string(6)
+        file_name = f'{sign}_{name if not new_name else new_name}'
+        file_path = os.path.join(upload_dir, file_name)
         with open(file_path, 'wb+') as f:
             f.write(body)
 
-        server_host = f'{self.request.protocol}://{self.request.host}'
-        new_file_path = server_host + os.path.join(self.static_url('upload'), f'{date.today().year}', file_name)
+        new_file_path = self.static_url(f'upload/{date.today().year}/{file_name}', include_host=True, include_version=False)
 
-        return new_file_path
+        file_obj = {
+            "name": name,
+            "new_name": new_name,
+            "size": len(body),
+            "content_type": content_type,
+            "url": new_file_path,
+        }
+
+        return file_obj
