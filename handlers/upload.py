@@ -30,7 +30,8 @@ class UploadHandler(BaseHandler):
         else:
             file_objs = [self.save_file(file, new_name=new_name, document=document) for file in files]
 
-            [upload_db.add_upload(item=obj) for obj in file_objs]
+            if not document:
+                [upload_db.add_upload(item=obj) for obj in file_objs]
 
             self.finish('\n'.join([obj.get('url') for obj in file_objs]))
             return
