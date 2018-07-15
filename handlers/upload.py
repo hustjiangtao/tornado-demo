@@ -19,7 +19,8 @@ class UploadHandler(BaseHandler):
     @authenticated
     def post(self):
         files = self.request.files.get('file', None)
-        new_name = self.request.files.get('newName', None)
+        new_name = self.get_body_argument('newName', None)
+        document = self.get_body_argument('document', None)
 
         code = SUCCESS
         data = None
@@ -27,7 +28,7 @@ class UploadHandler(BaseHandler):
         if not files:
             code = PARAMS_MISS
         else:
-            file_objs = [self.save_file(file, new_name=new_name) for file in files]
+            file_objs = [self.save_file(file, new_name=new_name, document=document) for file in files]
 
             [upload_db.add_upload(item=obj) for obj in file_objs]
 
@@ -90,11 +91,12 @@ class UploadHandler(BaseHandler):
         return
 
     # @staticmethod
-    def save_file(self, file, new_name=None):
+    def save_file(self, file, new_name=None, document=None):
         """
         save file to upload dir
         :param file: tornado.httputil.HTTPFile
         :param new_name: new file name if provide
+        :param document: change document dir if provide
         :return: file_path
         """
         from tornado.httputil import HTTPFile
@@ -110,7 +112,10 @@ class UploadHandler(BaseHandler):
 
         import os
         from datetime import date
-        upload_dir = os.path.join(self.application.settings.get('static_path'), 'upload', f'{date.today().year}')
+        if document:
+            upload_dir = os.path.join('/var/www/document', f'{date.today().year}')
+        else:
+            upload_dir = os.path.join(self.application.settings.get('static_path'), 'upload', f'{date.today().year}')
         if not os.path.exists(upload_dir):
             os.mkdir(upload_dir)
             from lib.utils import do_warning

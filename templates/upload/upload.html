@@ -7,9 +7,14 @@
     <fieldset>
       <div class="pure-control-group">
         <label for="file">file</label>
-        <input type="file" id="file" name="file">
+        <input type="file" id="file" class="" name="file">
       </div>
-      <button>upload</button>
+      <label for="document" class="pure-checkbox">
+        <input id="document" type="checkbox" name="document" value="true">
+        Document
+      </label>
+      <br>
+      <button type="submit" class="pure-button pure-button-primary">upload</button>
     </fieldset>
   </form>
 </div>
