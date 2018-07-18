@@ -9,9 +9,17 @@ tornado = "*"
 sqlalchemy = "*"
 redis = "*"
 pyyaml = "*"
+ujson = "*"
 
 [dev-packages]
 "fabric3" = "*"
+pandas = "*"
+nltk = "*"
+wordcloud = "*"
+pillow = "*"
+pyperclip = "*"
+matplotlib = "*"
+gensim = "*"
 
 [requires]
 python_version = "3.6"
