@@ -2,14 +2,6 @@
 
 A demo based on Python3.6 + Tornado
 
-## Tree
-
-The Directory Structure is as bellow.
-
-```
-tree example
-```
-
 ## Introduction
 
 The project is build mainly using:
@@ -19,6 +11,35 @@ The project is build mainly using:
 - SQLAlchemy 1.2.10
 - SQLite3
 - Redis
+
+## Tree
+
+The Directory Structure is as bellow.
+
+```
+./
+├── crawlers
+├── database
+│   ├── db_scripts
+│   └── models
+├── handlers
+├── lib
+├── scripts
+├── static
+│   ├── css
+│   ├── img
+│   ├── js
+│   └── upload
+└── templates
+    ├── demo
+    ├── functools
+    ├── module
+    ├── post
+    ├── upload
+    └── user
+
+19 directories
+```
 
 ## Server.py
 
@@ -37,6 +58,7 @@ By now, you start the tornado web server.
 
 This file is the settings for Tornado Application.
 
+- `port`: set the server port, default is 9999 if not provided with command line when start the server
 - `debug`: set the log debug level if it's `True`
 - `autoreload`: auto start the tornado server when files has changed if it's `True`
 - `static_path`: the static files path
@@ -45,3 +67,24 @@ This file is the settings for Tornado Application.
 - `xsrf_cookies`: CSRF will be protected if it's `True`
 - `login_url`: the default login url when auth is failed
 
+## urls.py
+
+## handlers
+
+## database
+
+## static
+
+## templates
+
+## lib
+
+## scripts
+
+## crawlers
+
+## Pipfile
+
+## Pipfile.lock
+
+## LICENSE
