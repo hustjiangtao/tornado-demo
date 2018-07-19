@@ -69,22 +69,47 @@ This file is the settings for Tornado Application.
 
 ## urls.py
 
+Urls.py is the routers for searching application handler,
+and the regex can be used here to match handler with the url.
+A handler can handle the application.
+
 ## handlers
+
+A handler can handle a application matched the given url.
 
 ## database
 
+SQL models and SQL operations are defined here.
+
 ## static
+
+Static files including favicon.ico, images, css, js files and so on.
 
 ## templates
 
+Template files.
+
 ## lib
+
+Common functions.
 
 ## scripts
 
+Some script files.
+
 ## crawlers
+
+Crawler files.
 
 ## Pipfile
 
+File about python environment.
+Including pip source, python packages, packages for development and other requires.
+
 ## Pipfile.lock
 
+Details about python packages and environment requires.
+
 ## LICENSE
+
+License file. [Apache License - 2.0]
