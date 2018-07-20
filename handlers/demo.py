@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Demo"""
+
 
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
@@ -36,7 +38,6 @@ class DemoHandler(BaseHandler):
                 }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def delete(self):
@@ -64,7 +65,6 @@ class DemoHandler(BaseHandler):
                 }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def get(self):

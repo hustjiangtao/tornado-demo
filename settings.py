@@ -18,12 +18,11 @@ options.parse_command_line()
 enable_pretty_logging()
 
 # seetings for path
-path = lambda root,*a: os.path.join(root, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_PATH = path(ROOT, 'static')
-TEMPLATE_PATH = path(ROOT, 'templates')
+STATIC_PATH = os.path.join(ROOT, 'static')
+TEMPLATE_PATH = os.path.join(ROOT, 'templates')
 
-settings = {
+SETTINGS = {
     "debug": options.debug,
     "autoreload": False,
     "static_path": STATIC_PATH,

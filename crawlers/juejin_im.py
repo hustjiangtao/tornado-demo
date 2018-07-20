@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Juejin crawler"""
+
 
 import sys
 import time

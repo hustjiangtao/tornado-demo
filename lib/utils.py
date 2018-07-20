@@ -1,22 +1,26 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Common utils"""
+
 
 import logging
 import random
 import string
 import hmac
 import hashlib
+import traceback
 try:
     import ujson as json
-except Exception as e:
-    print(e)
+except ImportError:
     import json
+    logging.warning(traceback.format_exc())
+from json import JSONDecodeError
 
 from datetime import datetime
 
 
-class Json(object):
+class Json:
     """Json handle"""
 
     @staticmethod
@@ -25,9 +29,9 @@ class Json(object):
             return None
         try:
             result = json.loads(data)
-        except Exception as e:
-            print(e)
+        except JSONDecodeError:
             result = None
+            logging.warning(traceback.format_exc())
 
         return result
 
@@ -37,14 +41,14 @@ class Json(object):
             return None
         try:
             result = json.dumps(data)
-        except Exception as e:
-            print(e)
+        except JSONDecodeError:
             result = None
+            logging.warning(traceback.format_exc())
 
         return result
 
 
-class String(object):
+class String:
     """String service"""
     @staticmethod
     def random_string(string_length=10):
@@ -53,12 +57,14 @@ class String(object):
         if string_length < 36:
             return ''.join(random.sample(string.ascii_lowercase + string.digits, string_length))
 
-        return ''.join([random.choice(string.ascii_lowercase + string.digits) for x in range(string_length)])
+        return ''.join([random.choice(string.ascii_lowercase + string.digits)
+                        for x in range(string_length)])
 
     @staticmethod
     def get_hashed_password(password, salt):
         """Generate hashed password with a salt"""
-        return hmac.new(bytes(salt.encode('utf-8')), password.encode('utf-8'), hashlib.sha256).hexdigest()
+        return hmac.new(bytes(salt.encode('utf-8')), password.encode('utf-8'),
+                        hashlib.sha256).hexdigest()
 
     @staticmethod
     def compare_digest(a, b):
@@ -66,17 +72,17 @@ class String(object):
         return hmac.compare_digest(a, b)
 
 
-class BaseLogging(object):
+class BaseLogging:
     """Logging service"""
     logging.basicConfig(level=logging.INFO)
 
     @staticmethod
     def do_logging(data):
-        logging.info('\U0001F44D {} @ {}'.format(data, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        logging.info(f'\U0001F44D {data} @ {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
     @staticmethod
     def do_warning(data):
-        logging.warning('\U0001F602'' {} @ {}'.format(data, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        logging.warning(f'\U0001F602 {data} @ {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 json_service = Json()

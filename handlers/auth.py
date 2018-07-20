@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Auth handler"""
 
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
@@ -44,7 +45,6 @@ class AuthHandler(BaseHandler):
                     }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def delete(self):
@@ -55,17 +55,16 @@ class AuthHandler(BaseHandler):
         data = None
 
         self.render_json(code=code, data=data)
-        return
 
     def get(self):
         """login page"""
-        next = self.get_query_argument('next', '')
+        next_url = self.get_query_argument('next', '')
 
         user_id = self.current_user
         if user_id:
             self.redirect('/user')
         else:
             data = {
-                "next": next,
+                "next": next_url,
             }
             self.render('user/auth.html', data=data)

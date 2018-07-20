@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Health check"""
 
-import tornado.web
 
 from handlers.base_handler import BaseHandler
 
@@ -18,4 +18,3 @@ class HealthHandler(BaseHandler):
         }
 
         self.render_json(code=code, data=data, message=message)
-        return

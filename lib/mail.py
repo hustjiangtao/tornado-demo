@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Mail service"""
+
 
 import re
 import base64
 import smtplib
-
-from tornado import gen
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -14,9 +14,12 @@ from email.mime.image import MIMEImage
 from email.mime.application import MIMEApplication
 from email.utils import formataddr
 
+from tornado import gen
+
 
 @gen.coroutine
 def send_msg_by_email(mail_to, msg, to_name=None, subject=None, attach_file=None):
+    """send mail"""
     if not mail_to:
         raise gen.Return(False)
 

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Test"""
 
-import tornado.web
+
+from handlers.base_handler import BaseHandler
 
 
-class TestHandler(tornado.web.RequestHandler):
+class TestHandler(BaseHandler):
     """Test healthy for this web server"""
 
     def get(self):

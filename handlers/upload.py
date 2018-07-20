@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Upload"""
+
 
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
@@ -28,10 +30,11 @@ class UploadHandler(BaseHandler):
         if not files:
             code = PARAMS_MISS
         else:
-            file_objs = [self.save_file(file, new_name=new_name, document=document) for file in files]
+            file_objs = [self.save_file(file, new_name=new_name, document=document)
+                         for file in files]
 
             if not document:
-                [upload_db.add_upload(item=obj) for obj in file_objs]
+                map(upload_db.add_upload, file_objs)
 
             self.finish('\n'.join([obj.get('url') for obj in file_objs]))
             return
@@ -41,7 +44,6 @@ class UploadHandler(BaseHandler):
             # }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def delete(self):
@@ -68,7 +70,6 @@ class UploadHandler(BaseHandler):
                 }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def get(self):
@@ -89,7 +90,6 @@ class UploadHandler(BaseHandler):
     @authenticated
     def options(self):
         self.write('POST,PUT,GET')
-        return
 
     # @staticmethod
     def save_file(self, file, new_name=None, document=None):
@@ -116,7 +116,8 @@ class UploadHandler(BaseHandler):
         if document:
             upload_dir = os.path.join('/var/www/document', f'{date.today().year}')
         else:
-            upload_dir = os.path.join(self.application.settings.get('static_path'), 'upload', f'{date.today().year}')
+            upload_dir = os.path.join(self.application.settings.get('static_path'),
+                                      'upload', f'{date.today().year}')
         if not os.path.exists(upload_dir):
             os.mkdir(upload_dir)
             from lib.utils import do_warning
@@ -125,10 +126,11 @@ class UploadHandler(BaseHandler):
         sign = random_string(6)
         file_name = f'{sign}_{name if not new_name else new_name}'
         file_path = os.path.join(upload_dir, file_name)
-        with open(file_path, 'wb+') as f:
-            f.write(body)
+        with open(file_path, 'wb+') as f_temp:
+            f_temp.write(body)
 
-        new_file_path = self.static_url(f'upload/{date.today().year}/{file_name}', include_host=True, include_version=False)
+        new_file_path = self.static_url(f'upload/{date.today().year}/{file_name}',
+                                        include_host=True, include_version=False)
 
         file_obj = {
             "name": name,

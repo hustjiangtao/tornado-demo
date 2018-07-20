@@ -19,7 +19,7 @@ from handlers.chat import ChatHandler
 from handlers.upload import UploadHandler
 
 
-url_handlers = [
+URL_HANDLERS = [
     (r"/", RedirectHandler, dict(url='/posts', permanent=False)),
     (r"/test", TestHandler),
     (r"/health", HealthHandler),

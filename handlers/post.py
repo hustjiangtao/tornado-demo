@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Post"""
+
 
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
@@ -41,7 +43,6 @@ class PostHandler(BaseHandler):
                 }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def put(self):
@@ -60,7 +61,7 @@ class PostHandler(BaseHandler):
                 "title": title,
                 "content": content,
             }
-            result = post_db.update_post(item=update_item)
+            result = post_db.update_post(_id=_id, item=update_item)
             if not result:
                 code = POST_ADD_ERROR
             else:
@@ -69,7 +70,6 @@ class PostHandler(BaseHandler):
                 }
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def get(self):

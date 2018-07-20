@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Register"""
+
 
 from handlers.base_handler import BaseHandler
 from database.user import user_db
@@ -9,7 +11,6 @@ from lib.utils import json_encode
 from lib.system_code import SUCCESS
 from lib.system_code import PARAMS_MISS
 from lib.system_code import ACCOUNT_USED
-from lib.system_code import PASSWORD_ERROR
 
 
 class RegisterHandler(BaseHandler):
@@ -51,4 +52,3 @@ class RegisterHandler(BaseHandler):
                     }
 
         self.render_json(code=code, data=data)
-        return

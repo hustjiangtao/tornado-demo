@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Upload"""
+
 
 from database.base import BaseDB
 from database.models.model_route import UploadModel
@@ -11,8 +13,13 @@ class UploadDB(BaseDB):
 
     def add_upload(self, item):
         """Add a upload
-        # >>> {'name': 'jiangtao', 'new_name': 'new_jiangtao', 'size': 12333, 'content_type': 'image/png', 'url': 'http://www.baidu.com/123.png'}
-        int
+        :param item: {
+            'name': 'jiangtao',
+            'new_name': 'new_jiangtao',
+            'size': 12333,
+            'content_type': 'image/png',
+            'url': 'http://www.baidu.com/123.png'
+            }
         """
         if not isinstance(item, dict):
             return False
@@ -32,8 +39,14 @@ class UploadDB(BaseDB):
 
     def update_upload(self, _id, item):
         """update a upload
-        # >>> {'name': 'jiangtao', 'new_name': 'new_jiangtao', 'size': 12333, 'content_type': 'image/png', 'url': 'http://www.baidu.com/123.png'}
-        True
+        :param _id: id
+        :param item: {
+            'name': 'jiangtao',
+            'new_name': 'new_jiangtao',
+            'size': 12333,
+            'content_type': 'image/png',
+            'url': 'http://www.baidu.com/123.png'
+            }
         """
         if not _id or not isinstance(item, dict):
             return False
@@ -55,12 +68,11 @@ class UploadDB(BaseDB):
 
     def get_upload_by_id(self, _id):
         """get a upload
-        # >>> 1
-        {}
+        :param _id: id
         """
         if not _id:
             return {}
-        elif not isinstance(_id, int):
+        if not isinstance(_id, int):
             _id = int(_id)
 
         query = self.db_session.query(UploadModel).filter_by(id=_id)

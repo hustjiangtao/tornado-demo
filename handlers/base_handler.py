@@ -5,11 +5,11 @@
 
 
 import json
-import tornado.web
 import functools
 import urllib.parse as urlparse
-
 from urllib.parse import urlencode
+
+import tornado.web
 from tornado.escape import to_unicode
 from tornado.web import HTTPError
 from tornado.web import MissingArgumentError
@@ -69,14 +69,21 @@ class BaseHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, PUT, GET, OPTIONS, DELETE')
         self.set_header('Access-Control-Allow-Credentials', 'true')
         self.set_header(
-                'Access-Control-Allow-Headers',
-                'Origin, X-Requested-With, Content-Type, Accept, client_id, uuid, Authorization'
+            'Access-Control-Allow-Headers',
+            'Origin, X-Requested-With, Content-Type, Accept, client_id, uuid, Authorization'
         )
 
         # # TODO test-only
         # self.set_header('Access-Control-Allow-Origin', self.request.headers.get('Origin') or '*')
 
     def render_json(self, code=0, data=None, message=''):
+        """
+        return json formatted data
+        :param code: int
+        :param data: dict
+        :param message: str
+        :return: bool
+        """
         if message == '':
             message = MESSAGE.get(code, ERROR)
         result = {
@@ -109,19 +116,25 @@ class BaseHandler(tornado.web.RequestHandler):
             args = json_decode(self.request.body)
             name = to_unicode(name)
             if name in args:
-                return args[name]
+                result = args[name]
             elif default is not None:
-                return default
+                result = default
             else:
                 raise MissingArgumentError(name)
 
-    def get_new_password(self, password):
+            return result
+
+        return None
+
+    @staticmethod
+    def get_new_password(password):
         """Generate a password"""
         salt = random_string(10)
         hashed_password = get_hashed_password(password=password, salt=salt)
         return hashed_password, salt
 
-    def is_my_password(self, new_password, my_password, my_salt):
+    @staticmethod
+    def is_my_password(new_password, my_password, my_salt):
         """Compare if a given password is my password"""
         hashed_password = get_hashed_password(password=new_password, salt=my_salt)
         return compare_digest(hashed_password, my_password)

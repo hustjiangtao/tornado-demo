@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Post"""
+
 
 from sqlalchemy import or_
 
@@ -13,8 +15,11 @@ class PostDB(BaseDB):
 
     def add_post(self, item):
         """Add a post
-        >>> {"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com', "author": 'jiangtao'}
-        True
+        :param item: {
+            "title": 'jiangtao-first-post',
+            "content": 'my email is jiangtao.hu@qq.com',
+            "author": 'jiangtao'
+            }
         """
         if not isinstance(item, dict):
             return False
@@ -32,8 +37,11 @@ class PostDB(BaseDB):
 
     def add_crawler_posts(self, items):
         """Add a post
-        >>> [{"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com', "author": 'jiangtao'}]
-        True
+        :param item: {
+            "title": 'jiangtao-first-post',
+            "content": 'my email is jiangtao.hu@qq.com',
+            "author": 'jiangtao'
+            }
         """
         if not isinstance(items, list):
             return False
@@ -63,8 +71,11 @@ class PostDB(BaseDB):
 
     def update_post(self, _id, item):
         """update a post
-        >>> {"title": 'jiangtao-first-post', "content": 'my email is jiangtao.hu@qq.com'}
-        True
+        :param _id: id
+        :param item: {
+            "title": 'jiangtao-first-post',
+            "content": 'my email is jiangtao.hu@qq.com',
+            }
         """
         if not _id or not isinstance(item, dict):
             return False
@@ -82,8 +93,7 @@ class PostDB(BaseDB):
 
     def get_post_by_id(self, _id):
         """get a post by it's id
-        >>> 1
-        True
+        :param _id: id
         """
         if not _id:
             return {}
@@ -106,8 +116,9 @@ class PostDB(BaseDB):
 
     def get_all_posts(self, offset, limit, search=None):
         """get all posts
-        >>>
-        True
+        :param offset: offset
+        :param limit: limit
+        :param search: search
         """
         query = self.db_session.query(PostModel)
         if search:

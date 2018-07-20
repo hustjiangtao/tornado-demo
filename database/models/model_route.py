@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""sql model route"""
+
 
 import sys
 sys.path.append('../../')
@@ -16,7 +18,7 @@ from database.models.post import Post
 from database.models.upload import Upload
 
 
-class Model(object):
+class Model:
 
     """all models of this project"""
 

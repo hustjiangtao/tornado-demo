@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Base db operations"""
+
 
 import logging
 import traceback
 
+from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm.exc import NoResultFound
+
 from database.models.base_model import Session
 
 
-class BaseDB(object):
+class BaseDB:
     """SQL
     All other sql class should base on this one
     """
@@ -20,6 +25,7 @@ class BaseDB(object):
         self.db_session.close()
 
     def add(self, instance):
+        """add a instance"""
         if not instance:
             return False
 
@@ -27,7 +33,7 @@ class BaseDB(object):
             self.db_session.add(instance)
             self.db_session.commit()
             result = True
-        except Exception as e:
+        except OperationalError:
             self.db_session.rollback()
             logging.warning(traceback.format_exc())
             result = False
@@ -35,6 +41,7 @@ class BaseDB(object):
         return result
 
     def add_all(self, instances):
+        """add many instances"""
         if not instances:
             return False
 
@@ -42,21 +49,22 @@ class BaseDB(object):
             self.db_session.add_all(instances)
             self.db_session.commit()
             result = True
-        except Exception as e:
+        except OperationalError:
             self.db_session.rollback()
             logging.warning(traceback.format_exc())
             result = False
 
         return result
 
-    def save(self, instances):
-        if not instances:
+    def save(self, instance):
+        """save instance while modified"""
+        if not instance:
             return False
 
         try:
             self.db_session.commit()
             result = True
-        except Exception as e:
+        except OperationalError:
             self.db_session.rollback()
             logging.warning(traceback.format_exc())
             result = False
@@ -65,12 +73,13 @@ class BaseDB(object):
 
     @staticmethod
     def fetch_first(query):
+        """fetch first result after query"""
         if not query:
             return None
 
         try:
             result = query.first()
-        except Exception as e:
+        except NoResultFound:
             logging.warning(traceback.format_exc())
             result = None
 
@@ -78,6 +87,7 @@ class BaseDB(object):
 
     @staticmethod
     def fetch_all(query, offset=None, limit=None):
+        """fetch all result after query"""
         if not query:
             return None
 
@@ -86,7 +96,7 @@ class BaseDB(object):
 
         try:
             result = query.all()
-        except Exception as e:
+        except NoResultFound:
             logging.warning(traceback.format_exc())
             result = []
 
@@ -94,6 +104,7 @@ class BaseDB(object):
 
     @staticmethod
     def count(query):
+        """fetch count after query"""
         if not query:
             return None
 
@@ -101,7 +112,7 @@ class BaseDB(object):
             result = query.first()
             if result:
                 result = result[0]
-        except Exception as e:
+        except NoResultFound:
             logging.warning(traceback.format_exc())
             result = None
 

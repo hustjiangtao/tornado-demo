@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""server for project"""
+
 
 import logging
+import traceback
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -10,16 +13,19 @@ import tornado.web
 
 from tornado.options import options
 
-from settings import settings
-from urls import url_handlers as handlers
+from settings import SETTINGS
+from urls import URL_HANDLERS
 
 
 class Application(tornado.web.Application):
+    """initial application"""
+
     def __init__(self):
-        tornado.web.Application.__init__(self, handlers, **settings)
+        tornado.web.Application.__init__(self, URL_HANDLERS, **SETTINGS)
 
 
 def main():
+    """main function to run server"""
     app = Application()
     http_server = tornado.httpserver.HTTPServer(app, xheaders=True)
     http_server.listen(options.port)
@@ -30,7 +36,7 @@ if __name__ == "__main__":
     try:
         logging.warning('Tornado server start...')
         main()
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         logging.warning("KeyboardInterrupt")
-    except Exception as e:
-        logging.warning(e)
+    else:
+        logging.warning(traceback.format_exc())

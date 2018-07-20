@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""System code"""
+
 
 SUCCESS = 200
 ERROR = 500

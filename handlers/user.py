@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""User"""
+
 
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
 from database.user import user_db
 
-from lib.utils import json_encode
 from lib.system_code import SUCCESS
 from lib.system_code import PARAMS_MISS
-from lib.system_code import ACCOUNT_ERROR
 from lib.system_code import USER_NOT_LOGIN
 from lib.system_code import UPDATE_FAILED
 
@@ -44,7 +44,6 @@ class UserHandler(BaseHandler):
                 code = UPDATE_FAILED
 
         self.render_json(code=code, data=data)
-        return
 
     @authenticated
     def get(self):

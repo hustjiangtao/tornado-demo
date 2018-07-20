@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Demo"""
+
 
 from database.base import BaseDB
 from database.models.model_route import DemoModel
@@ -51,7 +53,7 @@ class DemoDB(BaseDB):
         """
         if not _id:
             return {}
-        elif not isinstance(_id, int):
+        if not isinstance(_id, int):
             _id = int(_id)
 
         query = self.db_session.query(DemoModel).filter_by(id=_id)
@@ -68,9 +70,9 @@ class DemoDB(BaseDB):
         return result
 
 
-demo_db = DemoDB()
+DEMO_DB = DemoDB()
 
 
 if __name__ == '__main__':
-    demo_db = DemoDB()
-    print(demo_db.get_demo_by_id(1))
+    DEMO_DB = DemoDB()
+    print(DEMO_DB.get_demo_by_id(1))

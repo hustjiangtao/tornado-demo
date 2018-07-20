@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""User"""
+
 
 from database.base import BaseDB
 from database.models.model_route import UserModel
@@ -11,8 +13,13 @@ class UserDB(BaseDB):
 
     def add_user(self, item):
         """Add a user
-        >>> {'name': 'jiangtao', 'email': 'jiangtao.hu@qq.com', 'mobile': '17612141727', 'password': 'a319c89da307cf078445e00688f903a6d86a7c2cc8d8fd88705db9400c0bcfdd', 'salt': 'wcmd2s8tau'}
-        True
+        :param item: {
+            'name': 'jiangtao',
+            'email': 'jiangtao.hu@qq.com',
+            'mobile': '17612141727',
+            'password': 'a319c89da307cf078445e00688f903a6d86a7c2cc8d8fd88705db9400c0bcfdd',
+            'salt': 'wcmd2s8tau'
+            }
         """
         if not isinstance(item, dict):
             return False
@@ -34,7 +41,10 @@ class UserDB(BaseDB):
 
     def update_user(self, _id, item):
         """update a user
-        >>> {"name": 'jiangtao', "email": 'jiangtao.hu@qq.com'}
+        :param item: {
+            "name": 'jiangtao',
+            "email": 'jiangtao.hu@qq.com'
+            }
         True
         """
         if not _id or not isinstance(item, dict):
@@ -54,8 +64,7 @@ class UserDB(BaseDB):
 
     def get_user_auth_by_name(self, name):
         """get a user by his name
-        >>> 'jiangtao'
-        {}
+        :param name: name
         """
         if not name:
             return {}
@@ -75,12 +84,11 @@ class UserDB(BaseDB):
 
     def get_user_by_id(self, _id):
         """get a user
-        >>> 1
-        {}
+        :param _id: id
         """
         if not _id:
             return {}
-        elif not isinstance(_id, int):
+        if not isinstance(_id, int):
             _id = int(_id)
 
         query = self.db_session.query(UserModel).filter_by(id=_id)

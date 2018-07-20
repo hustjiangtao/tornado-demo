@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Create table user"""
 
-from database.base import BaseDB
+
+from database.models.base_model import Session
 
 
-class CreateDBUser(BaseDB):
-    """创建user表"""
-
+def main():
+    """run to exec"""
     create_sql = """
     -- drop table if exists user;
     create table if not exists user (
@@ -20,21 +21,14 @@ class CreateDBUser(BaseDB):
     create_time timestamp default (datetime('now', 'localtime')) ) ;
     """
 
-    def __init__(self):
-        super(CreateDBUser, self).__init__()
+    session = Session()
 
-    def run(self):
-        result = self.create_db(create_sql=self.create_sql)
-        print(result)
-        if result:
-            print('create table user success.')
-        else:
-            print('create table user failed.')
-
-
-def main():
-    create_db = CreateDBUser()
-    create_db.run()
+    result = session.execute(create_sql)
+    print(result)
+    if result:
+        print('create table user success.')
+    else:
+        print('create table user failed.')
 
 
 if __name__ == "__main__":

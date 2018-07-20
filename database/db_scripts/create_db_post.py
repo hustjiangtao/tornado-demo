@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 # -*- author: Jiangtao -*-
 
+"""Create table post"""
 
-from database.base import BaseDB
+
+from database.models.base_model import Session
 
 
-class CreateDBPost(BaseDB):
-    """创建post表"""
-
+def main():
+    """run to exec"""
     create_sql = """
     -- drop table if exists post;
     create table if not exists post (
@@ -18,21 +19,14 @@ class CreateDBPost(BaseDB):
     create_time timestamp default (datetime('now', 'localtime')) ) ;
     """
 
-    def __init__(self):
-        super(CreateDBPost, self).__init__()
+    session = Session()
 
-    def run(self):
-        result = self.create_db(create_sql=self.create_sql)
-        print(result)
-        if result:
-            print('create table post success.')
-        else:
-            print('create table post failed.')
-
-
-def main():
-    create_db = CreateDBPost()
-    create_db.run()
+    result = session.execute(create_sql)
+    print(result)
+    if result:
+        print('create table post success.')
+    else:
+        print('create table post failed.')
 
 
 if __name__ == "__main__":
