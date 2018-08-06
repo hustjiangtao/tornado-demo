@@ -8,6 +8,7 @@ import logging
 # import traceback
 import random
 import requests
+import json
 
 from time import time, sleep
 
@@ -18,19 +19,41 @@ class Talk:
     """A self talk robot"""
 
     def __init__(self, boss=None):
+        self.redis = self.get_redis()
         self.boss = {
             "name": boss,
-        }
+        } if boss is not None else self.get_boss_data()
         self.name = "Saya"
         self.data = {}
 
     @staticmethod
+    def get_redis():
+        """Get redis client instance"""
+        import redis
+        pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
+        r_cache = redis.Redis(connection_pool=pool)
+        return r_cache
+
+    def save_boss_data(self):
+        """Save boss data to redis"""
+        return self.redis.set(name="boss", value=json.dumps(self.boss), ex=86400*3)
+
+    def get_boss_data(self):
+        """Get boss data from redis"""
+        boss_data = json.loads(self.redis.get(name="boss") or "{}")
+        if boss_data and boss_data.get("name"):
+            print(f"Welcome back! {boss_data['name']}")
+            sleep(0.5)
+        return boss_data
+
+    @staticmethod
     def greeting():
+        """Words for greeting"""
         greetings = ['hola', 'hello', 'hi', 'Hi', 'hey!', 'hey']
         return random.choice(greetings)
 
     def improve_boss(self, boss_key=None, boss_info=None):
-        """Get boss's personal info"""
+        """Get boss's personal info and save them"""
         if all([boss_key, boss_info]):
             self.boss[boss_key] = boss_info
 
@@ -81,6 +104,7 @@ class Talk:
             return False
 
     def talk(self):
+        """Main functions to implement the talk"""
         input_strs = self.get_input()
         if self.is_bye(input_strs):
             return 0
@@ -88,6 +112,18 @@ class Talk:
         print(output_str)
         # print(self.data)
         return 1
+
+    def run(self):
+        """Entry function to start talk"""
+        try:
+            result = self.talk()
+        except Exception:
+            logging.warning("Start talk failed.")
+            result = 0
+        finally:
+            self.save_boss_data()
+
+        return result
 
 
 class Tuling:
@@ -98,6 +134,7 @@ class Tuling:
         self.url = "http://openapi.tuling123.com/openapi/api/v2"
 
     def get_data(self, text):
+        """Get post data for tuling api"""
         data = {
             # "reqType":0,
             "perception": {
@@ -148,7 +185,7 @@ def main():
     result = 1
     talk = Talk()
     while result:
-        result = talk.talk()
+        result = talk.run()
 
 
 if __name__ == "__main__":
