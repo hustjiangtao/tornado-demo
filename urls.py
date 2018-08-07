@@ -17,6 +17,7 @@ from handlers.post import PostHandler
 from handlers.chat import ChatIndexHandler
 from handlers.chat import ChatHandler
 from handlers.upload import UploadHandler
+from handlers.album import AlbumHandler
 
 
 URL_HANDLERS = [
@@ -32,4 +33,5 @@ URL_HANDLERS = [
     (r"/chat-index", ChatIndexHandler),
     (r"/chat", ChatHandler),
     (r"/upload", UploadHandler),
+    (r"/album", AlbumHandler),
 ]

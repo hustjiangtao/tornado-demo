@@ -16,8 +16,10 @@ create_time timestamp default (datetime('now', 'localtime')) ) ;
 
 from sqlalchemy import Column
 
+from sqlalchemy.sql.sqltypes import CHAR
 from sqlalchemy.sql.sqltypes import VARCHAR
 from sqlalchemy.sql.sqltypes import Integer
+from sqlalchemy import types
 
 from database.models.base_model import BaseModel
 
@@ -31,3 +33,4 @@ class Upload(BaseModel):
     size = Column(Integer, nullable=False, comment='大小')
     content_type = Column(VARCHAR(10), nullable=False, comment='文件类型')
     url = Column(VARCHAR(120), nullable=False, unique=True, comment='链接')
+    upload_dir = Column(CHAR(4), nullable=False, comment='存放子目录')

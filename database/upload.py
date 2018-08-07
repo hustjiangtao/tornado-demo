@@ -30,6 +30,7 @@ class UploadDB(BaseDB):
         upload_model.size = item.get('size')
         upload_model.content_type = item.get('content_type')
         upload_model.url = item.get('url')
+        upload_model.upload_dir = item.get('upload_dir')
 
         result = self.add(upload_model)
         if result:
@@ -85,10 +86,39 @@ class UploadDB(BaseDB):
                 "size": upload.size,
                 "content_type": upload.content_type,
                 "url": upload.url,
+                "upload_dir": int(upload.upload_dir),
                 "create_time": upload.create_time,
             }
         else:
             result = {}
+
+        return result
+
+    def get_all_upload_dir_with_url(self):
+        """get all the upload dir"""
+        dirs = self.db_session.query(UploadModel.upload_dir, UploadModel.url).all()
+        group_urls = {}
+        if dirs:
+            for x in dirs:
+                group_urls.setdefault(x[0], []).append(x[1])
+        result = {x: group_urls.get(x) for x in sorted(group_urls, reverse=True)}
+
+        return result
+
+    def get_upload_by_dir(self, upload_dir):
+        """get upload by upload_dir
+        :param upload_dir: str
+        """
+        if not upload_dir:
+            return []
+        if not isinstance(upload_dir, str):
+            upload_dir = str(upload_dir)
+
+        urls = self.db_session.query(UploadModel.url).filter_by(upload_dir=upload_dir).all()
+        if urls:
+            result = [x[0] for x in urls]
+        else:
+            result = []
 
         return result
 

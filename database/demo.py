@@ -70,9 +70,9 @@ class DemoDB(BaseDB):
         return result
 
 
-DEMO_DB = DemoDB()
+demo_db = DemoDB()
 
 
 if __name__ == '__main__':
-    DEMO_DB = DemoDB()
-    print(DEMO_DB.get_demo_by_id(1))
+    demo_db = DemoDB()
+    print(demo_db.get_demo_by_id(1))

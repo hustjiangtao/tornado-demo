@@ -34,7 +34,8 @@ class UploadHandler(BaseHandler):
                          for file in files]
 
             if not document:
-                map(upload_db.add_upload, file_objs)
+                for obj in file_objs:
+                    upload_db.add_upload(obj)
 
             self.finish('\n'.join([obj.get('url') for obj in file_objs]))
             return
@@ -113,11 +114,12 @@ class UploadHandler(BaseHandler):
 
         import os
         from datetime import date
+        this_year = date.today().year
         if document:
-            upload_dir = os.path.join('/var/www/document', f'{date.today().year}')
+            upload_dir = os.path.join('/var/www/document', f'{this_year}')
         else:
             upload_dir = os.path.join(self.application.settings.get('static_path'),
-                                      'upload', f'{date.today().year}')
+                                      'upload', f'{this_year}')
         if not os.path.exists(upload_dir):
             os.mkdir(upload_dir)
             from lib.utils import do_warning
@@ -129,7 +131,7 @@ class UploadHandler(BaseHandler):
         with open(file_path, 'wb+') as f_temp:
             f_temp.write(body)
 
-        new_file_path = self.static_url(f'upload/{date.today().year}/{file_name}',
+        new_file_path = self.static_url(f'upload/{this_year}/{file_name}',
                                         include_host=True, include_version=False)
 
         file_obj = {
@@ -138,6 +140,7 @@ class UploadHandler(BaseHandler):
             "size": len(body),
             "content_type": content_type,
             "url": new_file_path,
+            "upload_dir": f'{this_year}',
         }
 
         return file_obj

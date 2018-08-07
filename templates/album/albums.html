@@ -1,0 +1,24 @@
+{% extends '../base.html' %}
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('css/layout.css') }}">
+{% end %}
+
+{% block content %}
+{% set albums = data.get('albums') %}
+<div class="content_box login">
+  {% for album, urls in albums.items() %}
+  <table class="ui-table">
+    <tr>
+      <h2>{{ album }}</h2>
+      {% for url in urls[:5] %}
+      <td><img src="{{ url }}" width="50px" height="50px"></td>
+      {% end %}
+    </tr>
+  </table>
+  {% end %}
+  <h3></h3>
+</div>
+{% end %}
+
+{% block foot_js %}
+{% end %}
