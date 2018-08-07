@@ -90,6 +90,8 @@ class Talk:
         """Get output result"""
         tuling = Tuling()
         output = tuling.get_tuling_result(output)
+        # from scripts.saya.chatbot.chatbot import bot
+        # output = bot.get_result(output)
         result = f"{self.name}: {output}"
         sleep(0.3)
         return result
@@ -189,7 +191,7 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING)
     try:
         logging.warning("talk start...")
         sleep(0.5)
