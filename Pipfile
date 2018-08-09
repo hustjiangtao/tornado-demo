@@ -7,10 +7,10 @@ name = "pypi"
 [packages]
 tornado = "*"
 sqlalchemy = "*"
-redis = "*"
 pyyaml = "*"
 ujson = "*"
 chatterbot = "*"
+redis = "*"
 
 [dev-packages]
 "fabric3" = "*"
