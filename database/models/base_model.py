@@ -72,7 +72,7 @@ class MetaModel:
 
 
 class Engine:
-    db_conf_dir = os.path.join(os.path.dirname(__file__), 'db.yaml')
+    db_conf_dir = os.path.join(os.path.dirname(__file__), '../../conf', 'db.yaml')
     with open(db_conf_dir, encoding='utf-8') as f:
         db_conf = yaml.safe_load(f)
 
