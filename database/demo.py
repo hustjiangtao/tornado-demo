@@ -5,7 +5,7 @@
 
 
 from database.base import BaseDB
-from database.models.model_route import DemoModel
+from database.models import DemoModel
 
 
 class DemoDB(BaseDB):

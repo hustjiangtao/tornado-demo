@@ -22,6 +22,8 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from sqlalchemy.sql.expression import text
 
+from lib.utils import do_logging
+
 
 class DateTimeEncoder(json.JSONEncoder):
     """DateTime encoder"""
@@ -83,3 +85,10 @@ class Engine:
 BaseModel = declarative_base(cls=MetaModel)
 engine = Engine().engine
 Session = sessionmaker(bind=engine)
+
+
+if __name__ == '__main__':
+    do_logging('create db start.')
+    # BaseModel.metadata.drop_all(engine)
+    BaseModel.metadata.create_all(engine)
+    do_logging('create db complete.')

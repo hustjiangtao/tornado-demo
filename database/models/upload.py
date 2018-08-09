@@ -2,8 +2,8 @@
 # -*- author: Jiangtao -*-
 
 """
--- drop table if exists demo;
-create table if not exists demo (
+-- drop table if exists upload;
+create table if not exists upload (
 id INTEGER primary key AUTOINCREMENT ,
 name varchar(100) not null ,
 new_name varchar(100) default null ,

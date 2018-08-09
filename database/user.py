@@ -5,7 +5,7 @@
 
 
 from database.base import BaseDB
-from database.models.model_route import UserModel
+from database.models import UserModel
 
 
 class UserDB(BaseDB):

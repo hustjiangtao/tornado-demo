@@ -7,7 +7,7 @@
 from sqlalchemy import or_
 
 from database.base import BaseDB
-from database.models.model_route import PostModel
+from database.models import PostModel
 
 
 class PostDB(BaseDB):

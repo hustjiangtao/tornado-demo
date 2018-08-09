@@ -5,7 +5,7 @@
 
 
 from database.base import BaseDB
-from database.models.model_route import UploadModel
+from database.models import UploadModel
 
 
 class UploadDB(BaseDB):
