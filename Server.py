@@ -34,7 +34,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        logging.warning('Tornado server start...')
+        logging.warning('ICE server start...')
         main()
     except KeyboardInterrupt:
         logging.warning("KeyboardInterrupt")

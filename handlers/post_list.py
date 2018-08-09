@@ -22,7 +22,8 @@ class PostListHandler(BaseHandler):
         cached = True if all_posts else False
         if not all_posts:
             all_posts = post_db.get_all_posts(offset=offset, limit=limit, search=search)
-            self.r.setex(name=self.request.uri, value=json_encode(all_posts), time=60)
+            if all_posts:
+                self.r.setex(name=self.request.uri, value=json_encode(all_posts), time=60)
 
         data = {
             "offset": offset,
