@@ -4,14 +4,17 @@
 """Post"""
 
 
+from tornado.web import HTTPError
+
 from handlers.base_handler import BaseHandler
 from handlers.base_handler import authenticated
+
 from database.post import post_db
 from database.user import user_db
+
 from lib.system_code import SUCCESS
 from lib.system_code import PARAMS_MISS
 from lib.system_code import POST_ADD_ERROR
-from tornado.web import HTTPError
 
 
 class PostHandler(BaseHandler):
@@ -20,7 +23,9 @@ class PostHandler(BaseHandler):
     @authenticated
     def post(self):
         title = self.get_json_argument('title', None)
+        intro = self.get_json_argument('intro', None)
         content = self.get_json_argument('content', None)
+        format_ = self.get_json_argument('format', None)
 
         code = SUCCESS
         data = None
@@ -31,8 +36,10 @@ class PostHandler(BaseHandler):
             current_user = user_db.get_user_by_id(_id=self.current_user)
             add_item = {
                 "title": title,
-                "content": content,
                 "author": current_user.get('name'),
+                "intro": intro,
+                "content": content,
+                "format": format_,
             }
             result = post_db.add_post(item=add_item)
             if not result:
@@ -48,18 +55,22 @@ class PostHandler(BaseHandler):
     def put(self):
         _id = self.get_json_argument('id', None)
         title = self.get_json_argument('title', None)
+        intro = self.get_json_argument('intro', None)
         content = self.get_json_argument('content', None)
+        format_ = self.get_json_argument('format', None)
 
         code = SUCCESS
         data = None
 
-        if not all([title, content]):
+        if not all([title, intro, content, format_]):
             code = PARAMS_MISS
         else:
             update_item = {
                 "id": _id,
                 "title": title,
+                "intro": intro,
                 "content": content,
+                "format": format_,
             }
             result = post_db.update_post(_id=_id, item=update_item)
             if not result:

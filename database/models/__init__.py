@@ -4,6 +4,11 @@
 """all models of this project"""
 
 
+from lib.utils import do_logging
+
+from database.models.base_model import BaseModel
+from database.models.base_model import engine
+
 from database.models.demo import Demo as DemoModel
 from database.models.user import User as UserModel
 from database.models.post import Post as PostModel
@@ -15,3 +20,10 @@ __all__ = (
     'PostModel',
     'UploadModel',
 )
+
+
+if __name__ == '__main__':
+    do_logging('create db start.')
+    # BaseModel.metadata.drop_all(engine)
+    BaseModel.metadata.create_all(engine)
+    do_logging('create db complete.')

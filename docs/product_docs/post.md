@@ -15,7 +15,10 @@
 - 标签, tag, json_dict_str
 - 简介, intro, str
 - 正文, content, text
-- 格式, format, tinyint
+- 格式, format, str
+- 来源, source, str
+- 来源站内id, source_id, str
+- 原始链接, original_url, str
 - 发表时间, create_time, timestamp
 - 修改时间, update_time, timestamp
 

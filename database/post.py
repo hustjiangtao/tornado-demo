@@ -17,21 +17,25 @@ class PostDB(BaseDB):
         """Add a post
         :param item: {
             "title": 'jiangtao-first-post',
+            "author": 'jiangtao',
+            "intro": 'my email',
             "content": 'my email is jiangtao.hu@qq.com',
-            "author": 'jiangtao'
+            "format": 'markdown',
             }
         """
         if not isinstance(item, dict):
             return False
 
-        post_model = PostModel()
-        post_model.title = item.get('title')
-        post_model.content = item.get('content')
-        post_model.author = item.get('author')
+        post = PostModel()
+        post.title = item.get('title')
+        post.author = item.get('author')
+        post.intro = item.get('intro')
+        post.content = item.get('content')
+        post.format = item.get('format')
 
-        result = self.add(post_model)
+        result = self.add(post)
         if result:
-            result = post_model.id
+            result = post.id
 
         return result
 
@@ -39,8 +43,15 @@ class PostDB(BaseDB):
         """Add a post
         :param item: {
             "title": 'jiangtao-first-post',
+            "author": 'jiangtao',
+            "intro": 'my email',
             "content": 'my email is jiangtao.hu@qq.com',
-            "author": 'jiangtao'
+            "format": 'markdown',
+            "source": 'post',
+            "source": 'post',
+            "source_id": 'source_id',
+            "original_url": 'original_url',
+            "source_id": 'source_id',
             }
         """
         if not isinstance(items, list):
@@ -48,20 +59,19 @@ class PostDB(BaseDB):
 
         post_models = []
         for item in items:
-            post_model = PostModel()
-            post_model.title = item.get('title')
-            post_model.intro = item.get('content')
-            post_model.content = item.get('content')
-            post_model.author = item.get('author')
-            post_model.source = item.get('source')
-            post_model.source_id = item.get('source_id')
-            post_model.original_url = item.get('original_url')
-            post_model.collection_count = item.get('collection_count')
-            post_model.comments_count = item.get('comments_count')
+            post = PostModel()
+            post.title = item.get('title')
+            post.author = item.get('author')
+            post.intro = item.get('intro')
+            post.content = item.get('content')
+            post.format = item.get('format')
+            post.source = item.get('source')
+            post.source_id = item.get('source_id')
+            post.original_url = item.get('original_url')
             if item.get('create_time'):
-                post_model.create_time = item.get('create_time')
+                post.create_time = item.get('create_time')
 
-            post_models.append(post_model)
+            post_models.append(post)
 
         result = self.add_all(post_models)
         if result:
@@ -74,7 +84,9 @@ class PostDB(BaseDB):
         :param _id: id
         :param item: {
             "title": 'jiangtao-first-post',
+            "intro": 'my email',
             "content": 'my email is jiangtao.hu@qq.com',
+            "format": 'markdown',
             }
         """
         if not _id or not isinstance(item, dict):
@@ -86,7 +98,9 @@ class PostDB(BaseDB):
             return False
 
         post.title = item.get('title')
+        post.intro = item.get('intro')
         post.content = item.get('content')
+        post.format = item.get('format')
         result = self.save(post)
 
         return result
@@ -104,9 +118,12 @@ class PostDB(BaseDB):
             result = {
                 "id": post.id,
                 "title": post.title,
-                "content": post.content,
-                "original_url": post.original_url,
                 "author": post.author,
+                "intro": post.intro,
+                "content": post.content,
+                "format": post.format,
+                "source": post.source,
+                "original_url": post.original_url,
                 "create_time": str(post.create_time.date()),
             }
         else:
@@ -131,9 +148,12 @@ class PostDB(BaseDB):
             result = [{
                 "id": post.id,
                 "title": post.title,
-                "content": post.content,
-                "original_url": post.original_url,
                 "author": post.author,
+                "intro": post.intro,
+                "content": post.content,
+                "format": post.format,
+                "source": post.source,
+                "original_url": post.original_url,
                 "create_time": str(post.create_time.date()),
             } for post in posts]
         else:
@@ -157,9 +177,5 @@ post_db = PostDB()
 
 
 if __name__ == '__main__':
-    post_db = PostDB()
-    print(post_db.add_post({
-        "title": 'jiangtao-first-post',
-        "content": 'my email is jiangtao.hu@qq.com',
-        "author": 'jiangtao'
-    }))
+    import doctest
+    doctest.testmod()
