@@ -20,7 +20,8 @@ enable_pretty_logging()
 # seetings for path
 ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = os.path.join(ROOT, 'static')
-TEMPLATE_PATH = os.path.join(ROOT, 'templates')
+# TEMPLATE_PATH = os.path.join(ROOT, 'templates')
+TEMPLATE_PATH = os.path.join(ROOT, 'tmp-mdl')
 
 SETTINGS = {
     "debug": options.debug,

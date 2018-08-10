@@ -32,4 +32,7 @@ class PostListHandler(BaseHandler):
             "posts": all_posts,
             "cached": cached,
         }
-        self.render('post/post_list.html', data=data)
+        if self.request.uri == '/index':
+            self.render('mdl/index.html', data=data)
+        else:
+            self.render('post/post_list.html', data=data)

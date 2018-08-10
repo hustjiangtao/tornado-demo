@@ -18,6 +18,9 @@ from handlers.chat import ChatIndexHandler
 from handlers.chat import ChatHandler
 from handlers.upload import UploadHandler
 from handlers.album import AlbumHandler
+from handlers.blog import BlogHandler
+from handlers.about import AboutHandler
+from handlers.contact import ContactHandler
 
 
 URL_HANDLERS = [
@@ -35,3 +38,12 @@ URL_HANDLERS = [
     (r"/upload", UploadHandler),
     (r"/album", AlbumHandler),
 ]
+
+__MDL_URL_HANDLERS = [
+    (r"/index", PostListHandler),
+    (r"/blog", BlogHandler),
+    (r"/about", AboutHandler),
+    (r"/contact", ContactHandler),
+]
+
+URL_HANDLERS.extend(__MDL_URL_HANDLERS)
