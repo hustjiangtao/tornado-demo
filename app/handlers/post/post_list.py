@@ -6,9 +6,9 @@
 
 import random
 
-from handlers.base_handler import BaseHandler
-from database.post import post_db
-from lib.utils import json_encode, json_decode
+from app.handlers.base_handler import BaseHandler
+from app.database.post import post_db
+from app.lib.utils import json_encode, json_decode
 
 
 class PostListHandler(BaseHandler):

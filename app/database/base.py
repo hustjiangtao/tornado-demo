@@ -10,7 +10,7 @@ import traceback
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm.exc import NoResultFound
 
-from database.models.base_model import Session
+from app.database.models.base_model import Session
 
 
 class BaseDB:

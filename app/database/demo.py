@@ -4,8 +4,8 @@
 """Demo"""
 
 
-from database.base import BaseDB
-from database.models import DemoModel
+from app.database.base import BaseDB
+from app.database.models import DemoModel
 
 
 class DemoDB(BaseDB):

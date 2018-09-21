@@ -14,13 +14,13 @@ from tornado.escape import to_unicode
 from tornado.web import HTTPError
 from tornado.web import MissingArgumentError
 
-from lib.utils import json_decode
-from lib.utils import random_string
-from lib.utils import get_hashed_password
-from lib.utils import compare_digest
-from lib.system_code import ERROR
-from lib.system_code import MESSAGE
-from lib.redis_service import r_cache
+from app.lib.utils import json_decode
+from app.lib.utils import random_string
+from app.lib.utils import get_hashed_password
+from app.lib.utils import compare_digest
+from app.lib.system_code import ERROR
+from app.lib.system_code import MESSAGE
+from app.lib.redis_service import r_cache
 
 
 def authenticated(method):

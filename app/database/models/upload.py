@@ -21,7 +21,7 @@ from sqlalchemy.sql.sqltypes import VARCHAR
 from sqlalchemy.sql.sqltypes import Integer
 from sqlalchemy import types
 
-from database.models.base_model import BaseModel
+from app.database.models.base_model import BaseModel
 
 
 class Upload(BaseModel):

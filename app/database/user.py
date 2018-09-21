@@ -4,8 +4,8 @@
 """User"""
 
 
-from database.base import BaseDB
-from database.models import UserModel
+from app.database.base import BaseDB
+from app.database.models import UserModel
 
 
 class UserDB(BaseDB):

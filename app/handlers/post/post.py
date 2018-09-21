@@ -6,15 +6,15 @@
 
 from tornado.web import HTTPError
 
-from handlers.base_handler import BaseHandler
-from handlers.base_handler import authenticated
+from app.handlers.base_handler import BaseHandler
+from app.handlers.base_handler import authenticated
 
-from database.post import post_db
-from database.user import user_db
+from app.database.post import post_db
+from app.database.user import user_db
 
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
-from lib.system_code import POST_ADD_ERROR
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
+from app.lib.system_code import POST_ADD_ERROR
 
 
 class PostHandler(BaseHandler):

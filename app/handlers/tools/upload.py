@@ -4,14 +4,14 @@
 """Upload"""
 
 
-from handlers.base_handler import BaseHandler
-from handlers.base_handler import authenticated
+from app.handlers.base_handler import BaseHandler
+from app.handlers.base_handler import authenticated
 
-from database.upload import upload_db
+from app.database.upload import upload_db
 
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
-from lib.utils import random_string
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
+from app.lib.utils import random_string
 
 
 class UploadHandler(BaseHandler):
@@ -122,7 +122,7 @@ class UploadHandler(BaseHandler):
                                       'upload', f'{this_year}')
         if not os.path.exists(upload_dir):
             os.mkdir(upload_dir)
-            from lib.utils import do_warning
+            from app.lib.utils import do_warning
             do_warning(f'mkdir: {upload_dir}')
 
         sign = random_string(6)

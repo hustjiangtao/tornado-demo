@@ -19,7 +19,7 @@ from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import CHAR
 from sqlalchemy.sql.sqltypes import VARCHAR
 
-from database.models.base_model import BaseModel
+from app.database.models.base_model import BaseModel
 
 
 class User(BaseModel):

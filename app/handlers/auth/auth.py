@@ -3,15 +3,15 @@
 
 """Auth handler"""
 
-from handlers.base_handler import BaseHandler
-from handlers.base_handler import authenticated
-from database.user import user_db
+from app.handlers.base_handler import BaseHandler
+from app.handlers.base_handler import authenticated
+from app.database.user import user_db
 
-from lib.utils import json_encode
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
-from lib.system_code import ACCOUNT_ERROR
-from lib.system_code import PASSWORD_ERROR
+from app.lib.utils import json_encode
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
+from app.lib.system_code import ACCOUNT_ERROR
+from app.lib.system_code import PASSWORD_ERROR
 
 
 class AuthHandler(BaseHandler):

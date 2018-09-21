@@ -4,13 +4,13 @@
 """Register"""
 
 
-from handlers.base_handler import BaseHandler
-from database.user import user_db
+from app.handlers.base_handler import BaseHandler
+from app.database.user import user_db
 
-from lib.utils import json_encode
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
-from lib.system_code import ACCOUNT_USED
+from app.lib.utils import json_encode
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
+from app.lib.system_code import ACCOUNT_USED
 
 
 class RegisterHandler(BaseHandler):

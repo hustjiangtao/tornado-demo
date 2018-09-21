@@ -4,8 +4,8 @@
 """Upload"""
 
 
-from database.base import BaseDB
-from database.models import UploadModel
+from app.database.base import BaseDB
+from app.database.models import UploadModel
 
 
 class UploadDB(BaseDB):

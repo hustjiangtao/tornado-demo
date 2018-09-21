@@ -4,7 +4,7 @@
 """Test"""
 
 
-from handlers.base_handler import BaseHandler
+from app.handlers.base_handler import BaseHandler
 
 
 class TestHandler(BaseHandler):

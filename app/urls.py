@@ -6,20 +6,20 @@
 
 from tornado.web import RedirectHandler
 
-from handlers.test import TestHandler
-from handlers.health import HealthHandler
-from handlers.demo import demo
-from handlers.auth import register
-from handlers.auth import auth
-from handlers.user import user
-from handlers.post import post_list
-from handlers.post import post
-from handlers.tools import chat
-from handlers.tools import upload
-from handlers.album import album
-from handlers.blog import blog
-from handlers.blog import about
-from handlers.blog import contact
+from app.handlers.test import TestHandler
+from app.handlers.health import HealthHandler
+from app.handlers.demo import demo
+from app.handlers.auth import register
+from app.handlers.auth import auth
+from app.handlers.user import user
+from app.handlers.post import post_list
+from app.handlers.post import post
+from app.handlers.tools import chat
+from app.handlers.tools import upload
+from app.handlers.album import album
+from app.handlers.blog import blog
+from app.handlers.blog import about
+from app.handlers.blog import contact
 
 
 URL_HANDLERS = []

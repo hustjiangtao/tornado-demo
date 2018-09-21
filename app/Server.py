@@ -13,8 +13,8 @@ import tornado.web
 
 from tornado.options import options
 
-from settings import SETTINGS
-from urls import URL_HANDLERS
+from app.settings import SETTINGS
+from app.urls import URL_HANDLERS
 
 
 class Application(tornado.web.Application):

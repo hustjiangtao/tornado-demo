@@ -19,8 +19,8 @@ from tornado import httpclient, gen, ioloop, queues
 
 sys.path.append('../')
 
-from lib.utils import json_decode
-from database.post import post_db
+from app.lib.utils import json_decode
+from app.database.post import post_db
 
 page = 0
 base_url = 'https://search-merger-ms.juejin.im/v1/search?query={query}&page={page}&raw_result=false&src=web'

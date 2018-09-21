@@ -4,14 +4,14 @@
 """User"""
 
 
-from handlers.base_handler import BaseHandler
-from handlers.base_handler import authenticated
-from database.user import user_db
+from app.handlers.base_handler import BaseHandler
+from app.handlers.base_handler import authenticated
+from app.database.user import user_db
 
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
-from lib.system_code import USER_NOT_LOGIN
-from lib.system_code import UPDATE_FAILED
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
+from app.lib.system_code import USER_NOT_LOGIN
+from app.lib.system_code import UPDATE_FAILED
 
 
 class UserHandler(BaseHandler):

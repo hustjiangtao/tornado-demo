@@ -23,7 +23,7 @@ from sqlalchemy import Column
 from sqlalchemy.sql.sqltypes import TEXT
 from sqlalchemy.sql.sqltypes import VARCHAR
 
-from database.models.base_model import BaseModel
+from app.database.models.base_model import BaseModel
 
 
 class Post(BaseModel):

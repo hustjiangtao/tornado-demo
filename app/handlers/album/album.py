@@ -4,13 +4,13 @@
 """Album"""
 
 
-from handlers.base_handler import BaseHandler
-from handlers.base_handler import authenticated
+from app.handlers.base_handler import BaseHandler
+from app.handlers.base_handler import authenticated
 
-from database.upload import upload_db
+from app.database.upload import upload_db
 
-from lib.system_code import SUCCESS
-from lib.system_code import PARAMS_MISS
+from app.lib.system_code import SUCCESS
+from app.lib.system_code import PARAMS_MISS
 
 
 class AlbumHandler(BaseHandler):

@@ -6,8 +6,8 @@
 
 from sqlalchemy import or_
 
-from database.base import BaseDB
-from database.models import PostModel
+from app.database.base import BaseDB
+from app.database.models import PostModel
 
 
 class PostDB(BaseDB):

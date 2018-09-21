@@ -14,7 +14,7 @@ except ImportError:
 
 from tornado import httpclient, gen, ioloop, queues
 
-from lib.utils import json_decode
+from app.lib.utils import json_decode
 
 base_url = 'http://fy.iciba.com/ajax.php?a=fy&f=auto&t=auto&w='
 concurrency = 10

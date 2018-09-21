@@ -8,7 +8,7 @@ import datetime
 
 from tornado.websocket import WebSocketHandler
 
-from handlers.base_handler import BaseHandler
+from app.handlers.base_handler import BaseHandler
 
 
 class ChatIndexHandler(BaseHandler):
