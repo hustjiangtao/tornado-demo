@@ -76,8 +76,10 @@ class Engine:
     with open(db_conf_dir, encoding='utf-8') as f:
         db_conf = yaml.safe_load(f)
 
-    path = db_conf.get('sqlite').get('path')
-    engine = create_engine('sqlite:///{path}'.format(path=path), encoding='utf8', echo=False)
+    # path = db_conf.get('sqlite').get('path')
+    sql = db_conf.get('sqlite')
+    # engine = create_engine('sqlite:///{path}'.format(path=path), encoding='utf8', echo=False)
+    engine = create_engine(f'{sql}', encoding='utf8', echo=False)
 
 
 BaseModel = declarative_base(cls=MetaModel)
