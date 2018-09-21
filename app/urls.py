@@ -8,7 +8,7 @@ from tornado.web import RedirectHandler
 
 from handlers.test import TestHandler
 from handlers.health import HealthHandler
-from handlers.demo import DemoHandler
+from handlers.demo import demo
 from handlers.auth import register
 from handlers.auth import auth
 from handlers.user import user
@@ -29,7 +29,7 @@ __BASE_URL_HANDLERS = [
     (r"/", RedirectHandler, dict(url='/posts', permanent=False)),
     (r"/test", TestHandler),
     (r"/health", HealthHandler),
-    (r"/demo", DemoHandler),
+    (r"/demo", demo.DemoHandler),
     (r"/register", register.RegisterHandler),
     (r"/auth", auth.AuthHandler),
     (r"/user", user.UserHandler),
