@@ -11,6 +11,8 @@ pyyaml = "*"
 ujson = "*"
 chatterbot = "*"
 redis = "*"
+fire = "*"
+alembic = "*"
 
 [dev-packages]
 "fabric3" = "*"
