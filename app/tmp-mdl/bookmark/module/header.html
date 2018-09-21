@@ -1,0 +1,29 @@
+{% set routers = [
+("/bookmark/index", "Portfolio"),
+("/bookmark/1/detail", "Blog"),
+] %}
+
+{# portfolio-style-header-start #}
+<header class="mdl-layout__header mdl-layout__header--waterfall portfolio-header">
+    <div class="mdl-layout__header-row portfolio-logo-row">
+        <span class="mdl-layout__title">
+            <div class="portfolio-logo"></div>
+            <span class="mdl-layout__title">ICE</span>
+        </span>
+    </div>
+    <div class="mdl-layout__header-row portfolio-navigation-row mdl-layout--large-screen-only">
+        <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
+            {% for router, router_name in routers %}
+            <a class="mdl-navigation__link {{ 'is-active' if request.uri == router else '' }}" href="{{ router }}">{{ router_name }}</a>
+            {% end %}
+        </nav>
+    </div>
+</header>
+<div class="mdl-layout__drawer mdl-layout--small-screen-only">
+    <nav class="mdl-navigation mdl-typography--body-1-force-preferred-font">
+        {% for router, router_name in routers %}
+        <a class="mdl-navigation__link {{ 'is-active' if request.uri == router else '' }}" href="{{ router }}">{{ router_name }}</a>
+        {% end %}
+    </nav>
+</div>
+{# portfolio-style-header-end #}

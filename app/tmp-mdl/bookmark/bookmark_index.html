@@ -1,0 +1,50 @@
+{% extends base.html %}
+
+{% block title %}Index{% end %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('mdl/css/idx.css') }}" />
+{% end %}
+
+{% block content %}
+{% set posts = data.get('bookmarks') %}
+{% set posts_count = len(posts) %}
+<div class="mdl-grid portfolio-max-width">
+    {% for idx, post in enumerate(posts) %}
+    <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+        <div class="mdl-card__media">
+            <img class="article-image" src="{{ static_url('mdl/images/example-work0{i}.jpg'.format(i=idx%9 + 1)) }}" border="0" alt="">
+        </div>
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">{{ post.get('title') }}</h2>
+        </div>
+        <div class="mdl-card__supporting-text portfoloo-card-content">
+            {{ post.get('content') }}
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="{{ post.get('original_url') }}" target="_blank">Read more</a>
+        </div>
+        <div class="mdl-card__menu">
+            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                <i class="material-icons">share</i>
+            </button>
+        </div>
+    </div>
+    {% end %}
+    {#<div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card">
+        <div class="mdl-card__media">
+            <img class="article-image" src="{{ static_url('mdl/images/example-work01.jpg') }}" border="0" alt="">
+        </div>
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Blog template</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" href="portfolio-example01.html">Read more</a>
+        </div>
+    </div>#}
+</div>
+{#{% include 'module/page_view.html' %}#}
+{% end %}
