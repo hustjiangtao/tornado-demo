@@ -64,10 +64,17 @@ class MetaModel:
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, self.columnitems)
 
-    def to_dict(self):
-        return self.columnitems
+    def to_dict(self, include=None):
+        """transform sql obj to dict
+        :param include: (list, tuple), item to return, eg: include=['id', 'name']
+        """
+        result = self.columnitems
+        if include and isinstance(include, (list, tuple)):
+            result = {x: result.get(x) for x in include}
+        return result
 
     def to_json(self):
+        """transform sql obj to json"""
         return json.dumps(self.to_dict(), cls=DateTimeEncoder)
 
 
