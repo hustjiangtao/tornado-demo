@@ -13,12 +13,14 @@ from app.database.models.demo import Demo as DemoModel
 from app.database.models.user import User as UserModel
 from app.database.models.post import Post as PostModel
 from app.database.models.upload import Upload as UploadModel
+from app.database.models.bookmark import Bookmark as BookmarkModel
 
 __all__ = (
     'DemoModel',
     'UserModel',
     'PostModel',
     'UploadModel',
+    'BookmarkModel',
 )
 
 

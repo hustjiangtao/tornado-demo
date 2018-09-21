@@ -5,6 +5,7 @@
 
 
 from tornado.web import RedirectHandler
+from tornado.web import url
 
 from app.handlers.test import TestHandler
 from app.handlers.health import HealthHandler
@@ -20,6 +21,8 @@ from app.handlers.album import album
 from app.handlers.blog import blog
 from app.handlers.blog import about
 from app.handlers.blog import contact
+from app.handlers.bookmark import bookmark_index
+from app.handlers.bookmark import bookmark_detail
 
 
 URL_HANDLERS = []
@@ -50,5 +53,12 @@ __MDL_BLOG_URL_HANDLERS = [
 ]
 
 
+__BSP_URL_HANDLERS = [
+    url(r"/bookmark/index", bookmark_index.IndexHandler, name="bookmark_index"),
+    url(r"/bookmark/(\d+)/detail", bookmark_detail.BookmarkDetailHandler, name="bookmark_detail"),
+]
+
+
 URL_HANDLERS.extend(__BASE_URL_HANDLERS)
 URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
+URL_HANDLERS.extend(__BSP_URL_HANDLERS)
