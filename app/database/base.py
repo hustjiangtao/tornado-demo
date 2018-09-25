@@ -71,6 +71,22 @@ class BaseDB:
 
         return result
 
+    def delete(self, query):
+        """delete instance queried"""
+        if not query:
+            return False
+
+        try:
+            query.delete()
+            self.db_session.commit()
+            result = True
+        except OperationalError:
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
+            result = False
+
+        return result
+
     @staticmethod
     def fetch_first(query):
         """fetch first result after query"""

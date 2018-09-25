@@ -49,7 +49,22 @@ class BookmarkDetailHandler(BaseHandler):
 
     # @authenticated
     def delete(self):
-        pass
+        """bookmark delete api"""
+        _id = self.get_query_argument('id', None)
+
+        code = SUCCESS
+        data = None
+
+        if not _id:
+            code = PARAMS_MISS
+        else:
+            result = bookmark_db.delete_bookmark(_id=_id)
+            if result:
+                data = {
+                    "result": True,
+                }
+
+        self.render_json(code=code, data=data)
 
     # @authenticated
     def put(self):
@@ -81,14 +96,13 @@ class BookmarkDetailHandler(BaseHandler):
     # @authenticated
     def get(self):
         """bookmark detail page"""
-        _id = self.get_query_argument('id', None)
-        bookmark = bookmark_db.get_bookmark_by_id(_id=_id)
-        if bookmark:
-            result = bookmark
+        bookmarks = bookmark_db.get_all_bookmarks()
+        if bookmarks:
+            result = bookmarks
         else:
-            result = {}
+            result = []
         data = {
-            "bookmark": result,
+            "bookmarks": result,
         }
         self.render('bookmark/bookmark_detail.html', data=data)
 

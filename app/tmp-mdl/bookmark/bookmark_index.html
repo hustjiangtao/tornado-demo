@@ -21,7 +21,7 @@
         <tbody>
         {% for idx, bookmark in enumerate(bookmarks) %}
         <tr>
-            <td>{{ bookmark.get('name') }}</td>
+            <td><a href="{{ bookmark.get('url') }}" target="_blank">{{ bookmark.get('name') }}</a></td>
             <td>{{ bookmark.get('type') }}</td>
             <td>{{ bookmark.get('create_time').date() }}</td>
         </tr>

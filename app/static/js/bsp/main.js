@@ -274,16 +274,38 @@ function add_bookmark() {
 }
 
 // update bookmark
-function update_bookmark() {
-  let name = $('#bookmark-update #name').val();
-  let url = $('#bookmark-update #url').val();
-  let type = $('#bookmark-update #type').val();
+function update_bookmark(thisthis) {
+  const ele = $(thisthis).parent().parent();
+  let id = ele.data('id');
+  let name = ele.find('#name').val();
+  let url = ele.find('#url').val();
+  let type = ele.find('#type').val();
   let data = {
+    "id": id,
     "name": name,
     "url": url,
     "type": type,
   };
   axios.put('/bookmark', data)
+    .then(function (response) {
+      if (response.data.code === 200) {
+        let id = response.data.data.id;
+        window.location.reload()
+      }
+      else {
+        alert(response.data.message)
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+// delete bookmark
+function delete_bookmark(thisthis) {
+  const ele = $(thisthis).parent().parent();
+  let id = ele.data('id');
+  axios.delete('/bookmark?id='+id)
     .then(function (response) {
       if (response.data.code === 200) {
         let id = response.data.data.id;
@@ -306,15 +328,5 @@ function switch_to_add_bookmark() {
 //  cancel add bookmark
 function cancel_add_bookmark() {
   $('#bookmark-add').hide();
-  $('#bookmark-detail').show();
-}
-// switch to update bookmark
-function switch_to_update_bookmark() {
-  $('#bookmark-detail').hide();
-  $('#bookmark-update').show();
-}
-// cancel update bookmark
-function cancel_update_bookmark() {
-  $('#bookmark-update').hide();
   $('#bookmark-detail').show();
 }

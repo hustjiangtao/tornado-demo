@@ -45,7 +45,23 @@ class BookmarkDB(BaseDB):
             return False
 
         bookmark.name = item.get('name')
+        bookmark.url = item.get('url')
+        bookmark.type = item.get('type')
+
         result = self.save(bookmark)
+
+        return result
+
+    def delete_bookmark(self, _id):
+        """update a demo
+        >>> 1
+        True
+        """
+        if not _id:
+            return False
+
+        query = self.db_session.query(BookmarkModel).filter_by(id=_id)
+        result = self.delete(query)
 
         return result
 
@@ -79,6 +95,24 @@ class BookmarkDB(BaseDB):
         """
         if any([offset is None, limit is None]):
             return []
+
+        query_params = ('id', 'name', 'url', 'type', 'create_time')
+        query = self.db_session.query(BookmarkModel)
+        bookmarks = self.fetch_all(query, offset=offset, limit=limit)
+        if bookmarks:
+            result = [x.to_dict(include=query_params) for x in bookmarks]
+        else:
+            result = []
+
+        return result
+
+    def get_all_bookmarks(self, offset=None, limit=None):
+        """
+        get all bookmarks
+        :param offset: offset
+        :param limit: limit
+        :return: list
+        """
 
         query_params = ('id', 'name', 'url', 'type', 'create_time')
         query = self.db_session.query(BookmarkModel)
