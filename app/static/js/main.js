@@ -1,12 +1,12 @@
 // main js
 
-function $(select) {
-    if (select.startsWith('#')) {
-        return document.getElementById(select.slice(1))
-    } else if (select.startsWith('.')) {
-        return document.getElementsByClassName(select.slice(1))
-    }
-}
+// function $(select) {
+//     if (select.startsWith('#')) {
+//         return document.getElementById(select.slice(1))
+//     } else if (select.startsWith('.')) {
+//         return document.getElementsByClassName(select.slice(1))
+//     }
+// }
 
 // register
 function do_register() {

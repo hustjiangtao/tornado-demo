@@ -35,6 +35,7 @@ class BookmarkDetailHandler(BaseHandler):
                 "name": name,
                 "url": url,
                 "type": _type,
+                "creator": self.current_user or 0,
             }
             result = bookmark_db.add_bookmark(item=add_item)
             if not result:
@@ -78,8 +79,9 @@ class BookmarkDetailHandler(BaseHandler):
         self.render_json(code=code, data=data)
 
     # @authenticated
-    def get(self, _id):
+    def get(self):
         """bookmark detail page"""
+        _id = self.get_query_argument('id', None)
         bookmark = bookmark_db.get_bookmark_by_id(_id=_id)
         if bookmark:
             result = bookmark

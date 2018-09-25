@@ -55,7 +55,7 @@ __MDL_BLOG_URL_HANDLERS = [
 
 __BSP_URL_HANDLERS = [
     url(r"/bookmark/index", bookmark_index.IndexHandler, name="bookmark_index"),
-    url(r"/bookmark/(\d+)/detail", bookmark_detail.BookmarkDetailHandler, name="bookmark_detail"),
+    url(r"/bookmark", bookmark_detail.BookmarkDetailHandler, name="bookmark_detail"),
 ]
 
 

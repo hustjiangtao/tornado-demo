@@ -21,6 +21,9 @@ class BookmarkDB(BaseDB):
 
         bookmark_model = BookmarkModel()
         bookmark_model.name = item.get('name')
+        bookmark_model.url = item.get('url')
+        bookmark_model.type = item.get('type')
+        bookmark_model.creator = item.get('creator')
 
         result = self.add(bookmark_model)
         if result:
@@ -74,7 +77,7 @@ class BookmarkDB(BaseDB):
         :param limit: limit
         :return: list
         """
-        if not all([offset, limit]):
+        if any([offset is None, limit is None]):
             return []
 
         query_params = ('id', 'name', 'url', 'type', 'create_time')
