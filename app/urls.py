@@ -29,7 +29,7 @@ URL_HANDLERS = []
 
 
 __BASE_URL_HANDLERS = [
-    (r"/", RedirectHandler, dict(url='/posts', permanent=False)),
+    (r"/", RedirectHandler, dict(url='/bookmark/index', permanent=False)),
     (r"/test", TestHandler),
     (r"/health", HealthHandler),
     (r"/demo", demo.DemoHandler),
