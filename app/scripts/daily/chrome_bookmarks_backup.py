@@ -11,6 +11,7 @@ class CBB:
         self.bookmarks = "~/Library/Application\ Support/Google/Chrome/Default/Bookmarks"
         self.temp = './Bookmarks'
         self.data = []
+        self.hosts = set()
 
     def copy_to_temp(self):
         """Copy bookmarks to local as temp"""
@@ -55,11 +56,46 @@ class CBB:
         count_dict = defaultdict(int)
         for name, url in result:
             host = urlsplit(url).netloc
+            self.hosts.add(f"{urlsplit(url).scheme}://{urlsplit(url).netloc}")
             # count_dict[(name, host)] += 1
             count_dict[host] += 1
         for x, c in sorted(count_dict.items(), key=lambda x: x[1], reverse=True)[:10]:
             if c > 1:
                 print(x, ':', c)
+
+        return count_dict
+
+    def get_hosts_name(self, hosts):
+        """get the host name from web <head><title></title><head>"""
+        if not hosts:
+            return []
+
+        import requests
+        import lxml.html
+        from lxml import etree
+
+        def fetch(url):
+            with requests.get(url, timeout=3.0) as resp:
+                html = resp.text
+                html = lxml.html.fromstring(html)
+                result = html.xpath('//head/title/text()')[0]
+                return result.strip()
+
+        return zip(map(fetch, hosts), hosts)
+
+    def upload_to_bsp(self):
+        """upload bookmarks to bsp"""
+        # result = list(self.get_hosts_name(list(self.hosts)))
+        result = self.data
+        from app.database.models.base_model import Session
+        from app.database.bookmark import BookmarkModel
+        session = Session()
+        for name, url in result[1:]:
+            # print(name)
+            bm = BookmarkModel(name=name, url=url, type='chrome', creator=0)
+            print(bm)
+            session.add(bm)
+        session.commit()
 
     def run(self):
         """Run server"""
@@ -71,6 +107,7 @@ class CBB:
 def main():
     cbb = CBB()
     cbb.run()
+    # cbb.upload_to_bsp()
 
 
 if __name__ == '__main__':
