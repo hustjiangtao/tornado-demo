@@ -1,8 +1,8 @@
-"""init db
+"""init db for mysql mariadb
 
-Revision ID: 1d3976a168ce
+Revision ID: 6f1fd303f738
 Revises: 
-Create Date: 2018-09-27 17:25:58.954592
+Create Date: 2018-09-27 17:51:18.568253
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1d3976a168ce'
+revision = '6f1fd303f738'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,6 @@ def upgrade():
     op.create_table('bookmark',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
-    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=100), nullable=False),
     sa.Column('url', sa.VARCHAR(length=256), nullable=False),
     sa.Column('type', sa.VARCHAR(length=32), nullable=False),
@@ -36,7 +35,6 @@ def upgrade():
     op.create_table('demo',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
-    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name'),
@@ -46,7 +44,6 @@ def upgrade():
     op.create_table('post',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
-    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('title', sa.VARCHAR(length=100), nullable=False),
     sa.Column('author', sa.VARCHAR(length=50), nullable=False),
     sa.Column('tag', sa.VARCHAR(length=32), nullable=True),
@@ -63,7 +60,6 @@ def upgrade():
     op.create_table('upload',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
-    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=100), nullable=False),
     sa.Column('new_name', sa.VARCHAR(length=100), nullable=True),
     sa.Column('size', sa.Integer(), nullable=False),
@@ -78,7 +74,6 @@ def upgrade():
     op.create_table('user',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
-    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=50), nullable=False),
     sa.Column('email', sa.VARCHAR(length=50), nullable=False),
     sa.Column('mobile', sa.VARCHAR(length=20), nullable=True),
