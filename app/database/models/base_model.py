@@ -38,10 +38,10 @@ class MetaModel:
     """Base meta setting for sql obj"""
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment='记录ID')
-    create_time = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
+    create_time = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
     # create_time = Column(TIMESTAMP, server_default=text("(datetime('now','localtime'))"),
     #                      comment='创建时间')
-    update_time = Column(TIMESTAMP,
+    update_time = Column(TIMESTAMP, nullable=False,
                          server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
                          comment='更新时间')
 
