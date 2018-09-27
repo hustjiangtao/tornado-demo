@@ -14,6 +14,7 @@ redis = "*"
 fire = "*"
 alembic = "*"
 lxml = "*"
+pymysql = "*"
 
 [dev-packages]
 "fabric3" = "*"

@@ -84,7 +84,8 @@ class Engine:
         db_conf = yaml.safe_load(f)
 
     # path = db_conf.get('sqlite').get('path')
-    sql = db_conf.get('sqlite')
+    # sql = db_conf.get('sqlite')
+    sql = db_conf.get('mysql')
     # engine = create_engine('sqlite:///{path}'.format(path=path), encoding='utf8', echo=False)
     engine = create_engine(f'{sql}', encoding='utf8', echo=False)
 
