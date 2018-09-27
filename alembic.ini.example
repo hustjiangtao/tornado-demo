@@ -36,7 +36,8 @@ script_location = alembic
 # output_encoding = utf-8
 
 ;sqlalchemy.url = driver://user:pass@localhost/dbname
-sqlalchemy.url = sqlite:////Users/jiangtao.work/Desktop/test.db
+;sqlalchemy.url = sqlite:////Users/jiangtao.work/Desktop/test.db
+sqlalchemy.url = mysql+pymysql://root:123456@localhost:3306/test
 
 
 # Logging configuration
