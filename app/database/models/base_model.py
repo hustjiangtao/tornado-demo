@@ -41,9 +41,9 @@ class MetaModel:
     create_time = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
     # create_time = Column(TIMESTAMP, server_default=text("(datetime('now','localtime'))"),
     #                      comment='创建时间')
-    update_time = Column(TIMESTAMP,
-                         server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
-                         comment='更新时间')
+    # update_time = Column(TIMESTAMP,
+    #                      server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
+    #                      comment='更新时间')
 
     @declared_attr
     def __tablename__(cls):
