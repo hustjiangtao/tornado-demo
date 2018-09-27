@@ -41,9 +41,9 @@ class MetaModel:
     create_time = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
     # create_time = Column(TIMESTAMP, server_default=text("(datetime('now','localtime'))"),
     #                      comment='创建时间')
-    # update_time = Column(TIMESTAMP,
-    #                      server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
-    #                      comment='更新时间')
+    update_time = Column(TIMESTAMP,
+                         server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
+                         comment='更新时间')
 
     @declared_attr
     def __tablename__(cls):
@@ -51,7 +51,7 @@ class MetaModel:
 
     @declared_attr
     def __table_args__(cls):
-        return {'mysql_charset': 'utf8', 'mysql_engine': 'InnoDB'}
+        return {'mysql_charset': 'utf8mb4', 'mysql_engine': 'InnoDB'}
 
     @property
     def columns(self):

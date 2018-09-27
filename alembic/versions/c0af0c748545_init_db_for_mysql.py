@@ -1,8 +1,8 @@
-"""init db for mysql mariadb
+"""init db for mysql
 
-Revision ID: 6f1fd303f738
+Revision ID: c0af0c748545
 Revises: 
-Create Date: 2018-09-27 17:51:18.568253
+Create Date: 2018-09-27 18:47:02.736530
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6f1fd303f738'
+revision = 'c0af0c748545'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,12 +21,13 @@ def upgrade():
     op.create_table('bookmark',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
+    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=100), nullable=False),
     sa.Column('url', sa.VARCHAR(length=256), nullable=False),
     sa.Column('type', sa.VARCHAR(length=32), nullable=False),
     sa.Column('creator', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    mysql_charset='utf8',
+    mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     op.create_index(op.f('ix_bookmark_creator'), 'bookmark', ['creator'], unique=False)
@@ -35,15 +36,17 @@ def upgrade():
     op.create_table('demo',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
+    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name'),
-    mysql_charset='utf8',
+    mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     op.create_table('post',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
+    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('title', sa.VARCHAR(length=100), nullable=False),
     sa.Column('author', sa.VARCHAR(length=50), nullable=False),
     sa.Column('tag', sa.VARCHAR(length=32), nullable=True),
@@ -54,12 +57,13 @@ def upgrade():
     sa.Column('source_id', sa.VARCHAR(length=64), nullable=True),
     sa.Column('original_url', sa.VARCHAR(length=128), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    mysql_charset='utf8',
+    mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     op.create_table('upload',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
+    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=100), nullable=False),
     sa.Column('new_name', sa.VARCHAR(length=100), nullable=True),
     sa.Column('size', sa.Integer(), nullable=False),
@@ -68,12 +72,13 @@ def upgrade():
     sa.Column('upload_dir', sa.CHAR(length=4), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('url'),
-    mysql_charset='utf8',
+    mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('create_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP()'), nullable=True),
+    sa.Column('update_time', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'), nullable=True),
     sa.Column('name', sa.VARCHAR(length=50), nullable=False),
     sa.Column('email', sa.VARCHAR(length=50), nullable=False),
     sa.Column('mobile', sa.VARCHAR(length=20), nullable=True),
@@ -82,7 +87,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('name'),
-    mysql_charset='utf8',
+    mysql_charset='utf8mb4',
     mysql_engine='InnoDB'
     )
     # ### end Alembic commands ###
