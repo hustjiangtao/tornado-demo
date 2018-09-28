@@ -334,3 +334,11 @@ function cancel_add_bookmark() {
   $('#bookmark-add').hide();
   $('#bookmark-detail').show();
 }
+
+// bookmark click stats
+function click_bookmark(id) {
+  axios.get('/bookmark/stats/click?id='+id)
+    .catch(function (error) {
+      console.log(error);
+    });
+}

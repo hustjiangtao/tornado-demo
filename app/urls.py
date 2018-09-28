@@ -23,6 +23,7 @@ from app.handlers.blog import about
 from app.handlers.blog import contact
 from app.handlers.bookmark import bookmark_index
 from app.handlers.bookmark import bookmark_detail
+from app.handlers.bookmark import bookmark_stats
 
 
 URL_HANDLERS = []
@@ -59,6 +60,12 @@ __BSP_URL_HANDLERS = [
 ]
 
 
+__BSP_STATS_API_HANDLERS = [
+    url(r"/bookmark/stats/click", bookmark_stats.ClickHandler, name="bookmark_stats_click"),
+]
+
+
 URL_HANDLERS.extend(__BASE_URL_HANDLERS)
 URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_URL_HANDLERS)
+URL_HANDLERS.extend(__BSP_STATS_API_HANDLERS)

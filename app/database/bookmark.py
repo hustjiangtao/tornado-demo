@@ -4,8 +4,11 @@
 """bookmark db"""
 
 
+from datetime import date
+
 from app.database.base import BaseDB
 from app.database.models import BookmarkModel
+from app.database.models import BookmarkStatsModel
 
 
 class BookmarkDB(BaseDB):
@@ -126,6 +129,31 @@ class BookmarkDB(BaseDB):
             result = [x.to_dict(include=query_params) for x in bookmarks]
         else:
             result = []
+
+        return result
+
+    def increase_bookmark_click(self, bid):
+        """Add a demo
+        :param bid: bookmark id
+        >>> 1
+        True
+        """
+        if not bid:
+            return False
+
+        query = self.db_session.query(BookmarkStatsModel)
+        query = query.filter_by(bid=bid)
+        query = query.filter_by(stat_date=date.today())
+        stat = self.fetch_first(query)
+        if stat:
+            stat.click += 1
+            result = self.save(stat)
+        else:
+            stat_model = BookmarkStatsModel()
+            stat_model.bid = bid
+            stat_model.click = 1
+
+            result = self.add(stat_model)
 
         return result
 

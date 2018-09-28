@@ -22,7 +22,7 @@
         <tbody>
         {% for idx, bookmark in enumerate(bookmarks) %}
         <tr>
-            <td><a href="{{ bookmark.get('url') }}" target="_blank">{{ bookmark.get('name')[:30] }}</a></td>
+            <td><a href="{{ bookmark.get('url') }}" target="_blank" onclick="click_bookmark({{ bookmark.get('id') }})">{{ bookmark.get('name')[:30] }}</a></td>
             <td>{{ bookmark.get('type') }}</td>
             <td>{{ bookmark.get('info') or '-' }}</td>
             <td>{{ bookmark.get('create_time').date() }}</td>
@@ -32,4 +32,8 @@
     </table>
 </div>
 {#{% include 'module/page_view.html' %}#}
+{% end %}
+
+{% block js %}
+<script src="{{ static_url('js/bsp/main.js') }}"></script>
 {% end %}
