@@ -47,7 +47,9 @@ class MetaModel:
 
     @declared_attr
     def __tablename__(cls):
-        return cls.__name__.lower()
+        """define table name, lower case with _ to split"""
+        name = ''.join([f'_{x}' if x.isupper() and idx != 0 else x for idx, x in enumerate(cls.__name__)])
+        return name.lower()
 
     @declared_attr
     def __table_args__(cls):
