@@ -70,9 +70,10 @@ class MetaModel:
         """transform sql obj to dict
         :param include: (list, tuple), item to return, eg: include=['id', 'name']
         """
-        result = self.columnitems
         if include and isinstance(include, (list, tuple)):
-            result = {x: result.get(x) for x in include}
+            result = {x: getattr(self, x) for x in include}
+        else:
+            result = self.columnitems
         return result
 
     def to_json(self):
