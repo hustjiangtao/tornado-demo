@@ -253,10 +253,12 @@ function add_bookmark() {
   let name = $('#bookmark-add #name').val();
   let url = $('#bookmark-add #url').val();
   let type = $('#bookmark-add #type').val();
+  let info = $('#bookmark-add #info').val();
   let data = {
     "name": name,
     "url": url,
     "type": type,
+    "info": info,
   };
   axios.post('/bookmark', data)
     .then(function (response) {
@@ -280,11 +282,13 @@ function update_bookmark(thisthis) {
   let name = ele.find('#name').val();
   let url = ele.find('#url').val();
   let type = ele.find('#type').val();
+  let info = ele.find('#info').val();
   let data = {
     "id": id,
     "name": name,
     "url": url,
     "type": type,
+    "info": info,
   };
   axios.put('/bookmark', data)
     .then(function (response) {

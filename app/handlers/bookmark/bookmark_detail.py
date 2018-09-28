@@ -24,6 +24,7 @@ class BookmarkDetailHandler(BaseHandler):
         name = self.get_json_argument('name', None)
         url = self.get_json_argument('url', None)
         _type = self.get_json_argument('type', None)
+        info = self.get_json_argument('info', None)
 
         code = SUCCESS
         data = None
@@ -35,6 +36,7 @@ class BookmarkDetailHandler(BaseHandler):
                 "name": name,
                 "url": url,
                 "type": _type,
+                "info": info,
                 "creator": self.current_user or 0,
             }
             result = bookmark_db.add_bookmark(item=add_item)
@@ -73,6 +75,7 @@ class BookmarkDetailHandler(BaseHandler):
         name = self.get_json_argument('name', None)
         url = self.get_json_argument('url', None)
         _type = self.get_json_argument('type', None)
+        info = self.get_json_argument('info', None)
 
         code = SUCCESS
         data = None
@@ -84,6 +87,7 @@ class BookmarkDetailHandler(BaseHandler):
                 "name": name,
                 "url": url,
                 "type": _type,
+                "info": info,
             }
             result = bookmark_db.update_bookmark(_id=_id, item=update_item)
             if result:

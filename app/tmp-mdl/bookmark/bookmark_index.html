@@ -15,6 +15,7 @@
         <tr>
             <th class="mdl-data-table__cell--non-numeric">Name</th>
             <th>Type</th>
+            <th>Info</th>
             <th>Time</th>
         </tr>
         </thead>
@@ -23,6 +24,7 @@
         <tr>
             <td><a href="{{ bookmark.get('url') }}" target="_blank">{{ bookmark.get('name')[:30] }}</a></td>
             <td>{{ bookmark.get('type') }}</td>
+            <td>{{ bookmark.get('info') or '-' }}</td>
             <td>{{ bookmark.get('create_time').date() }}</td>
         </tr>
         {% end %}

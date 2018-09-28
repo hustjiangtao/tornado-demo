@@ -24,6 +24,8 @@ class BookmarkDB(BaseDB):
         bookmark_model.url = item.get('url')
         bookmark_model.type = item.get('type')
         bookmark_model.creator = item.get('creator')
+        if item.get('info'):
+            bookmark_model.info = item.get('info')
 
         result = self.add(bookmark_model)
         if result:
@@ -47,6 +49,9 @@ class BookmarkDB(BaseDB):
         bookmark.name = item.get('name')
         bookmark.url = item.get('url')
         bookmark.type = item.get('type')
+        bookmark.info = item.get('info')
+        if item.get('info'):
+            bookmark.info = item.get('info')
 
         result = self.save(bookmark)
 
@@ -76,7 +81,7 @@ class BookmarkDB(BaseDB):
         if not isinstance(_id, int):
             _id = int(_id)
 
-        query_params=('id', 'name', 'url', 'type', 'create_time')
+        query_params=('id', 'name', 'url', 'type', 'info', 'create_time')
         query = self.db_session.query(BookmarkModel).filter_by(id=_id)
         bookmark = self.fetch_first(query)
         if bookmark:
@@ -96,7 +101,7 @@ class BookmarkDB(BaseDB):
         if any([offset is None, limit is None]):
             return []
 
-        query_params = ('id', 'name', 'url', 'type', 'create_time')
+        query_params = ('id', 'name', 'url', 'type', 'info', 'create_time')
         query = self.db_session.query(BookmarkModel)
         bookmarks = self.fetch_all(query, offset=offset, limit=limit)
         if bookmarks:
@@ -114,7 +119,7 @@ class BookmarkDB(BaseDB):
         :return: list
         """
 
-        query_params = ('id', 'name', 'url', 'type', 'create_time')
+        query_params = ('id', 'name', 'url', 'type', 'info', 'create_time')
         query = self.db_session.query(BookmarkModel)
         bookmarks = self.fetch_all(query, offset=offset, limit=limit)
         if bookmarks:
