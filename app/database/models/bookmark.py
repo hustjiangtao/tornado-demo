@@ -27,6 +27,20 @@ class Bookmark(BaseModel):
                          foreign_keys="BookmarkStats.bid",
                          backref="bookmark", lazy="dynamic")
 
+    def sum_stats(self, _type=None):
+        """sum stats, eg: sum click, sum rate, return all stats when _type is None"""
+        all_type = ('click', 'like', 'dislike', 'rate')
+
+        if _type is None:
+            all_stats = [{t: getattr(x, t) if t != 'rate' else x.rate() for t in all_type} for x in self.stats.all()]
+            sum_stats = {t: sum([x.get(t) for x in all_stats]) for t in all_type}
+        elif _type in all_type:
+            sum_stats = sum([getattr(x, _type) if _type != 'rate' else x.rate() for x in self.stats.all()])
+        else:
+            sum_stats = 0
+
+        return sum_stats
+
 
 class BookmarkStats(BaseModel):
 
