@@ -29,7 +29,7 @@ class ClickHandler(BaseHandler):
         if not _id:
             code = PARAMS_MISS
         else:
-            result = bookmark_db.increase_bookmark_click(bid=_id)
+            result = bookmark_db.increase_bookmark_click(_id=_id)
             data = {
                 "result": result,
             }

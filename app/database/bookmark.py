@@ -132,25 +132,24 @@ class BookmarkDB(BaseDB):
 
         return result
 
-    def increase_bookmark_click(self, bid):
+    def increase_bookmark_click(self, _id):
         """Add a demo
-        :param bid: bookmark id
+        :param _id: bookmark id
         >>> 1
         True
         """
-        if not bid:
+        if not _id:
             return False
 
         query = self.db_session.query(BookmarkStatsModel)
-        query = query.filter_by(bid=bid)
-        query = query.filter_by(stat_date=date.today())
+        query = query.filter_by(id=_id)
         stat = self.fetch_first(query)
         if stat:
             stat.click += 1
             result = self.save(stat)
         else:
             stat_model = BookmarkStatsModel()
-            stat_model.bid = bid
+            stat_model.id = _id
             stat_model.click = 1
 
             result = self.add(stat_model)
