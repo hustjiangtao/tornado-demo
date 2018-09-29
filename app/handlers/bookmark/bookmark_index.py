@@ -4,6 +4,8 @@
 """bookmark index"""
 
 
+from app.lib.do_cache import do_temp_cache
+
 from app.handlers.base_handler import BaseHandler
 from app.handlers.base_handler import authenticated
 
@@ -15,6 +17,7 @@ class IndexHandler(BaseHandler):
     """bookmark index handler"""
 
     # @authenticated
+    # @do_temp_cache(60, with_user=False)
     def get(self):
         """bookmark index page"""
         b_type = self.get_query_argument('b_type', None)
