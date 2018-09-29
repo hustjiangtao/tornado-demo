@@ -6,6 +6,8 @@
 
 from datetime import date
 
+from sqlalchemy import desc
+
 from app.database.base import BaseDB
 from app.database.models import BookmarkModel
 from app.database.models import BookmarkStatsModel
@@ -106,6 +108,28 @@ class BookmarkDB(BaseDB):
 
         query_params = ('id', 'name', 'url', 'type', 'info', 'create_time')
         query = self.db_session.query(BookmarkModel)
+        bookmarks = self.fetch_all(query, offset=offset, limit=limit)
+        if bookmarks:
+            result = [x.to_dict(include=query_params) for x in bookmarks]
+        else:
+            result = []
+
+        return result
+
+    def get_sorted_bookmarks_by_rate(self, offset=None, limit=None):
+        """
+        get bookmarks sorted by rate
+        :param offset: offset
+        :param limit: limit
+        :return: list
+        """
+        if any([offset is None, limit is None]):
+            return []
+
+        query_params = ('id', 'name', 'url', 'type', 'info', 'create_time', 'sum_stats')
+        query = self.db_session.query(BookmarkModel)
+        query = query.outerjoin(BookmarkStatsModel, BookmarkStatsModel.id == BookmarkModel.id)
+        query = query.order_by(desc(BookmarkStatsModel.rate), BookmarkModel.id)
         bookmarks = self.fetch_all(query, offset=offset, limit=limit)
         if bookmarks:
             result = [x.to_dict(include=query_params) for x in bookmarks]
