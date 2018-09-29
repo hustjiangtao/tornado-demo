@@ -8,6 +8,7 @@
 
 {% block content %}
 {% set bookmarks = data.get('bookmarks') %}
+{% set bookmarks_top10 = data.get('bookmarks_top10') %}
 {% set bookmarks_count = len(bookmarks) %}
 <div class="mdl-grid portfolio-max-width">
     <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
@@ -21,6 +22,33 @@
         </thead>
         <tbody>
         {% for idx, bookmark in enumerate(bookmarks) %}
+        <tr>
+            <td><a href="{{ bookmark.get('url') }}" target="_blank" onclick="click_bookmark({{ bookmark.get('id') }})">{{ bookmark.get('name')[:30] }}</a></td>
+            <td>{{ bookmark.get('type') }}</td>
+            <td>{{ bookmark.get('info') or '-' }}</td>
+            <td>{{ bookmark.get('create_time').date() }}</td>
+        </tr>
+        {% end %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mdl-grid portfolio-max-width">
+    <h5>Top 10</h5>
+</div>
+
+<div class="mdl-grid portfolio-max-width">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+        <tr>
+            <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th>Type</th>
+            <th>Info</th>
+            <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for idx, bookmark in enumerate(bookmarks_top10) %}
         <tr>
             <td><a href="{{ bookmark.get('url') }}" target="_blank" onclick="click_bookmark({{ bookmark.get('id') }})">{{ bookmark.get('name')[:30] }}</a></td>
             <td>{{ bookmark.get('type') }}</td>

@@ -25,12 +25,14 @@ class IndexHandler(BaseHandler):
         limit = self.get_query_argument('limit', None) or 20
         # bookmarks = bookmark_db.get_bookmarks(offset=offset, limit=limit)
         bookmarks = bookmark_db.get_sorted_bookmarks_by_rate(offset=offset, limit=limit)
+        bookmarks_top10 = bookmark_db.get_sorted_bookmarks_by_rate(offset=0, limit=10)
         if bookmarks:
             result = bookmarks
         else:
             result = []
         data = {
             "bookmarks": result,
+            "bookmarks_top10": bookmarks_top10,
         }
         self.render('bookmark/bookmark_index.html', data=data)
 
