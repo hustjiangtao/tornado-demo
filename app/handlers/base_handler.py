@@ -126,7 +126,10 @@ class BaseHandler(tornado.web.RequestHandler):
             return json.loads(user_cookie)
         return None
 
-    def get_json_argument(self, name, default=None):
+    # default args for json_arguments, default is object, not none
+    _ARG_DEFAULT=object()
+
+    def get_json_argument(self, name, default=_ARG_DEFAULT):
         """Get argument from application/json body"""
         content_type = self.request.headers.get("Content-Type", "")
         if content_type.startswith("application/json"):
@@ -134,10 +137,10 @@ class BaseHandler(tornado.web.RequestHandler):
             name = to_unicode(name)
             if name in args:
                 result = args[name]
-            elif default is not None:
-                result = default
-            else:
+            elif default is self._ARG_DEFAULT:
                 raise MissingArgumentError(name)
+            else:
+                result = default
 
             return result
 
