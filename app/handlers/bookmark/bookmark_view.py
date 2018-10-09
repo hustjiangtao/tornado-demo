@@ -17,7 +17,7 @@ class ViewHandler(BaseHandler):
     """bookmark view handler"""
 
     # @authenticated
-    @do_temp_cache(60 * 5, with_user=False)
+    # @do_temp_cache(60 * 5, with_user=False)
     def get(self):
         """bookmark view page"""
         offset = self.get_query_argument('offset', None) or 0
