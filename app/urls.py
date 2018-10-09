@@ -22,6 +22,7 @@ from app.handlers.blog import blog
 from app.handlers.blog import about
 from app.handlers.blog import contact
 from app.handlers.bookmark import bookmark_index
+from app.handlers.bookmark import bookmark_view
 from app.handlers.bookmark import bookmark_detail
 from app.handlers.bookmark import bookmark_stats
 
@@ -56,6 +57,7 @@ __MDL_BLOG_URL_HANDLERS = [
 
 __BSP_URL_HANDLERS = [
     url(r"/bookmark/index", bookmark_index.IndexHandler, name="bookmark_index"),
+    url(r"/bookmark/view", bookmark_view.ViewHandler, name="bookmark_view"),
     url(r"/bookmark", bookmark_detail.BookmarkDetailHandler, name="bookmark_detail"),
 ]
 

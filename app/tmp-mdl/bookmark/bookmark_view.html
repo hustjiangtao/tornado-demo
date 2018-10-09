@@ -1,0 +1,146 @@
+{% extends base.html %}
+
+{% block title %}View{% end %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.1/css/swiper.min.css">
+
+<!-- Demo styles -->
+<style>
+  html, body {
+    position: relative;
+    height: 100%;
+  }
+  body {
+    background: #eee;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color:#000;
+    margin: 0;
+    padding: 0;
+  }
+  .swiper-container {
+    width: 100%;
+    height: 100%;
+  }
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .demo-card-square.mdl-card {
+    width: 320px;
+    height: 320px;
+  }
+  .demo-card-square > .mdl-card__title {
+    color: #fff;
+    background:
+    {#url('../assets/demos/dog.png') bottom right 15% no-repeat #46B6AC;#}
+            #46B6AC;
+  }
+  .demo-card-square > .mdl-card__supporting-text {
+    height: 60%;
+  }
+</style>
+{% end %}
+
+{% block layout %}
+{% set bookmarks = data.get('bookmarks') %}
+{% set bookmarks_count = len(bookmarks) %}
+<!-- Swiper -->
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    {% for idx, bookmark in enumerate(bookmarks) %}
+    <div class="swiper-slide">
+      <div class="demo-card-square mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">{{ bookmark.get('name')[:30] }}</h2>
+        </div>
+        {#        <div class="mdl-card__media">#}
+        {#          <img src="skytower.jpg" width="173" height="157" border="0" alt="" style="padding:10px;">#}
+        {#        </div>#}
+        <div class="mdl-card__supporting-text">
+          {{ bookmark.get('info') }}
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+          <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{{ bookmark.get('url') }}">Go to use {{ bookmark.get('name') }}</a>
+        </div>
+      </div>
+    </div>
+    {% end %}
+  </div>
+</div>
+<!-- TOAST -->
+<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+  <div class="mdl-snackbar__text"></div>
+  <button type="button" class="mdl-snackbar__action"></button>
+</div>
+{% end %}
+
+{% block js %}
+<!-- Swiper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.4.1/js/swiper.min.js"></script>
+
+<!-- Initialize Swiper -->
+<script>
+  let offset = {{ data.get('offset') }};
+  let limit = {{ data.get('limit') }};
+  var swiper = new Swiper('.swiper-container');
+  swiper.on('slideChange', function () {
+    if (swiper.isBeginning) {
+      give_toast('已经是第一个啦')
+    } else if (swiper.isEnd) {
+      let data = {
+        params: {
+          "offset": offset + limit,
+          "limit": limit,
+          "type": 'api',
+        }
+      };
+      axios.get('/bookmark/view', data)
+        .then(function (response) {
+          if (response.data.code === 200) {
+            let res_data = response.data.data;
+            if (res_data.bookmarks.length>0) {
+              offset = data.params.offset;
+              for (let i=0,c=res_data.bookmarks.length;i<c;i++) {
+                swiper.appendSlide('<div class="swiper-slide"><div><h3>' + res_data.bookmarks[i].name.slice(0, 30) + '</h3><p>' + res_data.bookmarks[i].info + '</div></div>')
+              }
+            } else {
+              give_toast('没有更多了哦');
+            }
+          }
+          else {
+            alert(response.data.message)
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  });
+  // give a toast
+  function give_toast(text) {
+    var notification = document.querySelector('.mdl-js-snackbar');
+    notification.MaterialSnackbar.showSnackbar(
+      {
+        message: text
+      }
+    );
+  }
+</script>
+<script src="{{ static_url('js/axios.min.js') }}"></script>
+{% end %}
