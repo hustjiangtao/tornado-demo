@@ -22,6 +22,8 @@ from app.lib.system_code import ERROR
 from app.lib.system_code import MESSAGE
 from app.lib.redis_service import r_cache
 
+from app.database.models.base_model import DateTimeEncoder
+
 
 def authenticated(method):
     """Decorate methods with this to require that the user be logged in.
@@ -109,7 +111,7 @@ class BaseHandler(tornado.web.RequestHandler):
             "message": message,
             "data": data,
         }
-        self.write(json.dumps(result, ensure_ascii=False))
+        self.write(json.dumps(result, ensure_ascii=False, cls=DateTimeEncoder))
 
     def render(self, template_name, **kwargs):
         """
