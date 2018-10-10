@@ -15,6 +15,7 @@ fire = "*"
 alembic = "*"
 lxml = "*"
 pymysql = "*"
+looter = "*"
 
 [dev-packages]
 "fabric3" = "*"
