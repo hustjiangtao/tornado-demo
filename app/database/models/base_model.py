@@ -16,6 +16,7 @@ from sqlalchemy import Integer
 from sqlalchemy import TIMESTAMP
 
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declared_attr
@@ -95,4 +96,5 @@ class Engine:
 
 BaseModel = declarative_base(cls=MetaModel)
 engine = Engine().engine
-Session = sessionmaker(bind=engine)
+# Session = sessionmaker(bind=engine)
+Session = scoped_session(sessionmaker(bind=engine))
