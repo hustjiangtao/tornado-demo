@@ -22,6 +22,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = os.path.join(ROOT, 'static')
 # TEMPLATE_PATH = os.path.join(ROOT, 'templates')
 TEMPLATE_PATH = os.path.join(ROOT, 'tmp-mdl')
+EXT_STATIC_PATH = '/Users/jiangtao.work/Desktop/mm'
 
 SETTINGS = {
     "debug": options.debug,
@@ -31,4 +32,6 @@ SETTINGS = {
     "cookie_secret": 'tornado-demo',
     "xsrf_cookies": True,
     "login_url": '/auth',
+    # ext settings
+    "ext_static_path": EXT_STATIC_PATH,
 }

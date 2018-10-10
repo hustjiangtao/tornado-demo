@@ -6,6 +6,7 @@
 
 from tornado.web import RedirectHandler
 from tornado.web import url
+from tornado.web import StaticFileHandler
 
 from app.handlers.test import TestHandler
 from app.handlers.health import HealthHandler
@@ -25,6 +26,10 @@ from app.handlers.bookmark import bookmark_index
 from app.handlers.bookmark import bookmark_view
 from app.handlers.bookmark import bookmark_detail
 from app.handlers.bookmark import bookmark_stats
+from app.handlers.mm import mm_explore
+from app.handlers.mm import mm_stats
+
+from app.settings import SETTINGS
 
 
 URL_HANDLERS = []
@@ -64,6 +69,14 @@ __BSP_URL_HANDLERS = [
 
 __BSP_STATS_API_HANDLERS = [
     url(r"/bookmark/stats/click", bookmark_stats.ClickHandler, name="bookmark_stats_click"),
+    url(r"/mm/stats/click", mm_stats.ClickHandler, name="mm_stats_click"),
+]
+
+
+__MM_URL_HANDLERS = [
+    url(r"/mm/explore", mm_explore.ExploreHandler, name="mm_explore"),
+    # url(r"/mm/(.*\.(jpg|png|gif))", StaticFileHandler, dict(path=SETTINGS['ext_static_path']), name='mm_url'),
+    url(r"/mm/(.*)", StaticFileHandler, dict(path=SETTINGS['ext_static_path']), name='mm_url'),
 ]
 
 
@@ -71,3 +84,4 @@ URL_HANDLERS.extend(__BASE_URL_HANDLERS)
 URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_STATS_API_HANDLERS)
+URL_HANDLERS.extend(__MM_URL_HANDLERS)

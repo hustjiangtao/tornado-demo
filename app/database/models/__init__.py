@@ -15,6 +15,8 @@ from app.database.models.post import Post as PostModel
 from app.database.models.upload import Upload as UploadModel
 from app.database.models.bookmark import Bookmark as BookmarkModel
 from app.database.models.bookmark import BookmarkStats as BookmarkStatsModel
+from app.database.models.mm import Mm as MmModel
+from app.database.models.mm import MmStats as MmStatsModel
 
 __all__ = (
     'DemoModel',
@@ -23,6 +25,8 @@ __all__ = (
     'UploadModel',
     'BookmarkModel',
     'BookmarkStatsModel',
+    'MmModel',
+    'MmStatsModel',
 )
 
 
