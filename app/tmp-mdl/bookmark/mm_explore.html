@@ -104,14 +104,19 @@
           "type": 'api',
         }
       };
-      axios.get('/bookmark/view', data)
+      axios.get('/mm/explore', data)
         .then(function (response) {
           if (response.data.code === 200) {
             let res_data = response.data.data;
-            if (res_data.bookmarks.length>0) {
+            if (res_data.mms.length>0) {
               offset = data.params.offset;
-              for (let i=0,c=res_data.bookmarks.length;i<c;i++) {
-                swiper.appendSlide('<div class="swiper-slide"><div><h3>' + res_data.bookmarks[i].name.slice(0, 30) + '</h3><p>' + res_data.bookmarks[i].info + '</div></div>')
+              for (let i=0,c=res_data.mms.length;i<c;i++) {
+                let append_html = "<div class=\"swiper-slide\">\n" +
+                  "      <div class=\"demo-card-image mdl-card mdl-shadow--2dp\" style=\"background: url('/mm/" + res_data.mms[i].url + "') center / cover\">\n" +
+                  "        <div class=\"mdl-card__title mdl-card--expand\"></div>\n" +
+                  "      </div>\n" +
+                  "    </div>";
+                swiper.appendSlide(append_html)
               }
             } else {
               give_toast('没有更多了哦');

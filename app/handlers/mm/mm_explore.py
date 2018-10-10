@@ -4,6 +4,8 @@
 """mm explore"""
 
 
+from random import randint
+
 from app.lib.do_cache import do_temp_cache
 
 from app.handlers.base_handler import BaseHandler
@@ -23,6 +25,8 @@ class ExploreHandler(BaseHandler):
         offset = self.get_query_argument('offset', None) or 0
         limit = self.get_query_argument('limit', None) or 10
         _type = self.get_query_argument('type', None)
+        if int(offset) < 10000:
+            offset = randint(0, 100) + int(offset)
         mms = mm_db.get_mms(offset=offset, limit=limit)
         # mms = mm_db.get_sorted_mms_by_rate(offset=offset, limit=limit)
         if mms:
