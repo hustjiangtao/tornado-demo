@@ -87,8 +87,8 @@ class BaseDB:
 
         return result
 
-    @staticmethod
-    def fetch_first(query):
+    # @staticmethod
+    def fetch_first(self, query):
         """fetch first result after query"""
         if not query:
             return None
@@ -98,11 +98,15 @@ class BaseDB:
         except NoResultFound:
             logging.warning(traceback.format_exc())
             result = None
+        except Exception:
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
+            result = None
 
         return result
 
-    @staticmethod
-    def fetch_all(query, offset=None, limit=None):
+    # @staticmethod
+    def fetch_all(self, query, offset=None, limit=None):
         """fetch all result after query"""
         if not query:
             return None
@@ -115,11 +119,15 @@ class BaseDB:
         except NoResultFound:
             logging.warning(traceback.format_exc())
             result = []
+        except Exception:
+            self.db_session.rollback()
+            logging.warning(traceback.format_exc())
+            result = []
 
         return result
 
-    @staticmethod
-    def count(query):
+    # @staticmethod
+    def count(self, query):
         """fetch count after query"""
         if not query:
             return None
@@ -129,6 +137,10 @@ class BaseDB:
             if result:
                 result = result[0]
         except NoResultFound:
+            logging.warning(traceback.format_exc())
+            result = None
+        except Exception:
+            self.db_session.rollback()
             logging.warning(traceback.format_exc())
             result = None
 
