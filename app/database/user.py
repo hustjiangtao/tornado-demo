@@ -106,6 +106,29 @@ class UserDB(BaseDB):
 
         return result
 
+    def get_users_by_ids(self, ids):
+        """get many users
+        :param ids: list, id list
+        """
+        if not ids or not isinstance(ids, (list, tuple, set)):
+            return []
+
+        query = self.db_session.query(UserModel)
+        query = query.filter(UserModel.id.in_(ids))
+        users = self.fetch_all(query)
+        if users:
+            result = [{
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "mobile": user.mobile,
+                "create_time": user.create_time,
+            } for user in users]
+        else:
+            result = []
+
+        return result
+
 
 user_db = UserDB()
 

@@ -16,6 +16,7 @@ alembic = "*"
 lxml = "*"
 pymysql = "*"
 looter = "*"
+markdown = "*"
 
 [dev-packages]
 "fabric3" = "*"
@@ -29,6 +30,7 @@ gensim = "*"
 pylint = "*"
 "flake8" = "*"
 "autopep8" = "*"
+pygments = "*"
 
 [requires]
 python_version = "3.6"

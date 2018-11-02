@@ -28,6 +28,8 @@ from app.handlers.bookmark import bookmark_detail
 from app.handlers.bookmark import bookmark_stats
 from app.handlers.mm import mm_explore
 from app.handlers.mm import mm_stats
+from app.handlers.doc import doc
+from app.handlers.doc import doc_index
 
 from app.settings import SETTINGS
 
@@ -80,8 +82,15 @@ __MM_URL_HANDLERS = [
 ]
 
 
+__DOC_URL_HANDLERS = [
+    url(r"/doc/index", doc_index.DocIndexHandler, name="doc_index"),
+    url(r"/doc/(\d+)", doc.DocHandler, name="doc_detail"),
+]
+
+
 URL_HANDLERS.extend(__BASE_URL_HANDLERS)
 URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_STATS_API_HANDLERS)
 URL_HANDLERS.extend(__MM_URL_HANDLERS)
+URL_HANDLERS.extend(__DOC_URL_HANDLERS)
