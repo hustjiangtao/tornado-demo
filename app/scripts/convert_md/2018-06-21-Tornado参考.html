@@ -1,0 +1,904 @@
+
+            <html lang="zh-cn">
+            <head>
+            <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+            <link href="default.css" rel="stylesheet">
+            <link href="github.css" rel="stylesheet">
+            </head>
+            <body>
+            <!--# 简介
+Tornado Web服务器概览,tornado教程,tornado开发教程-->
+
+<h1 id="tornado-webtornadotornado">Tornado Web服务器概览,tornado教程,tornado开发教程</h1>
+<h2 id="_1">目录</h2>
+<div class="toc">
+<ul>
+<li><a href="#tornado-webtornadotornado">Tornado Web服务器概览,tornado教程,tornado开发教程</a><ul>
+<li><a href="#_1">目录</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#_2">下载和安装</a></li>
+<li><a href="#_3">模块索引</a><ul>
+<li><a href="#_4">主要模块</a></li>
+<li><a href="#_5">底层模块</a></li>
+</ul>
+</li>
+<li><a href="#tornado">Tornado 攻略</a><ul>
+<li><a href="#_6">请求处理程序和请求参数</a></li>
+<li><a href="#requesthandler">重写 RequestHandler 的方法函数</a></li>
+<li><a href="#redirect">重定向(redirect)</a></li>
+<li><a href="#_7">模板</a></li>
+<li><a href="#cookie-cookie">Cookie 和安全 Cookie</a></li>
+<li><a href="#_8">用户认证</a></li>
+<li><a href="#_9">跨站伪造请求的防范</a></li>
+<li><a href="#_10">静态文件和主动式文件缓存</a></li>
+<li><a href="#_11">本地化</a></li>
+<li><a href="#ui">UI 模块</a></li>
+<li><a href="#_12">非阻塞式异步请求</a></li>
+<li><a href="#http">异步 HTTP 客户端</a></li>
+<li><a href="#_13">第三方认证</a></li>
+<li><a href="#_14">调试模式和自动重载</a></li>
+</ul>
+</li>
+<li><a href="#_15">性能</a></li>
+<li><a href="#_16">生产环境下的部署</a></li>
+<li><a href="#wsgi-google-appengine">WSGI 和 Google AppEngine</a></li>
+<li><a href="#_17">注意事项和社区支持</a></li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="overview">Overview</h2>
+<p>FriendFeed使用了一款使用 Python 编写的，相对简单的 非阻塞式 Web 服务器。
+其应用程序使用的 Web 框架看起来有些像 web.py 或者 Google 的 webapp，
+不过为了能有效利用非阻塞式服务器环境，这个 Web 框架还包含了一些相关的有用工具和优化。</p>
+<p>Tornado 就是我们在 FriendFeed 的 Web 服务器及其常用工具的开源版本。
+Tornado 和现在的主流 Web 服务器框架（包括大多数 Python 的框架）有着明显的区别：
+它是非阻塞式服务器，而且速度相当快。得利于其 非阻塞的方式和对 epoll 的运用，
+Tornado 每秒可以处理数以千计的连接，因此 Tornado 是实时 Web 服务的一个理想框架。
+我们开发这个 Web 服务器的主要目的就是为了处理 FriendFeed 的实时功能 —— 在 FriendFeed 的
+应用里每一个活动用户都会保持着一个服务器连接。
+（关于如何扩容 服务器，以处理数以千计的客户端的连接的问题，
+请参阅 <a href="http://www.kegel.com/c10k.html">The C10K problem</a> ）</p>
+<p>以下是经典的 “Hello, world” 示例：</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">tornado.ioloop</span>
+<span class="kn">import</span> <span class="nn">tornado.web</span>
+
+<span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Hello, world&quot;</span><span class="p">)</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">application</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">8888</span><span class="p">)</span>
+    <span class="n">tornado</span><span class="o">.</span><span class="n">ioloop</span><span class="o">.</span><span class="n">IOLoop</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+
+
+<p>查看下面的 Tornado 攻略以了解更多关于 tornado.web 包的细节。</p>
+<p>我们清理了 Tornado 的基础代码，减少了各模块之间的相互依存关系，
+所以理论上讲，你可以在自己的项目中独立地使用任何模块，而不需要使用整个包。</p>
+<h2 id="_2">下载和安装</h2>
+<ul>
+<li>
+<p>自动安装：
+Tornado 已经列入 PyPI ，因此可以通过 pip 或者 easy_install 来安装。
+如果你没有安装 libcurl 的话，你需要将其单独安装到系统中。请参见下面的安装依赖一节。
+注意一点，使用 pip 或 easy_install 安装的 Tornado 并没有包含源代码中的 demo 程序。</p>
+</li>
+<li>
+<p>手动安装：下载 <a href="http://github.com/downloads/facebook/tornado/tornado-2.0.tar.gz">tornado-2.0.tar.gz</a></p>
+</li>
+</ul>
+<div class="codehilite"><pre><span></span>$ tar xvzf tornado-2.0.tar.gz
+$ <span class="nb">cd</span> tornado-2.0
+$ python setup.py build
+$ sudo python setup.py install
+</pre></div>
+
+
+<p>Tornado 的代码托管在 GitHub 上面。对于 Python 2.6 以上的版本，
+因为标准库中已经包括了对 epoll 的支持，所以你可以不用 setup.py 编译安装，
+只要简单地将 tornado 的目录添加到 PYTHONPATH 就可以使用了。</p>
+<p>安装需求
+Tornado 在 Python 2.5, 2.6, 2.7 中都经过了测试。要使用 Tornado 的所有功能，
+你需要安装 PycURL (7.18.2 或更高版本) 以及 simplejson
+(仅适用于Python 2.5，2.6 以后的版本标准库当中已经包含了对 JSON 的支持)。
+为方便起见，下面将列出 Mac OS X 和 Ubuntu 中的完整安装方式：</p>
+<p>Mac OS X 10.6 (Python 2.6+)</p>
+<div class="codehilite"><pre><span></span>$ sudo easy_install setuptools pycurl
+Ubuntu Linux <span class="o">(</span>Python <span class="m">2</span>.6+<span class="o">)</span>
+
+$ sudo apt-get install python-pycurl
+Ubuntu Linux <span class="o">(</span>Python <span class="m">2</span>.5<span class="o">)</span>
+
+$ sudo apt-get install python-dev python-pycurl python-simplejson
+</pre></div>
+
+
+<h2 id="_3">模块索引</h2>
+<p>最重要的一个模块是<a href="http://github.com/facebook/tornado/blob/master/tornado/web.py">web</a>，
+它就是包含了 Tornado 的大部分主要功能的 Web 框架。其它的模块都是工具性质的，
+以便让 web 模块更加有用，后面的 Tornado 攻略详细讲解了 web 模块的使用方法。</p>
+<h3 id="_4">主要模块</h3>
+<ul>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/web.py">web</a> - FriendFeed 使用的基础 Web 框架，包含了 Tornado 的大多数重要的功能</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/escape.py">escape</a> - XHTML, JSON, URL 的编码/解码方法</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/database.py">database</a> - 对 MySQLdb 的简单封装，使其更容易使用</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/template.py">template</a> - 基于 Python 的 web 模板系统</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/httpclient.py">httpclient</a> - 非阻塞式 HTTP 客户端，它被设计用来和 web 及 httpserver 协同工作</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/auth.py">auth</a> - 第三方认证的实现（包括 Google OpenID/OAuth、Facebook Platform、Yahoo BBAuth、FriendFeed OpenID/OAuth、Twitter OAuth）</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/locale.py">locale</a> - 针对本地化和翻译的支持</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/options.py">options</a> - 命令行和配置文件解析工具，针对服务器环境做了优化</li>
+</ul>
+<h3 id="_5">底层模块</h3>
+<ul>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/httpserver.py">httpserver</a> - 服务于 web 模块的一个非常简单的 HTTP 服务器的实现</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/iostream.py">iostream</a> - 对非阻塞式的 socket 的简单封装，以方便常用读写操作</li>
+<li><a href="http://github.com/facebook/tornado/blob/master/tornado/ioloop.py">ioloop</a> - 核心的 I/O 循环</li>
+</ul>
+<h2 id="tornado">Tornado 攻略</h2>
+<h3 id="_6">请求处理程序和请求参数</h3>
+<p>Tornado 的 Web 程序会将 URL 或者 URL 范式映射到 tornado.web.RequestHandler 的子类上去。
+在其子类中定义了 get() 或 post() 方法，用以处理不同的 HTTP 请求。</p>
+<p>下面的代码将 URL 根目录 / 映射到 MainHandler，还将一个 URL 范式 /story/([0-9]+) 映射到 StoryHandler。
+正则表达式匹配的分组会作为参数引入的相应方法中：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;You requested the main page&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">StoryHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">story_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;You requested the story &quot;</span> <span class="o">+</span> <span class="n">story_id</span><span class="p">)</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/story/([0-9]+)&quot;</span><span class="p">,</span> <span class="n">StoryHandler</span><span class="p">),</span>
+<span class="p">])</span>
+</pre></div>
+
+
+<p>你可以使用 get_argument() 方法来获取查询字符串参数，以及解析 POST 的内容：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;body&gt;&lt;form action=&quot;/&quot; method=&quot;post&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;&lt;input type=&quot;text&quot; name=&quot;message&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;&lt;/form&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">,</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;You wrote &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>上传的文件可以通过 <code>self.request.files</code> 访问到，
+该对象将名称（HTML元素 <code>&lt;input type="file"&gt;</code> 的 name 属性）对应到一个文件列表。
+每一个文件都以字典的形式 存在，其格式为 <code>{"filename":..., "content_type":..., "body":...}</code>。</p>
+<p>如果你想要返回一个错误信息给客户端，例如“403 unauthorized”，只需要抛出一个 tornado.web.HTTPError 异常：</p>
+<div class="codehilite"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_is_logged_in</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+</pre></div>
+
+
+<p>请求处理程序可以通过 self.request 访问到代表当前请求的对象。
+该 HTTPRequest 对象包含了一些有用的属性，包括：</p>
+<ul>
+<li><code>arguments</code> - 所有的 GET 或 POST 的参数</li>
+<li><code>files</code> - 所有通过 multipart/form-data POST 请求上传的文件</li>
+<li><code>path</code> - 请求的路径（ ? 之前的所有内容）</li>
+<li><code>headers</code> - 请求的开头信息</li>
+</ul>
+<p>你可以通过查看源代码 httpserver 模组中 HTTPRequest 的定义，从而了解到它的 所有属性。</p>
+<h3 id="requesthandler">重写 RequestHandler 的方法函数</h3>
+<p>除了 get()/post()等以外，RequestHandler 中的一些别的方法函数，这都是一些空函数，
+它们存在的目的是在必要时在子类中重新定义其内容。对于一个请求的处理 的代码调用次序如下：</p>
+<ul>
+<li>程序为每一个请求创建一个 RequestHandler 对象</li>
+<li>程序调用 initialize() 函数，这个函数的参数是 Application 配置中的关键字参数定义。
+（initialize 方法是 Tornado 1.1 中新添加的，旧版本中你需要 重写 <strong>init</strong> 以达到同样的目的），
+initialize 方法一般只是把传入的参数存 到成员变量中，而不会产生一些输出或者调用像 send_error 之类的方法。</li>
+<li>程序调用 prepare()。无论使用了哪种 HTTP 方法，prepare 都会被调用到，
+因此，这个方法通常会被定义在一个基类中，然后在子类中重用。
+prepare可以产生输出 信息。如果它调用了finish（或send_error 等函数），那么整个处理流程 就此结束。</li>
+<li>程序调用某个 HTTP 方法：例如 get()、post()、put() 等。
+如果 URL 的正则表达式模式中有分组匹配，那么相关匹配会作为参数传入方法。</li>
+</ul>
+<p>下面是一个示范 initialize() 方法的例子：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">ProfileHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="o">...</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s1">&#39;/user/(.*)&#39;</span><span class="p">,</span> <span class="n">ProfileHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">database</span><span class="o">=</span><span class="n">database</span><span class="p">)),</span>
+    <span class="p">])</span>
+</pre></div>
+
+
+<p>其它设计用来被复写的方法有：</p>
+<ul>
+<li><code>get_error_html(self, status_code, exception=None, **kwargs)</code> - 以字符串的形式 返回 HTML，以供错误页面使用。</li>
+<li><code>get_current_user(self)</code> - 查看下面的用户认证一节</li>
+<li><code>get_user_locale(self)</code> - 返回 locale 对象，以供当前用户使用。</li>
+<li><code>get_login_url(self)</code> - 返回登录网址，以供 @authenticated 装饰器使用（默认位置 在 Application 设置中）</li>
+<li><code>get_template_path(self)</code> - 返回模板文件的路径（默认是 Application 中的设置）</li>
+</ul>
+<h3 id="redirect">重定向(redirect)</h3>
+<p>Tornado 中的重定向有两种主要方法：self.redirect，或者使用 RedirectHandler。</p>
+<p>你可以在使用 RequestHandler （例如 get）的方法中使用 s<code>elf.redirect</code>，将用户重定向到别的地方。
+另外还有一个可选参数 permanent，你可以用它指定这次操作为永久性重定向。</p>
+<p>该参数会激发一个 <code>301 Moved Permanently HTTP</code> 状态，这在某些情况下是有用的，
+例如，你要将页面的原始链接重定向时，这种方式会更有利于搜索引擎优化（SEO）。</p>
+<p>permanent 的默认值是 False，这是为了适用于常见的操作，例如用户端在成功发送 POST 请求以后的重定向。</p>
+<p><code>self.redirect('/some-canonical-page', permanent=True)</code></p>
+<p>RedirectHandler 会在你初始化 Application 时自动生成。</p>
+<p>例如本站的下载 URL，由较短的 URL 重定向到较长的 URL 的方式是这样的：</p>
+<div class="codehilite"><pre><span></span><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">wsgi</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/([a-z]*)&quot;</span><span class="p">,</span> <span class="n">ContentHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/static/tornado-0.2.tar.gz&quot;</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RedirectHandler</span><span class="p">,</span>
+     <span class="nb">dict</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://github.com/downloads/facebook/tornado/tornado-0.2.tar.gz&quot;</span><span class="p">)),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>RedirectHandler 的默认状态码是 301 Moved Permanently，
+不过如果你想使用 302 Found 状态码，你需要将 permanent 设置为 False。</p>
+<div class="codehilite"><pre><span></span><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">wsgi</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/foo&quot;</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RedirectHandler</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span><span class="s2">&quot;/bar&quot;</span><span class="p">,</span> <span class="s2">&quot;permanent&quot;</span><span class="p">:</span><span class="bp">False</span><span class="p">}),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>注意，在 <code>self.redirect</code> 和 <code>RedirectHandler</code> 中，permanent 的默认值是不同的。
+这样做是有一定道理的，<code>self.redirect</code> 通常会被用在自定义方法中，是由逻辑事件触发的
+（例如环境变更、用户认证、以及表单提交）。而 RedirectHandler 是在每次匹配到请求 URL 时被触发。</p>
+<h3 id="_7">模板</h3>
+<p>你可以在 Tornado 中使用任何一种 Python 支持的模板语言。但是相较于其它模板而言，
+Tornado 自带的模板系统速度更快，并且也更灵活。具体可以查看 template 模块的源码。</p>
+<p>Tornado 模板其实就是 HTML 文件（也可以是任何文本格式的文件），
+其中包含了 Python 控制结构和表达式，这些控制结构和表达式需要放在规定的格式标记符(markup)中：</p>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{{ title }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+      {% for item in items %}
+        <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>{{ escape(item) }}<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      {% end %}
+    <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>如果你把上面的代码命名为 "template.html"，保存在 Python 代码的同一目录中，
+你就可以这样来渲染它：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Item 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Item 2&quot;</span><span class="p">,</span> <span class="s2">&quot;Item 3&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s2">&quot;template.html&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;My title&quot;</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Tornado 的模板支持“控制语句”和“表达语句”，控制语句是使用 <code>{%</code> 和 <code>%}</code> 包起来的，
+例如 <code>{% if len(items) &gt; 2 %}</code>。表达语句是使用 <code>\{{</code> 和 <code>}\}</code> 包起来的，例如 <code>\{{ items[0] }\}</code>。</p>
+<p>控制语句和对应的 Python 语句的格式基本完全相同。
+我们支持 if、for、while 和 try，这些语句逻辑结束的位置需要用 <code>{% end %}</code> 做标记。
+我们还通过 extends 和 block 语句实现了模板继承。
+这些在 <a href="http://github.com/facebook/tornado/blob/master/tornado/template.py">template</a> 模块的代码文档中有着详细的描述。</p>
+<p>表达语句可以是包括函数调用在内的任何 Python 表述。
+模板中的相关代码，会在一个单独的名字空间中被执行，这个名字空间包括了以下的一些对象和方法。
+（注意，下面列表中的对象或方法在使用 RequestHandler.render 或者 render_string 时才存在的，
+如果你在 RequestHandler 外面直接使用 template 模块，则它们中的大部分是不存在的）。</p>
+<ul>
+<li><code>escape</code>: tornado.escape.xhtml_escape 的別名</li>
+<li><code>xhtml_escape</code>: tornado.escape.xhtml_escape 的別名</li>
+<li><code>url_escape</code>: tornado.escape.url_escape 的別名</li>
+<li><code>json_encode</code>: tornado.escape.json_encode 的別名</li>
+<li><code>squeeze</code>: tornado.escape.squeeze 的別名</li>
+<li><code>linkify</code>: tornado.escape.linkify 的別名</li>
+<li><code>datetime</code>: Python 的 datetime 模组</li>
+<li><code>handler</code>: 当前的 RequestHandler 对象</li>
+<li><code>request</code>: handler.request 的別名</li>
+<li><code>current_user</code>: handler.current_user 的別名</li>
+<li><code>locale</code>: handler.locale 的別名</li>
+<li><code>_</code>: handler.locale.translate 的別名</li>
+<li><code>static_url</code>: for handler.static_url 的別名</li>
+<li><code>xsrf_form_html</code>: handler.xsrf_form_html 的別名</li>
+<li><code>reverse_url</code>: Application.reverse_url 的別名</li>
+<li>Application 设置中 ui_methods 和 ui_modules 下面的所有项目</li>
+<li>任何传递给 render 或者 render_string 的关键字参数</li>
+</ul>
+<p>当你制作一个实际应用时，你会需要用到 Tornado 模板的所有功能，尤其是模板继承功能。
+所有这些功能都可以在 template 模块 的代码文档中了解到。
+（其中一些功能是在 web 模块中实现的，例如 UIModules）</p>
+<p>从实现方式来讲，Tornado 的模板会被直接转成 Python 代码。
+模板中的语句会逐字复制到一个代表模板的函数中去。
+我们不会对模板有任何限制，Tornado 模板模块的设计宗旨就是要比其他模板系统更灵活而且限制更少。
+所以，当你的模板语句里发生了随机的错误，在执行模板时你就会看到随机的 Python 错误信息。</p>
+<p>所有的模板输出都已经通过 tornado.escape.xhtml_escape 自动转义(escape)，
+这种默认行为，可以通过以下几种方式修改：
+将 autoescape=None 传递给 Application 或者 TemplateLoader、
+在模板文件中加入 <code>{% autoescape None %}</code>、
+或者在简单表达语句 <code>\{{ ... }\}</code> 写成 <code>{% raw ...%}</code>。
+另外你可以在上述位置将 autoescape 设为一个自定义函数，而不仅仅是 None。</p>
+<h3 id="cookie-cookie">Cookie 和安全 Cookie</h3>
+<p>你可以使用 set_cookie 方法在用户的浏览中设置 cookie：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cookie</span><span class="p">(</span><span class="s2">&quot;mycookie&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s2">&quot;mycookie&quot;</span><span class="p">,</span> <span class="s2">&quot;myvalue&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Your cookie was not set yet!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Your cookie was set!&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Cookie 很容易被恶意的客户端伪造。
+加入你想在 cookie 中保存当前登陆用户的 id 之类的信息，你需要对 cookie 作签名以防止伪造。
+Tornado 通过 set_secure_cookie 和 get_secure_cookie 方法直接支持了这种功能。
+要使用这些方法，你需要在创建应用时提供一个密钥，名字为 cookie_secret。
+你可以把它作为一个关键词参数传入应用的设置中：</p>
+<div class="codehilite"><pre><span></span><span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">cookie_secret</span><span class="o">=</span><span class="s2">&quot;61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>签名过的 cookie 中包含了编码过的 cookie 值，另外还有一个时间戳和一个 HMAC 签名。
+如果 cookie 已经过期或者签名不匹配，get_secure_cookie 将返回 None，
+这和没有设置 cookie 时的返回值是一样的。上面例子的安全 cookie 版本如下：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_secure_cookie</span><span class="p">(</span><span class="s2">&quot;mycookie&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_secure_cookie</span><span class="p">(</span><span class="s2">&quot;mycookie&quot;</span><span class="p">,</span> <span class="s2">&quot;myvalue&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Your cookie was not set yet!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Your cookie was set!&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<h3 id="_8">用户认证</h3>
+<p>当前已经认证的用户信息被保存在每一个请求处理器的 self.current_user 当中，
+同时在模板的 current_user 中也是。默认情况下，current_user 为 None。</p>
+<p>要在应用程序实现用户认证的功能，你需要复写请求处理中 get_current_user() 这个方法，
+在其中判定当前用户的状态，比如通过 cookie。
+下面的例子让用户简单地使用一个 nickname 登陆应用，该登陆信息将被保存到 cookie 中：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">BaseHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_secure_cookie</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/login&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">escape</span><span class="o">.</span><span class="n">xhtml_escape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">LoginHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;html&gt;&lt;body&gt;&lt;form action=&quot;/login&quot; method=&quot;post&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;Name: &lt;input type=&quot;text&quot; name=&quot;name&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;&lt;input type=&quot;submit&quot; value=&quot;Sign in&quot;&gt;&#39;</span>
+                   <span class="s1">&#39;&lt;/form&gt;&lt;/body&gt;&lt;/html&gt;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_secure_cookie</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="n">LoginHandler</span><span class="p">),</span>
+<span class="p">],</span> <span class="n">cookie_secret</span><span class="o">=</span><span class="s2">&quot;61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=&quot;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>对于那些必须要求用户登陆的操作，可以使用装饰器 tornado.web.authenticated。
+如果一个方法套上了这个装饰器，但是当前用户并没有登陆的话，
+页面会被重定向到 login_url（应用配置中的一个选项），上面的例子可以被改写成：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+    <span class="nd">@tornado.web.authenticated</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">escape</span><span class="o">.</span><span class="n">xhtml_escape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Hello, &quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;cookie_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;login_url&quot;</span><span class="p">:</span> <span class="s2">&quot;/login&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="n">LoginHandler</span><span class="p">),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>如果你使用 authenticated 装饰器来装饰 post() 方法，那么在用户没有登陆的状态下，
+服务器会返回 403 错误。</p>
+<p>Tornado 内部集成了对第三方认证形式的支持，比如 Google 的 OAuth 。
+参阅 <a href="http://github.com/facebook/tornado/blob/master/tornado/auth.py">auth 模块</a> 的代码文档以了解更多信息。
+for more details. Checkauth 模块以了解更多的细节。
+在 Tornado 的源码中有一个 Blog 的例子，你也可以从那里看到用户认证的方法（以及如何在 MySQL 数据库中保存用户数据）。</p>
+<h3 id="_9">跨站伪造请求的防范</h3>
+<p><a href="http://en.wikipedia.org/wiki/Cross-site_request_forgery">跨站伪造请求(Cross-site request forgery)</a>，
+简称为 XSRF，是个性化 Web 应用中常见的一个安全问题。前面的链接也详细讲述了 XSRF 攻击的实现方式。</p>
+<p>当前防范 XSRF 的一种通用的方法，是对每一个用户都记录一个无法预知的 cookie 数据，
+然后要求所有提交的请求中都必须带有这个 cookie 数据。如果此数据不匹配，那么这个请求就可能是被伪造的。</p>
+<p>Tornado 有内建的 XSRF 的防范机制，要使用此机制，你需要在应用配置中加上 xsrf_cookies 设定：</p>
+<div class="codehilite"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;cookie_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;login_url&quot;</span><span class="p">:</span> <span class="s2">&quot;/login&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xsrf_cookies&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="n">LoginHandler</span><span class="p">),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>如果设置了 xsrf_cookies，那么 Tornado 的 Web 应用将对所有用户设置一个 <code>_xsrf</code> 的 cookie 值，
+如果 POST PUT DELET 请求中没有这个 cookie 值，那么这个请求会被直接拒绝。
+如果你开启了这个机制，那么在所有被提交的表单中，你都需要加上一个域来提供这个值。
+你可以通过在模板中使用专门的函数 <code>xsrf_form_html()</code> 来做到这一点：</p>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;/new_message&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>
+  {{ xsrf_form_html() }}
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;message&quot;</span><span class="p">/&gt;</span>
+  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;Post&quot;</span><span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>如果你提交的是 AJAX 的 POST 请求，你还是需要在每一个请求中通过脚本添加上 <code>_xsrf</code> 这个值。
+下面是在 FriendFeed 中的 AJAX 的 POST 请求，使用了 jQuery 函数来为所有请求组东添加 <code>_xsrf</code> 值：</p>
+<div class="codehilite"><pre><span></span><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="s2">&quot;\\b&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=([^;]*)\\b&quot;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">r</span> <span class="o">?</span> <span class="nx">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">jQuery</span><span class="p">.</span><span class="nx">postJSON</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">_xsrf</span> <span class="o">=</span> <span class="nx">getCookie</span><span class="p">(</span><span class="s2">&quot;_xsrf&quot;</span><span class="p">);</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span><span class="nx">url</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">data</span><span class="o">:</span> <span class="nx">$</span><span class="p">.</span><span class="nx">param</span><span class="p">(</span><span class="nx">args</span><span class="p">),</span> <span class="nx">dataType</span><span class="o">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="nx">type</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">callback</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="nx">response</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">));</span>
+    <span class="p">}});</span>
+<span class="p">};</span>
+</pre></div>
+
+
+<p>对于 PUT 和 DELETE 请求（以及不使用将 form 内容作为参数的 POST 请求）来说，
+你也可以在 HTTP 头中以 X-XSRFToken 这个参数传递 XSRF token。</p>
+<p>如果你需要针对每一个请求处理器定制 XSRF 行为，你可以重写 <code>RequestHandler.check_xsrf_cookie()</code>。
+例如你需要使用一个不支持 cookie 的 API，你可以通过将 <code>check_xsrf_cookie()</code> 函数设空来禁用 XSRF 保护机制。
+然而如果你需要同时支持 cookie 和非 cookie 认证方式，那么只要当前请求是通过 cookie 进行认证的，
+你就应该对其使用 XSRF 保护机制，这一点至关重要。</p>
+<h3 id="_10">静态文件和主动式文件缓存</h3>
+<p>你能通过在应用配置中指定 static_path 选项来提供静态文件服务：</p>
+<div class="codehilite"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;static_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;static&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;cookie_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;login_url&quot;</span><span class="p">:</span> <span class="s2">&quot;/login&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xsrf_cookies&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/login&quot;</span><span class="p">,</span> <span class="n">LoginHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/(apple-touch-icon\.png)&quot;</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">StaticFileHandler</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;static_path&#39;</span><span class="p">])),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>这样配置后，所有以 /static/ 开头的请求，都会直接访问到指定的静态文件目录，
+比如 <code>http://localhost:8888/static/foo.png</code> 会从指定的静态文件目录中访问到 foo.png 这个文件。
+同时 /robots.txt 和 /favicon.ico 也是会自动作为静态文件处理（即使它们不是以 /static/ 开头）。</p>
+<p>在上述配置中，我们使用 StaticFileHandler 特别指定了让 Tornado 从根目录伺服 apple-touch-icon.png 这个文件，
+尽管它的物理位置还是在静态文件目录中。（正则表达式的匹配分组的目的是向 StaticFileHandler 指定所请求的文件名称，
+抓取到的分组会以方法参数的形式传递给处理器。）通过相同的方式，你也可以从站点的更目录伺服 sitemap.xml 文件。
+当然，你也可以通过在 HTML 中使用正确的 <code>&lt;link /&gt;</code> 标签来避免这样的根目录文件伪造行为。</p>
+<p>为了提高性能，在浏览器主动缓存静态文件是个不错的主意。
+这样浏览器就不需要发送不必要的 If-Modified-Since 和 Etag 请求，从而影响页面的渲染速度。
+Tornado 可以通过内建的“静态内容分版(static content versioning)”来直接支持这种功能。</p>
+<p>要使用这个功能，在模板中就不要直接使用静态文件的 URL 地址了，
+你需要在 HTML 中使用 static_url() 这个方法来提供 URL 地址：</p>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>FriendFeed - {{ _(&quot;Home&quot;) }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;{{ static_url(&quot;</span><span class="na">images</span><span class="err">/</span><span class="na">logo</span><span class="err">.</span><span class="na">png</span><span class="err">&quot;)</span> <span class="err">}}&quot;</span><span class="p">/&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>static_url() 函数会将相对地址转成一个类似于 /static/images/logo.png?v=aae54 的 URI，
+v 参数是 logo.png 文件的散列值， Tornado 服务器会把它发给浏览器，
+并以此为依据让浏览器对相关内容做永久缓存。</p>
+<p>由于 v 的值是基于文件的内容计算出来的，如果你更新了文件，或者重启了服务器，
+那么就会得到一个新的 v 值，这样浏览器就会请求服务器以获取新的文件内容。如果文件的内容没有改变，
+浏览器就会一直使用本地缓存的文件，这样可以显著提高页面的渲染速度。</p>
+<p>在生产环境下，你可能会使用 <a href="http://nginx.net/">nginx</a> 这样的更有利于静态文件伺服的服务器，
+你可以将 Tornado 的文件缓存指定到任何静态文件服务器上面，下面是 FriendFeed 使用的 nginx 的相关配置：</p>
+<div class="codehilite"><pre><span></span>location /static/ <span class="o">{</span>
+    root /var/friendfeed/static<span class="p">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nv">$query_string</span><span class="o">)</span> <span class="o">{</span>
+        expires max<span class="p">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+
+<h3 id="_11">本地化</h3>
+<p>不管有没有登陆，当前用户的 locale 设置可以通过两种方式访问到：
+请求处理器的 self.locale 对象、以及模板中的 locale 值。
+Locale 的名称（如 en_US）可以通过 locale.name 这个变量访问到，
+你可以使用 locale.translate 来进行本地化翻译。
+在模板中，有一个全局方法叫 <code>_()</code>，它的作用就是进行本地化的翻译。这个翻译方法有两种使用形式：</p>
+<p><code>_("Translate this string")</code></p>
+<p>它会基于当前 locale 设置直接进行翻译，还有一种是：</p>
+<p><code>_("A person liked this", "%(num)d people liked this", len(people)) % {"num": len(people)}</code></p>
+<p>这种形式会根据第三个参数来决定是使用单数或是复数的翻译。
+上面的例子中，如果 len(people) 是 1 的话，就使用第一种形式的翻译，否则，就使用第二种形式的翻译。</p>
+<p>常用的翻译形式是使用 Python 格式化字符串时的“固定占位符(placeholder)”语法，
+（例如上面的 %(num)d），和普通占位符比起来，固定占位符的优势是使用时没有顺序限制。</p>
+<p>一个本地化翻译的模板例子：</p>
+<div class="codehilite"><pre><span></span><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>FriendFeed - {{ _(&quot;Sign in&quot;) }}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;{{ request.path }}&quot;</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>{{ _(&quot;Username&quot;) }} <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;text&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;username&quot;</span><span class="p">/&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>{{ _(&quot;Password&quot;) }} <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;password&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;password&quot;</span><span class="p">/&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;{{ _(&quot;</span><span class="na">Sign</span> <span class="na">in</span><span class="err">&quot;)</span> <span class="err">}}&quot;</span><span class="p">/&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      {{ xsrf_form_html() }}
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>默认情况下，我们通过 Accept-Language 这个头来判定用户的 locale，如果没有，则取 en_US 这个值。
+如果希望用户手动设置一个 locale 偏好，可以在处理请求的类中复写 get_user_locale 方法：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">BaseHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_current_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_secure_cookie</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_id</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">get_user_by_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_user_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;locale&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="o">.</span><span class="n">prefs</span><span class="p">:</span>
+            <span class="c1"># Use the Accept-Language header</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="o">.</span><span class="n">prefs</span><span class="p">[</span><span class="s2">&quot;locale&quot;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>如果 get_user_locale 返回 None，那么就会再去取 Accept-Language header 的值。</p>
+<p>你可以使用 <code>tornado.locale.load_translations</code> 方法获取应用中的所有已存在的翻译。
+它会找到包含有特定名字的 CSV 文件的目录，如 es_GT.csv fr_CA.csv 这些 csv 文件。
+然后从这些 CSV 文件中读取出所有的与特定语言相关的翻译内容。
+典型的用例里面，我们会在 Tornado 服务器的 main() 方法中调用一次该函数：</p>
+<div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">tornado</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">load_translations</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;translations&quot;</span><span class="p">))</span>
+    <span class="n">start_server</span><span class="p">()</span>
+</pre></div>
+
+
+<p>你可以使用 <code>tornado.locale.get_supported_locales()</code> 方法得到支持的 locale 列表。
+Tornado 会依据用户当前的 locale 设置以及已有的翻译，为用户选择一个最佳匹配的显示语言。
+比如，用户的 locale 是 es_GT 而翻译中只支持了 es，那么 self.locale 就会被设置为 es。
+如果找不到最接近的 locale 匹配，self.locale 就会就会取备用值 es_US。</p>
+<p>查看 <a href="http://github.com/facebook/tornado/blob/master/tornado/locale.py">locale 模块</a> 的代码文档以了解 CSV 文件的格式，以及其它的本地化方法函数。</p>
+<h3 id="ui">UI 模块</h3>
+<p>Tornado 支持一些 UI 模块，它们可以帮你创建标准的，易被重用的应用程序级的 UI 组件。
+这些 UI 模块就跟特殊的函数调用一样，可以用来渲染页面组件，而这些组件可以有自己的 CSS 和 JavaScript。</p>
+<p>例如你正在写一个博客的应用，你希望在首页和单篇文章的页面都显示文章列表，
+你可以创建一个叫做 Entry 的 UI 模块，让他在两个地方分别显示出来。
+首选需要为你的 UI 模块 创建一个 Python 模组文件，就叫 uimodules.py 好了:</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Entry</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">UIModule</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">show_comments</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_string</span><span class="p">(</span>
+            <span class="s2">&quot;module-entry.html&quot;</span><span class="p">,</span> <span class="n">entry</span><span class="o">=</span><span class="n">entry</span><span class="p">,</span> <span class="n">show_comments</span><span class="o">=</span><span class="n">show_comments</span><span class="p">)</span>
+</pre></div>
+
+
+<p>然后通过 ui_modules 配置项告诉 Tornado 在应用当中使用 uimodules.py：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">HomeHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">entries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM entries ORDER BY date DESC&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s2">&quot;home.html&quot;</span><span class="p">,</span> <span class="n">entries</span><span class="o">=</span><span class="n">entries</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">EntryHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry_id</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM entries WHERE id = </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">entry_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="p">:</span> <span class="k">raise</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s2">&quot;entry.html&quot;</span><span class="p">,</span> <span class="n">entry</span><span class="o">=</span><span class="n">entry</span><span class="p">)</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ui_modules&quot;</span><span class="p">:</span> <span class="n">uimodules</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">Application</span><span class="p">([</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">HomeHandler</span><span class="p">),</span>
+    <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/entry/([0-9]+)&quot;</span><span class="p">,</span> <span class="n">EntryHandler</span><span class="p">),</span>
+<span class="p">],</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+
+
+<p>在 home.html 中，你不需要写繁复的 HTML 代码，只要引用 Entry 就可以了：</p>
+<div class="codehilite"><pre><span></span>{% for entry in entries %}
+  {% module Entry(entry) %}
+{% end %}
+</pre></div>
+
+
+<p>在 entry.html 里面，你需要使用 show_comments 参数来引用 Entry 模块，用来显示展开的 Entry 内容：</p>
+<div class="codehilite"><pre><span></span>{% module Entry(entry, show_comments=True) %}
+</pre></div>
+
+
+<p>你可以为 UI 模型配置自己的 CSS 和 JavaScript ，
+只要复写 embedded_css、embedded_javascript、javascipt_files、css_files 就可以了：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Entry</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">UIModule</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">embedded_css</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;.entry { margin-bottom: 1em; }&quot;</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">show_comments</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_string</span><span class="p">(</span>
+            <span class="s2">&quot;module-entry.html&quot;</span><span class="p">,</span> <span class="n">show_comments</span><span class="o">=</span><span class="n">show_comments</span><span class="p">)</span>
+</pre></div>
+
+
+<p>即使一页中有多个相同的 UI 组件，UI 组件的 CSS 和 JavaScript 部分只会被渲染一次。
+CSS 是在页面的 <code>&lt;head&gt;</code> 部分，而 JavaScript 被渲染在页面结尾 <code>&lt;/body&gt;</code> 之前的位置。</p>
+<p>在不需要额外 Python 代码的情况下，模板文件也可以当做 UI 模块直接使用。
+例如前面的例子可以以下面的方式实现，只要把这几行放到 module-entry.html 中就可以了：</p>
+<div class="codehilite"><pre><span></span><span class="p">{{</span> <span class="n">set_resources</span><span class="p">(</span><span class="n">embedded_css</span><span class="o">=</span><span class="s2">&quot;.entry { margin-bottom: 1em; }&quot;</span><span class="p">)</span> <span class="p">}}</span>
+<span class="o">&lt;</span><span class="err">!</span><span class="o">--</span> <span class="n">more</span> <span class="n">template</span> <span class="n">html</span><span class="o">...</span> <span class="o">--&gt;</span>
+</pre></div>
+
+
+<p>这个修改过的模块式模板可以通过下面的方法调用：</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="n">module</span> <span class="n">Template</span><span class="p">(</span><span class="s2">&quot;module-entry.html&quot;</span><span class="p">,</span> <span class="n">show_comments</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+
+
+<p>set_resources 函数只能在 <code>{% module Template(...) %}</code> 调用的模板中访问到。
+和 <code>{% include ... %}</code> 不同，模块式模板使用了和它们的上级模板不同的命名空间
+——它们只能访问到全局模板命名空间和它们自己的关键字参数。</p>
+<h3 id="_12">非阻塞式异步请求</h3>
+<p>当一个处理请求的行为被执行之后，这个请求会自动地结束。
+因为 Tornado 当中使用了 一种非阻塞式的 I/O 模型，
+所以你可以改变这种默认的处理行为——让一个请求一直保持连接状态，而不是马上返回，直到一个主处理行为返回。
+要实现这种处理方式，只需要使用 <code>tornado.web.asynchronous</code> 装饰器就可以了。</p>
+<p>使用了这个装饰器之后，你必须调用 <code>self.finish()</code> 已完成 HTTTP 请求，
+否则用户的浏览器会一直处于等待服务器响应的状态：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="nd">@tornado.web.asynchronous</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Hello, world&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</pre></div>
+
+
+<p>下面是一个使用 Tornado 内置的异步请求 HTTP 客户端去调用 FriendFeed 的 API 的例子：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="nd">@tornado.web.asynchronous</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">http</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">httpclient</span><span class="o">.</span><span class="n">AsyncHTTPClient</span><span class="p">()</span>
+        <span class="n">http</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;http://friendfeed-api.com/v2/feed/bret&quot;</span><span class="p">,</span>
+                   <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">on_response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="p">:</span> <span class="k">raise</span> <span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">escape</span><span class="o">.</span><span class="n">json_decode</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Fetched &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;entries&quot;</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&quot; entries &quot;</span>
+                   <span class="s2">&quot;from the FriendFeed API&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</pre></div>
+
+
+<p>例子中，当 get() 方法返回时，请求处理还没有完成。
+在 HTTP 客户端执行它的回调函数 <code>on_response()</code> 时，从浏览器过来的请求仍然是存在的，
+只有在显式调用了 <code>self.finish()</code> 之后，才会把响应返回到浏览器。</p>
+<p>关于更多异步请求的高级例子，可以参阅 demo 中的 chat 这个例子。
+它是一个使用 <a href="http://en.wikipedia.org/wiki/Push_technology#Long_polling">long polling</a> 方式 的 AJAX 聊天室。
+如果你使用到了 long polling，你可能需要复写 <code>on_connection_close()</code>，
+这样你可以在客户连接关闭以后做相关的清理动作。（请查看该方法的代码文档，以防误用。）</p>
+<h3 id="http">异步 HTTP 客户端</h3>
+<p>Tornado 包含了两种非阻塞式 HTTP 客户端实现：SimpleAsyncHTTPClient 和 CurlAsyncHTTPClient。
+前者是直接基于 IOLoop 实现的，因此无需外部依赖关系。
+后者作为 Curl 客户端，需要安装 libcurl 和 pycurl 后才能正常工作，
+但是对于使用 到 HTTP 规范中一些不常用内容的站点来说，它的兼容性会更好。
+为防止碰到 旧版本中异步界面的 bug，我们建议你安装最近的版本的 libcurl 和 pycurl。</p>
+<p>这些客户端都有它们自己的模组(tornado.simple_httpclient 和 tornado.curl_httpclient)，
+你可以通过 tornado.httpclient 来指定使用哪一种客户端，
+默认情况下使用的是 SimpleAsyncHTTPClient，如果要修改默认值，
+只要在一开始调用 AsyncHTTPClient.configure 方法即可：</p>
+<p><code>AsyncHTTPClient.configure('tornado.curl_httpclient.CurlAsyncHTTPClient')</code></p>
+<h3 id="_13">第三方认证</h3>
+<p>Tornado 的 auth 模块实现了现在很多流行站点的用户认证方式，
+包括 Google/Gmail、Facebook、Twitter、Yahoo 以及 FriendFeed。
+这个模块可以让用户使用这些站点的账户来登陆你自己的应用，然后你就可以在授权的条件下访问原站点的一些服务，
+比如下载用户的地址薄，在 Twitter 上发推等。</p>
+<p>下面的例子使用了 Google 的账户认证，Google 账户的身份被保存到 cookie 当中，以便以后的访问使用：</p>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GoogleHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">,</span> <span class="n">tornado</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">GoogleMixin</span><span class="p">):</span>
+    <span class="nd">@tornado.web.asynchronous</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s2">&quot;openid.mode&quot;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_authenticated_user</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_auth</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">authenticate_redirect</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_on_auth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">authenticate_redirect</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="c1"># Save the user with, e.g., set_secure_cookie()</span>
+</pre></div>
+
+
+<p>请查看 auth 模块的代码文档以了解更多的细节。</p>
+<h3 id="_14">调试模式和自动重载</h3>
+<p>如果你将 debug=True 传递给 Application 构造器，该 app 将以调试模式 运行。
+在调试模式下，模板将不会被缓存，而这个 app 会监视代码文件的修改，
+如果发现修改动作，这个 app 就会被重新加载。在开发过程中，这会大大减少手动重启服务的次数。
+然而有些问题（例如 import 时的语法错误）还是会让服务器下线，目前的 debug 模式还无法避免这些情况。</p>
+<p>调试模式和 HTTPServer 的多进程模式不兼容。
+在调试模式下，你必须将 HTTPServer.start 的参数设为不大于 1 的数字。</p>
+<p>调试模式下的自动重载功能可以通过独立的模块 tornado.autoreload 调用，
+作为测试运行器的一个可选项目，tornado.testing.main 中也有用到它。</p>
+<h2 id="_15">性能</h2>
+<p>一个 Web 应用的性能表现，主要看它的整体架构，而不仅仅是前端的表现。
+和其它的 Python Web 框架相比，Tornado 的速度要快很多。</p>
+<p>我们在一些流行的 Python Web 框架上（<a href="http://www.djangoproject.com/">Django</a>、<a href="http://webpy.org/">web.py</a>、<a href="http://www.cherrypy.org/">CherryPy</a>），针对最简单的 Hello, world 例子作了一个测试。
+对于 Django 和 web.py，我们使用 Apache/mod_wsgi 的方式来带，CherryPy 就让它自己裸跑。
+这也是在生产环境中各框架常用的部署方案。对于我们的 Tornado，
+使用的部署方案为前端使用 <a href="http://nginx.net/">nginx</a> 做反向代理，
+带动 4 个线程模式的 Tornado，这种方案也是我们推荐的在生产环境下的 Tornado 部署方案
+（根据具体的硬件情况，我们推荐一个 CPU 核对应一个 Tornado 伺服实例，我们的负载测试使用的是四核处理器）。</p>
+<p>我们使用 Apache Benchmark (ab)，在另外一台机器上使用了如下指令进行负载测试：</p>
+<blockquote>
+<p>ab -n 100000 -c 25 http://10.0.1.x/</p>
+</blockquote>
+<p>在 AMD Opteron 2.4GHz 的四核机器上，结果如下图所示：</p>
+<p>在我们的测试当中，相较于第二快的服务器，Tornado 在数据上的表现也是它的 4 倍之多。
+即使只用了一个 CPU 核的裸跑模式，Tornado 也有 33% 的优势。</p>
+<p>这个测试不见得非常科学，不过从大体上你可以看出，我们开发 Tornado 时对于性能的注重程度。
+和其他的 Python Web 开发框架相比，它不会为你带来多少延时。</p>
+<h2 id="_16">生产环境下的部署</h2>
+<p>在 FriendFeed 中，我们使用 <a href="http://nginx.net/">nginx</a> 做负载均衡和静态文件伺服。
+我们在多台服务器上，同时部署了多个 Tornado 实例，通常，一个 CPU 内核会对应一个 Tornado 线程。</p>
+<p>因为我们的 Web 服务器是跑在负载均衡服务器（如 nginx）后面的，
+所以需要把 xheaders=True 传到 HTTPServer 的构造器当中去。
+这是为了让 Tornado 使用 X-Real-IP 这样的的 header 信息来获取用户的真实 IP地址，
+如果使用传统的方法，你只能得到这台负载均衡服务器的 IP 地址。</p>
+<p>下面是 nginx 配置文件的一个示例，整体上与我们在 FriendFeed 中使用的差不多。
+它假设 nginx 和 Tornado 是跑在同一台机器上的，四个 Tornado 服务跑在 8000-8003 端口上：</p>
+<div class="codehilite"><pre><span></span><span class="nt">user</span> <span class="nt">nginx</span><span class="o">;</span>
+<span class="nt">worker_processes</span> <span class="nt">1</span><span class="o">;</span>
+
+<span class="nt">error_log</span> <span class="o">/</span><span class="nt">var</span><span class="o">/</span><span class="nt">log</span><span class="o">/</span><span class="nt">nginx</span><span class="o">/</span><span class="nt">error</span><span class="p">.</span><span class="nc">log</span><span class="o">;</span>
+<span class="nt">pid</span> <span class="o">/</span><span class="nt">var</span><span class="o">/</span><span class="nt">run</span><span class="o">/</span><span class="nt">nginx</span><span class="p">.</span><span class="nc">pid</span><span class="o">;</span>
+
+<span class="nt">events</span> <span class="p">{</span>
+    <span class="err">worker_connections</span> <span class="err">1024</span><span class="p">;</span>
+    <span class="err">use</span> <span class="err">epoll</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">http</span> <span class="p">{</span>
+    <span class="err">#</span> <span class="err">Enumerate</span> <span class="err">all</span> <span class="err">the</span> <span class="err">Tornado</span> <span class="err">servers</span> <span class="err">here</span>
+    <span class="err">upstream</span> <span class="err">frontends</span> <span class="err">{</span>
+        <span class="err">server</span> <span class="err">127.0.0.1:8000</span><span class="p">;</span>
+        <span class="err">server</span> <span class="err">127.0.0.1:8001</span><span class="p">;</span>
+        <span class="err">server</span> <span class="err">127.0.0.1:8002</span><span class="p">;</span>
+        <span class="err">server</span> <span class="err">127.0.0.1:8003</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nt">include</span> <span class="o">/</span><span class="nt">etc</span><span class="o">/</span><span class="nt">nginx</span><span class="o">/</span><span class="nt">mime</span><span class="p">.</span><span class="nc">types</span><span class="o">;</span>
+    <span class="nt">default_type</span> <span class="nt">application</span><span class="o">/</span><span class="nt">octet-stream</span><span class="o">;</span>
+
+    <span class="nt">access_log</span> <span class="o">/</span><span class="nt">var</span><span class="o">/</span><span class="nt">log</span><span class="o">/</span><span class="nt">nginx</span><span class="o">/</span><span class="nt">access</span><span class="p">.</span><span class="nc">log</span><span class="o">;</span>
+
+    <span class="nt">keepalive_timeout</span> <span class="nt">65</span><span class="o">;</span>
+    <span class="nt">proxy_read_timeout</span> <span class="nt">200</span><span class="o">;</span>
+    <span class="nt">sendfile</span> <span class="nt">on</span><span class="o">;</span>
+    <span class="nt">tcp_nopush</span> <span class="nt">on</span><span class="o">;</span>
+    <span class="nt">tcp_nodelay</span> <span class="nt">on</span><span class="o">;</span>
+    <span class="nt">gzip</span> <span class="nt">on</span><span class="o">;</span>
+    <span class="nt">gzip_min_length</span> <span class="nt">1000</span><span class="o">;</span>
+    <span class="nt">gzip_proxied</span> <span class="nt">any</span><span class="o">;</span>
+    <span class="nt">gzip_types</span> <span class="nt">text</span><span class="o">/</span><span class="nt">plain</span> <span class="nt">text</span><span class="o">/</span><span class="nt">html</span> <span class="nt">text</span><span class="o">/</span><span class="nt">css</span> <span class="nt">text</span><span class="o">/</span><span class="nt">xml</span>
+               <span class="nt">application</span><span class="o">/</span><span class="nt">x-javascript</span> <span class="nt">application</span><span class="o">/</span><span class="nt">xml</span>
+               <span class="nt">application</span><span class="o">/</span><span class="nt">atom</span><span class="o">+</span><span class="nt">xml</span> <span class="nt">text</span><span class="o">/</span><span class="nt">javascript</span><span class="o">;</span>
+
+    <span class="err">#</span> <span class="nt">Only</span> <span class="nt">retry</span> <span class="nt">if</span> <span class="nt">there</span> <span class="nt">was</span> <span class="nt">a</span> <span class="nt">communication</span> <span class="nt">error</span><span class="o">,</span> <span class="nt">not</span> <span class="nt">a</span> <span class="nt">timeout</span>
+    <span class="err">#</span> <span class="nt">on</span> <span class="nt">the</span> <span class="nt">Tornado</span> <span class="nt">server</span> <span class="o">(</span><span class="nt">to</span> <span class="nt">avoid</span> <span class="nt">propagating</span> <span class="s2">&quot;queries of death&quot;</span>
+    <span class="err">#</span> <span class="nt">to</span> <span class="nt">all</span> <span class="nt">frontends</span><span class="o">)</span>
+    <span class="nt">proxy_next_upstream</span> <span class="nt">error</span><span class="o">;</span>
+
+    <span class="nt">server</span> <span class="p">{</span>
+        <span class="err">listen</span> <span class="err">80</span><span class="p">;</span>
+
+        <span class="err">#</span> <span class="err">Allow</span> <span class="err">file</span> <span class="err">uploads</span>
+        <span class="err">client_max_body_size</span> <span class="err">50M</span><span class="p">;</span>
+
+        <span class="err">location</span> <span class="err">^~</span> <span class="err">/static/</span> <span class="err">{</span>
+            <span class="err">root</span> <span class="err">/var/www</span><span class="p">;</span>
+            <span class="err">if</span> <span class="err">($query_string)</span> <span class="err">{</span>
+                <span class="err">expires</span> <span class="err">max</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="err">}</span>
+        <span class="nt">location</span> <span class="o">=</span> <span class="o">/</span><span class="nt">favicon</span><span class="p">.</span><span class="nc">ico</span> <span class="p">{</span>
+            <span class="err">rewrite</span> <span class="err">(.*)</span> <span class="err">/static/favicon.ico</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nt">location</span> <span class="o">=</span> <span class="o">/</span><span class="nt">robots</span><span class="p">.</span><span class="nc">txt</span> <span class="p">{</span>
+            <span class="err">rewrite</span> <span class="err">(.*)</span> <span class="err">/static/robots.txt</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nt">location</span> <span class="o">/</span> <span class="p">{</span>
+            <span class="err">proxy_pass_header</span> <span class="err">Server</span><span class="p">;</span>
+            <span class="err">proxy_set_header</span> <span class="err">Host</span> <span class="err">$http_host</span><span class="p">;</span>
+            <span class="err">proxy_redirect</span> <span class="err">false</span><span class="p">;</span>
+            <span class="err">proxy_set_header</span> <span class="err">X-Real-IP</span> <span class="err">$remote_addr</span><span class="p">;</span>
+            <span class="err">proxy_set_header</span> <span class="err">X-Scheme</span> <span class="err">$scheme</span><span class="p">;</span>
+            <span class="err">proxy_pass</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">frontends</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="err">}</span>
+<span class="err">}</span>
+</pre></div>
+
+
+<h2 id="wsgi-google-appengine">WSGI 和 Google AppEngine</h2>
+<p>Tornado 对 <a href="http://wsgi.org/">WSGI</a> 只提供了有限的支持，即使如此，
+因为 WSGI 并不支持非阻塞式的请求，所以如果你使用 WSGI 代替 Tornado 自己的 HTTP 服务的话，
+那么你将无法使用 Tornado 的异步非阻塞式的请求处理方式。
+比如 @tornado.web.asynchronous、httpclient 模块、auth 模块，这些将都无法使用。</p>
+<p>你可以通过 wsgi 模块中的 WSGIApplication 创建一个有效的 WSGI 应用（区别于我们用过的 tornado.web.Application）。
+下面的例子展示了使用内置的 WSGI CGIHandler 来创建一个有效的 <a href="http://code.google.com/appengine/">Google AppEngine</a> 应用。</p>
+<div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">tornado.web</span>
+<span class="kn">import</span> <span class="nn">tornado.wsgi</span>
+<span class="kn">import</span> <span class="nn">wsgiref.handlers</span>
+
+<span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">tornado</span><span class="o">.</span><span class="n">web</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Hello, world&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">application</span> <span class="o">=</span> <span class="n">tornado</span><span class="o">.</span><span class="n">wsgi</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([</span>
+        <span class="p">(</span><span class="sa">r</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">MainHandler</span><span class="p">),</span>
+    <span class="p">])</span>
+    <span class="n">wsgiref</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">CGIHandler</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+</pre></div>
+
+
+<p>请查看 demo 中的 appengine 范例，它是一个基于 Tornado 的完整的 AppEngine 应用。</p>
+<h2 id="_17">注意事项和社区支持</h2>
+<p>因为 FriendFeed 以及其他 Tornado 的主要用户在使用时都是基于 nginx或者 Apache 代理之后的。
+所以现在 Tornado 的 HTTP 服务部分并不完整，它无法处理多行的 header 信息，
+同时对于一些非标准的输入也无能为力。</p>
+<p>你可以在 <a href="http://groups.google.com/group/python-tornado">Tornado 开发者邮件列表</a> 中讨论和提交 bug。</p>
+<p>Tornado 是 <a href="http://developers.facebook.com/opensource/">Facebook开源技术</a>之一，
+基于<a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache Licence, Version 2.0</a> 发布。
+本站及其所有文档以 <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0</a> 发布。
+该中文文档的大部分翻译工作由 <a href="http://zys-free.com/">邹业盛</a> 完成，后期的增修和编排由 <a href="http://ducktypist.com/">gastlygem</a> 完成。 译文版权归原作者和译者所有。
+<a href="http://sebug.net/appdir/">漏洞目录</a>
+<a href="http://ssv.sebug.net/">@sebug</a></p>
+<h2 id="reference">Reference</h2>
+<ul>
+<li><a href="http://www.tornadoweb.org/en/stable/">Tornado Documents</a></li>
+<li><a href="http://tornado-zh.readthedocs.io/zh/latest/">Tornado 中文文档</a></li>
+<li><a href="http://old.sebug.net/paper/books/tornado/">Tornado Web 服务器概览 - tornado教程</a></li>
+</ul>
+            </body>
+            </html>
+            
