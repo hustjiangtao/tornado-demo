@@ -30,6 +30,7 @@ from app.handlers.mm import mm_explore
 from app.handlers.mm import mm_stats
 from app.handlers.doc import doc
 from app.handlers.doc import doc_index
+from app.handlers.doc import doc_cms
 
 from app.settings import SETTINGS
 
@@ -83,6 +84,7 @@ __MM_URL_HANDLERS = [
 
 
 __DOC_URL_HANDLERS = [
+    url(r"/cms/doc/(\d+)", doc_cms.DocCMSHandler, name="doc_cms"),
     url(r"/doc/index", doc_index.DocIndexHandler, name="doc_index"),
     url(r"/doc/(\d+)", doc.DocHandler, name="doc_detail"),
 ]
