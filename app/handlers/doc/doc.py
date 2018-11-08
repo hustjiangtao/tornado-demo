@@ -93,7 +93,7 @@ class DocHandler(BaseHandler):
         if item:
             item = {
                 "title": item.get('title') or '',
-                "author": item.get('title') or '',
+                "author": item.get('author') or '',
                 "category": item.get('category') or '',
                 "tags": item.get('tags') or '',
                 "content": convert_md(item.get('content') or ''),

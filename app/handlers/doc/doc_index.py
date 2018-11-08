@@ -17,7 +17,7 @@ class DocIndexHandler(BaseHandler):
 
     """doc handler"""
 
-    @do_temp_cache(3600, with_user=False)
+    # @do_temp_cache(3600, with_user=False)
     def get(self):
         """doc index page"""
         offset = self.get_query_argument('offset', None) or 0
@@ -30,7 +30,7 @@ class DocIndexHandler(BaseHandler):
         items_dict = defaultdict(list)
         if docs:
             for x in docs:
-                x['author'] = user_name_dict.get(x.get('author'))
+                x['author'] = user_name_dict.get(x.get('author')) or '无名达人'
                 items_dict[x.get('category')].append(x)
             result = dict(sorted(items_dict.items(), key=lambda x: x[0]))
         else:

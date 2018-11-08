@@ -16,48 +16,22 @@ from app.lib.system_code import PARAMS_MISS
 from app.scripts.convert_md.convert_md import convert_md
 
 
-class DocCMSHandler(BaseHandler):
+class DocCMSEditHandler(BaseHandler):
 
-    """doc cms handler"""
+    """doc cms edit handler"""
 
     @authenticated
     def post(self):
         """doc add api"""
-        title = self.get_body_argument('title', None)
-        category = self.get_body_argument('category', None)
-        tags = self.get_body_argument('tags', None)
-        content = self.get_body_argument('content', None)
-
-        code = SUCCESS
-        data = None
-
-        if not all([title, category, content]):
-            code = PARAMS_MISS
-        else:
-            if tags:
-                tags = tags.strip()
-            add_item = {
-                "title": title,
-                "category": category,
-                "tags": tags,
-                "content": content,
-            }
-            result = doc_db.add_doc(item=add_item)
-            if result:
-                data = {
-                    "id": result,
-                }
-
-        self.render_json(code=code, data=data)
+        pass
 
     @authenticated
     def delete(self):
         pass
 
-    @authenticated
-    def put(self):
+    # @authenticated
+    def put(self, _id):
         """demo update api"""
-        _id = self.get_body_argument('id', None)
         title = self.get_body_argument('title', None)
         category = self.get_body_argument('category', None)
         tags = self.get_body_argument('tags', None)
@@ -92,6 +66,7 @@ class DocCMSHandler(BaseHandler):
         item = doc_db.get_doc_by_id(_id=_id)
         if item:
             item = {
+                "id": _id,
                 "title": item.get('title') or '',
                 "author": item.get('title') or '',
                 "category": item.get('category') or '',
@@ -109,4 +84,4 @@ class DocCMSHandler(BaseHandler):
 
     # @authenticated
     def options(self):
-        self.write('POST,PUT,GET')
+        self.write('PUT,GET')

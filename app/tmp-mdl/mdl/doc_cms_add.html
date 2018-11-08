@@ -90,8 +90,6 @@
     </style>
   </head>
   <body>
-    {% set post = data.get('item') %}
-    {% set content = post.get('content') %}
     <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
       <header class="demo-header mdl-layout__header mdl-layout__header--scroll mdl-color--grey-100 mdl-color-text--grey-800">
         <div class="mdl-layout__header-row">
@@ -118,12 +116,12 @@
 {#            </div>#}
 
 {#            {% set post = data.get('item') %}#}
-            <div><h5>标题: </h5><input type="text" name="title" value="{{ post.get('title') }}" title="title" class="text_input" required></div>
-            <div><h5>分类: </h5><input type="text" name="category" value="{{ post.get('category') }}" title="category" class="text_input"></div>
-            <div><h5>标签: </h5><input type="text" name="tag" value="{{ post.get('tag') }}" title="tag" class="text_input"></div>
+            <div><h5>标题: </h5><input type="text" id="title" value="" title="title" class="text_input" required></div>
+            <div><h5>分类: </h5><input type="text" id="category" value="" title="category" class="text_input"></div>
+            <div><h5>标签: </h5><input type="text" id="tag" value="" title="tag" class="text_input"></div>
             <div><h5>正文: </h5><br></div>
             <div id="editor">
-              <textarea :value="input" @input="update" id="content" required>{{ post.get('content') }}</textarea>
+              <textarea :value="input" @input="update" id="content" required></textarea>
               <div v-html="compiledMarkdown"></div>
             </div>
             <div><input type="button" value="保存" id="post_edit_save"></div>
@@ -145,7 +143,7 @@
 {#    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>#}
     <script src="https://cdn.staticfile.org/material-design-lite/1.3.0/material.min.js"></script>
 {#    <script src="{{ static_url('mdl/google/material.min.js') }}"></script>#}
-{#    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>#}
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/vue/2.5.17/vue.min.js"></script>
     <script src="https://cdn.staticfile.org/marked/0.3.6/marked.min.js"></script>
     <script src="https://cdn.staticfile.org/lodash.js/4.16.0/lodash.min.js"></script>
@@ -168,20 +166,35 @@
       })
     </script>
     <script>
-      window.onload = function (){
-        axios.post('/register', data)
-            .then(function (response) {
-                if (response.data.code === 200) {
-                    window.location.href = '/posts'
-                }
-                else {
-                    alert(response.data.message)
+      $(document).ready(function () {
+        $('#post_edit_save').click(function () {
+          let data = {
+                "title": $('#title').val(),
+                "category": $('#category').val(),
+                "tag": $('#tag').val(),
+                "content": $('#content').val(),
+            };
+            $.ajax({
+                url: "{{ reverse_url('doc_cms_add') }}",
+                type: "POST",
+                async: true,
+                timeout: 5000,
+                data: data,
+                dataType: "json",
+                error: function () {
+
+                },
+                success: function (data, status) {
+                    let code = data.code;
+                    if (code !== 200) {
+                        $(event.target).closest('.bounce_box').find('.load_btn span').html(data.message);
+                    } else {
+                        window.location.reload();
+                    }
                 }
             })
-            .catch(function (error) {
-                console.log(error);
-            });
-      }
+        })
+      })
 
     </script>
   </body>
