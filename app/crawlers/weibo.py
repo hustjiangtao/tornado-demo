@@ -26,7 +26,7 @@ def crawl(url):
     tree = lt.fetch(url)
     news_list = tree.css('#pl_top_realtimehot > table > tbody > tr')
     result = []
-    for news in news_list[:3]:
+    for news in news_list:
         news_id = news.css('td.td-01.ranktop::text').extract_first()
         if not news_id:
             continue
@@ -38,9 +38,12 @@ def crawl(url):
         news_count = news.css('td.td-02 > span::text').extract_first()
         # get first detail of this news
         detail_tree = lt.fetch(domain+news_url, headers=headers)
-        detail = detail_tree.css('#pl_feedlist_index > div > div[action-type=feed_list_item]:nth-child(1) [node-type=feed_list_content] ::text').extract()
-        if not detail:
-            detail = detail_tree.css('#pl_feedlist_index > div > div[action-type=feed_list_item]:nth-child(2) [node-type=feed_list_content] ::text').extract()
+        # detail = detail_tree.css('#pl_feedlist_index > div > div[action-type=feed_list_item]:nth-child(1) [node-type=feed_list_content] ::text').extract()
+        detail = None
+        n = 1
+        while not detail:
+            detail = detail_tree.css(f'#pl_feedlist_index > div > div[action-type=feed_list_item]:nth-child({n}) [node-type=feed_list_content] ::text').extract()
+            n += 1
         news_detail = ''.join(detail).strip() if detail else ''
         # print(news_id, news_url, news_content, news_count, news_detail)
         result.append((news_id, domain+news_url, news_content, news_count, news_detail))
@@ -48,14 +51,28 @@ def crawl(url):
     return result
 
 
+def word_filter(data):
+    """filter word"""
+    if not data:
+        return ''
+
+    words = ['#']
+    for w in words:
+        data = data.replace(w, f'\\{w}')
+
+    return data
+
+
 def format_to_html(data):
     """format to html"""
     if not data:
         return None
     head = f'## 微博实时热搜榜 {date.today()}\n\n'
-    items = '<hr>\n\n'.join([f'- {id} {count} [{content}]({url}) \n\n\t{detail}\n' for id, url, content, count, detail in data])
+    items = '<hr>\n\n'.join([f'- {id} {count} [{word_filter(content)}]({url}) \n\n\t{word_filter(detail)}\n' for id, url, content, count, detail in data])
     foot = '\n'
     module = head + items + foot
+    # with open('weibo.md', 'wb') as f:
+    #     f.write(bytes(module, encoding='utf-8'))
     module = convert_md(''.join(module))
 
     return module
