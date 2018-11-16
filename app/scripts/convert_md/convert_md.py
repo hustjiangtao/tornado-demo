@@ -52,12 +52,14 @@ class ConvertMarkdown:
 
     def get_full_html(self, body):
         """get full html"""
+        # static_url_prefix = 'http://demo.hujiangtao.cn/static/mdl/css/doc/'
+        static_url_prefix = ''
         html = f'''
             <html lang="zh-cn">
             <head>
             <meta content="text/html; charset=utf-8" http-equiv="content-type" />
-            <link href="default.css" rel="stylesheet">
-            <link href="github.css" rel="stylesheet">
+            <link href="{static_url_prefix}default.css" rel="stylesheet">
+            <link href="{static_url_prefix}github.css" rel="stylesheet">
             </head>
             <body>
             {body}
@@ -97,6 +99,12 @@ class ConvertMarkdown:
         # html = md.convert(text)
         return html
 
+    def convert_full_html(self, text):
+        """convert md text to full html with md extensions"""
+        html = markdown.markdown(text, extensions=self.exts)
+        html = self.get_full_html(html)
+        return html
+
     def run(self):
         """run in order"""
         list(map(self.convert_local_file, self.get_files()))
@@ -118,8 +126,9 @@ class ConvertMarkdown:
 
 
 convert_md = ConvertMarkdown().convert_md
+convert_full_html = ConvertMarkdown().convert_full_html
 
-__all__ = (ConvertMarkdown, convert_md)
+__all__ = (ConvertMarkdown, convert_md, convert_full_html)
 
 
 def main():
