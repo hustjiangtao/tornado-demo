@@ -17,6 +17,8 @@ lxml = "*"
 pymysql = "*"
 looter = "*"
 markdown = "*"
+imgkit = "*"
+rsa = "*"
 
 [dev-packages]
 "fabric3" = "*"
