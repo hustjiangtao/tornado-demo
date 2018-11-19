@@ -6,16 +6,15 @@
 
 import os
 import logging
-import requests
 import traceback
 import json
 import time
 import re
-import looter as lt
 import urllib.parse
 import urllib.request as urllib2
-
 from datetime import date
+import looter as lt
+import requests
 
 from app.lib.mail import send_msg_by_email
 from app.scripts.convert_md import convert_md, convert_full_html
@@ -122,34 +121,36 @@ def send_msg(msg, attach_file=None):
     return send_msg_by_email(mail_to=mail_to, msg=msg, to_name=to_name, subject=subject, attach_file=attach_file)
 
 
-class Weibo:
+class BaseWeibo:
 
-    """weibo handler"""
+    """base handler for weibo"""
 
-    __WEIBO_CODE = {
-        "100000": 'post_success',
-    }
     __COOKIE_FILE = 'cookiejar.dat'
 
     def __init__(self):
-        self.__uid = None
-        self.__login()
-        self.__opener = self.get_opener()
-        self.send_http_request = self.__send_http_request
-        pass
+        self.login()
+        self.__opener = self.__get_opener()
 
-    def __check_cookiejar(self, cookie_file):
-        """check if the cookiejar expired or not"""
-        MAX_EPS=86400  # 24 hours
+    @staticmethod
+    def __check_cookiejar(cookie_file):
+        """
+        check if the cookiejar expired or not
+        :param cookie_file: path to cookie file
+        :return: bool
+        """
+        max_expires = 86400  # 24 hours
         if os.path.exists(cookie_file):
             modtime = os.stat(cookie_file).st_mtime
-            if time.time() - modtime < MAX_EPS:
+            if time.time() - modtime < max_expires:
                 return True
 
         return None
 
-    def get_opener(self):
-        """get urllib opener"""
+    def __get_opener(self):
+        """
+        get urllib opener
+        :return: obj of urllib2 opener
+        """
         import http.cookiejar as cookielib
 
         cookie_file = self.__COOKIE_FILE
@@ -168,9 +169,21 @@ class Weibo:
 
     @staticmethod
     def __build_url_request(url, data):
+        """
+        build a url request
+        :param url: url
+        :param data: data
+        :return: obj of urllib2 request
+        """
         return urllib2.Request(url, urllib.parse.urlencode(data).encode("utf-8"))
 
-    def __send_http_request(self, url, data):
+    def send_http_request(self, url, data):
+        """
+        send http request for url with data
+        :param url: url to request
+        :param data: data
+        :return: response content if success else None
+        """
         req = self.__build_url_request(url, data)
         # print(req.get_full_url())
         try:
@@ -183,7 +196,7 @@ class Weibo:
 
         return result
 
-    def __login(self):
+    def login(self):
         """登录，cookie有过期时间(1d)"""
         import rsa
         import binascii
@@ -195,33 +208,33 @@ class Weibo:
             return
 
         def pre_login():
-            pre_login_url='http://login.sina.com.cn/sso/prelogin.php?entry=weibo&callback=sinaSSOController.preloginCallBack&su=MTUyNTUxMjY3OTY%3D&rsakt=mod&checkpin=1&client=ssologin.js%28v1.4.18%29&_=1458836718537'
-            pre_response=requests.get(pre_login_url).text
-            pre_content_regex=r'\((.*?)\)'
-            patten=re.search(pre_content_regex, pre_response)
-            nonce=None
-            pubkey=None
-            servertime=None
-            rsakv=None
+            pre_login_url = 'http://login.sina.com.cn/sso/prelogin.php?entry=weibo&callback=sinaSSOController.preloginCallBack&su=MTUyNTUxMjY3OTY%3D&rsakt=mod&checkpin=1&client=ssologin.js%28v1.4.18%29&_=1458836718537'
+            pre_response = requests.get(pre_login_url).text
+            pre_content_regex = r'\((.*?)\)'
+            patten = re.search(pre_content_regex, pre_response)
+            nonce = None
+            pubkey = None
+            servertime = None
+            rsakv = None
             if patten.groups():
-                pre_content=patten.group(1)
-                pre_result=json.loads(pre_content)
-                nonce=pre_result.get("nonce")
-                pubkey=pre_result.get('pubkey')
-                servertime=pre_result.get('servertime')
-                rsakv=pre_result.get("rsakv")
+                pre_content = patten.group(1)
+                pre_result = json.loads(pre_content)
+                nonce = pre_result.get("nonce")
+                pubkey = pre_result.get('pubkey')
+                servertime = pre_result.get('servertime')
+                rsakv = pre_result.get("rsakv")
             return nonce, pubkey, servertime, rsakv
 
         def generate_form_data(nonce, pubkey, servertime, rsakv, username, password):
-            rsa_public_key=int(pubkey, 16)
-            key=rsa.PublicKey(rsa_public_key, 65537)
-            message=str(servertime) + '\t' + str(nonce) + '\n' + str(password)
-            passwd=rsa.encrypt(bytes(message, encoding='utf-8'), key)
-            passwd=binascii.b2a_hex(passwd)
-            username=urllib2.quote(username)
-            username=base64.encodestring(bytes(username, encoding='utf-8'))
-            form_data={'entry': 'weibo', 'gateway': '1', 'from': '', 'savestate': '7', 'useticket': '1', 'pagerefer': 'http://weibo.com/p/1005052679342531/home?from=page_100505&mod=TAB&pids=plc_main', 'vsnf': '1', 'su': username, 'service': 'miniblog', 'servertime': servertime, 'nonce': nonce, 'pwencode': 'rsa2', 'rsakv': rsakv, 'sp': passwd, 'sr': '1366*768', 'encoding': 'UTF-8', 'prelt': '115', 'url': 'http://weibo.com/ajaxlogin.php?framelogin=1&callback=parent.sinaSSOController.feedBackUrlCallBack', 'returntype': 'META'}
-            form_data=urllib.parse.urlencode(form_data)
+            rsa_public_key = int(pubkey, 16)
+            key = rsa.PublicKey(rsa_public_key, 65537)
+            message = str(servertime) + '\t' + str(nonce) + '\n' + str(password)
+            passwd = rsa.encrypt(bytes(message.encode('utf-8')), key)
+            passwd = binascii.b2a_hex(passwd)
+            username = urllib2.quote(username)
+            username = base64.encodebytes(username.encode('utf-8'))
+            form_data = {'entry': 'weibo', 'gateway': '1', 'from': '', 'savestate': '7', 'useticket': '1', 'pagerefer': 'http://weibo.com/p/1005052679342531/home?from=page_100505&mod=TAB&pids=plc_main', 'vsnf': '1', 'su': username, 'service': 'miniblog', 'servertime': servertime, 'nonce': nonce, 'pwencode': 'rsa2', 'rsakv': rsakv, 'sp': passwd, 'sr': '1366*768', 'encoding': 'UTF-8', 'prelt': '115', 'url': 'http://weibo.com/ajaxlogin.php?framelogin=1&callback=parent.sinaSSOController.feedBackUrlCallBack', 'returntype': 'META'}
+            form_data = urllib.parse.urlencode(form_data)
             form_data = bytes(form_data, encoding='utf-8')
             return form_data
 
@@ -244,6 +257,19 @@ class Weibo:
         cookie.save(cookie_file, ignore_discard=True, ignore_expires=True)
 
         return
+
+
+class Weibo(BaseWeibo):
+
+    """weibo handler"""
+
+    __WEIBO_CODE = {
+        "100000": 'post_success',
+    }
+
+    def __init__(self):
+        super(Weibo, self).__init__()
+        self.__uid = None
 
     @staticmethod
     def get_at_list():
@@ -268,7 +294,7 @@ class Weibo:
             if pid:
                 post_data['pic_id'] = pid
 
-        res_result = self.__send_http_request(url=post_url, data=post_data)
+        res_result = self.send_http_request(url=post_url, data=post_data)
         if res_result:
             result = json.loads(res_result)
             result_msg = self.__WEIBO_CODE.get(result.get('code')) or result.get('msg')
@@ -283,16 +309,12 @@ class Weibo:
         return '【' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())) + '】'
 
 
-class WeiboImage:
+class WeiboImage(BaseWeibo):
 
     """weibo image handler
     1. upload image to weibo: return weibo pid or image url.
     2. get weibo image url by pid: return full image url.
     """
-
-    def __init__(self):
-        weibo = Weibo()
-        self.__send_http_request = weibo.send_http_request
 
     def upload_image_to_weibo(self, image_path):
         """
@@ -307,13 +329,13 @@ class WeiboImage:
         data = {
             'b64_data': b,
         }
-        res_result = self.__send_http_request(url=image_url, data=data)
+        res_result = self.send_http_request(url=image_url, data=data)
         if res_result:
             html = res_result.decode().strip().strip('\n')
             image_result = re.sub(r"<meta.*</script>", "", html, flags=re.S)
             image_result = json.loads(image_result)
             pid = image_result.get('data').get('pics').get('pic_1').get('pid')
-            logging.info('got image, id=%s' % pid)
+            logging.info('got image, id=%s', pid)
         else:
             pid = None
         # return 'http://ww3.sinaimg.cn/large/%s'%image_id
@@ -330,7 +352,7 @@ if __name__ == '__main__':
     tasklist = [realtimehot]
     # tasklist = ['https://s.weibo.com/top/summary?cate=realtimehot']
     result = [crawl(task) for task in tasklist]
-    logging.info('got %s news.' % len(*result))
+    logging.info('got %s news.', len(*result))
     format_result = format_to_html(*result)
     # logging.info(format_result)
     # send_msg(msg=format_result, attach_file=[{"filename": 'out.jpg', "body": open('out.jpg', 'rb').read()}])
