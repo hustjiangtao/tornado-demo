@@ -135,6 +135,7 @@ class Weibo:
         self.__uid = None
         self.__login()
         self.__opener = self.get_opener()
+        self.send_http_request = self.__send_http_request
         pass
 
     def __check_cookiejar(self, cookie_file):
@@ -262,7 +263,7 @@ class Weibo:
         }
 
         if image_path:
-            pid = self.upload_image_to_weibo(image_path)
+            pid = WeiboImage().upload_image_to_weibo(image_path)
             # pid = '69405af6gy1fx8x9ebqbgj20t42eaha8'
             if pid:
                 post_data['pic_id'] = pid
@@ -281,11 +282,23 @@ class Weibo:
     def __cur_str_date():
         return '【' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())) + '】'
 
+
+class WeiboImage:
+
+    """weibo image handler
+    1. upload image to weibo: return weibo pid or image url.
+    2. get weibo image url by pid: return full image url.
+    """
+
+    def __init__(self):
+        weibo = Weibo()
+        self.__send_http_request = weibo.send_http_request
+
     def upload_image_to_weibo(self, image_path):
         """
-        get weibo image source id
+        upload image to weibo and get weibo image source pid
         :param image_path:
-        :return: weibo imgage id or image url
+        :return: weibo imgage pid or image url
         """
         import base64
 
@@ -299,12 +312,17 @@ class Weibo:
             html = res_result.decode().strip().strip('\n')
             image_result = re.sub(r"<meta.*</script>", "", html, flags=re.S)
             image_result = json.loads(image_result)
-            image_id = image_result.get('data').get('pics').get('pic_1').get('pid')
-            logging.info('got image, id=%s' % image_id)
+            pid = image_result.get('data').get('pics').get('pic_1').get('pid')
+            logging.info('got image, id=%s' % pid)
         else:
-            image_id = None
+            pid = None
         # return 'http://ww3.sinaimg.cn/large/%s'%image_id
-        return image_id
+        return pid
+
+    @staticmethod
+    def get_weibo_image_url(pid):
+        """get full size weibo image url by pid"""
+        return f'http://ww3.sinaimg.cn/large/{pid}'
 
 
 if __name__ == '__main__':
