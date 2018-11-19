@@ -308,6 +308,122 @@ class Weibo(BaseWeibo):
     def __cur_str_date():
         return '【' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())) + '】'
 
+    def get_user_profile(self, uid):
+        """
+        get user profile by uid
+        :param uid: weibo uid
+        :return: dict, user profile dict
+        """
+        target_url = 'https://api.weibo.cn/2/users/show?from=108B193010&c=iphone&networktype=wifi&lang=zh_CN&ua=iPhone10,3__weibo__8.11.1__iphone__os12.0.1&has_profile=1&has_extend=1&s=9748eccc&gsid=_2A2529S_dDeRxGedJ7VcZ8ivOzDyIHXVToyQVrDV6PUJbkdAKLUjckWpNUcmEdWR1iIQFm4t3K0fGH0GH8Cn8o4cz'
+        data = {
+            "uid": uid
+        }
+        res_result = self.send_http_request(url=target_url, data=data)
+        if res_result:
+            result = json.loads(res_result)
+            logging.info(result)
+            result_msg = 'get profile complete, uid=%s'
+        else:
+            result = {}
+            result_msg = 'get profile failed, uid=%s'
+        logging.info(result_msg, uid)
+
+        return result
+
+    def get_user_fans(self, uid):
+        """
+        get user fans by uid
+        :param uid: weibo uid
+        :return: list, user fans dict list
+        """
+        # target_url = 'https://m.weibo.cn/api/container/getIndex?containerid=231051_-_fans_-_1650804694&since_id=2'
+        target_url = 'https://m.weibo.cn/api/container/getIndex'
+        # fans api page start since_id=0
+        page = 0
+        fans = []
+        running = True
+        while running:
+            data = {
+                "containerid": f'231051_-_fans_-_{uid}',
+                "since_id": page,
+            }
+            res_result = self.send_http_request(url=target_url, data=data)
+            if res_result:
+                result = json.loads(res_result)
+                # logging.info(result)
+                if result.get('ok') == 1 and result.get('data'):
+                    for card in result['data']['cards']:
+                        # card style=1 is not target card
+                        if card.get('card_style') == 1:
+                            continue
+                        if card.get('card_group'):
+                            for group in card.get('card_group'):
+                                # fans card type
+                                if group['card_type'] == 10:
+                                    fans.append(group['user'])
+                                    # logging.info('%s %s', group['user']['screen_name'], group['user']['id'])
+                    logging.info(len(fans))
+                else:
+                    # stop running if no more result
+                    running = False
+                result_msg = 'get fans page=%s complete, uid=%s'
+            else:
+                result = {}
+                result_msg = 'get fans page=%s failed, uid=%s'
+            logging.info(result_msg, page, uid)
+            # next page
+            page += 1
+        logging.info('get fans total %s', len(fans))
+
+        return result
+
+    def get_user_followers(self, uid):
+        """
+        get user followers by uid
+        :param uid: weibo uid
+        :return: list, user follower dict list
+        """
+        # target_url = 'https://m.weibo.cn/api/container/getIndex?containerid=231051_-_fans_-_1650804694&since_id=2'
+        target_url = 'https://m.weibo.cn/api/container/getIndex'
+        # follower api page start page=1
+        page = 1
+        followers = []
+        running = True
+        while running:
+            data = {
+                "containerid": f'231051_-_followers_-_{uid}',
+                "page": page,
+            }
+            res_result = self.send_http_request(url=target_url, data=data)
+            if res_result:
+                result = json.loads(res_result)
+                # logging.info(result)
+                if result.get('ok') == 1 and result.get('data'):
+                    for card in result['data']['cards']:
+                        # card style=1 is not target card
+                        if card.get('card_style') == 1:
+                            continue
+                        if card.get('card_group'):
+                            for group in card.get('card_group'):
+                                # followers card type
+                                if group['card_type'] == 10:
+                                    followers.append(group['user'])
+                                    logging.info('%s %s', group['user']['screen_name'], group['user']['id'])
+                    logging.info(len(followers))
+                else:
+                    # stop running if no more result
+                    running = False
+                result_msg = 'get follower page=%s complete, uid=%s'
+            else:
+                result = {}
+                result_msg = 'get follower page=%s failed, uid=%s'
+            logging.info(result_msg, page, uid)
+            # next page
+            page += 1
+        logging.info('get followers total %s', len(followers))
+
+        return result
+
 
 class WeiboImage(BaseWeibo):
 
@@ -366,3 +482,6 @@ if __name__ == '__main__':
     # weibo.add_post(format_to_md(*result))
     # weibo.add_post(f'微博实时热搜榜 {date.today()}')
     weibo.add_post(text=f'微博实时热搜榜{weibo.get_at_list()}', image_path='out.jpg')
+    weibo.get_user_profile(1765825270)
+    weibo.get_user_fans(1765825270)
+    weibo.get_user_followers(1765825270)
