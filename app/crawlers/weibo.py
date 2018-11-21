@@ -19,6 +19,8 @@ import requests
 from app.lib.mail import send_msg_by_email
 from app.scripts.convert_md import convert_md, convert_full_html
 
+from app.config import WEIBO
+
 
 domain = 'https://s.weibo.com'
 base_top_url = f'{domain}/top/summary?cate='
@@ -245,8 +247,10 @@ class BaseWeibo:
         opener = urllib2.build_opener(handler)
         opener.addheaders.append(headers)
         nonce, pubkey, servertime, rsakv = pre_login()
-        username = input("username:")
-        password = input("password:")
+        # username = input("username:")
+        # password = input("password:")
+        username = WEIBO.get('account')
+        password = WEIBO.get('pass')
         req = opener.open(url, generate_form_data(nonce, pubkey, servertime, rsakv, username, password))
         redirect_result = req.read()
         login_pattern = r'location.replace\(\\\'(.*?)\\\'\)'
@@ -269,7 +273,7 @@ class Weibo(BaseWeibo):
 
     def __init__(self):
         super(Weibo, self).__init__()
-        self.__uid = None
+        self.__uid = WEIBO.get('uid')
 
     @staticmethod
     def get_at_list():
@@ -374,6 +378,7 @@ class Weibo(BaseWeibo):
             # next page
             page += 1
         logging.info('get fans total %s', len(fans))
+        result = fans
 
         return result
 
@@ -421,6 +426,7 @@ class Weibo(BaseWeibo):
             # next page
             page += 1
         logging.info('get followers total %s', len(followers))
+        result = followers
 
         return result
 
