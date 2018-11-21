@@ -19,6 +19,7 @@ looter = "*"
 markdown = "*"
 imgkit = "*"
 rsa = "*"
+python-dotenv = "*"
 
 [dev-packages]
 "fabric3" = "*"
