@@ -4,11 +4,8 @@
 """Base model settings"""
 
 
-import os
 import json
 from datetime import datetime
-
-import yaml
 
 from sqlalchemy import create_engine
 from sqlalchemy import Column
@@ -83,14 +80,9 @@ class MetaModel:
 
 
 class Engine:
-    db_conf_dir = os.path.join(os.path.dirname(__file__), '../../conf', 'db.yaml')
-    with open(db_conf_dir, encoding='utf-8') as f:
-        db_conf = yaml.safe_load(f)
+    from app.config import SQL
 
-    # path = db_conf.get('sqlite').get('path')
-    # sql = db_conf.get('sqlite')
-    sql = db_conf.get('mysql')
-    # engine = create_engine('sqlite:///{path}'.format(path=path), encoding='utf8', echo=False)
+    sql = SQL.get('mysql')
     engine = create_engine(f'{sql}', encoding='utf8', echo=False)
 
 
