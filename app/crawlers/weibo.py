@@ -12,7 +12,7 @@ import time
 import re
 import urllib.parse
 import urllib.request as urllib2
-from datetime import date
+from datetime import date, datetime
 import looter as lt
 import requests
 
@@ -35,7 +35,7 @@ def crawl(url):
     tree = lt.fetch(url)
     news_list = tree.css('#pl_top_realtimehot > table > tbody > tr')
     result = []
-    for news in news_list[:20]:
+    for news in news_list[:21]:
         news_id = news.css('td.td-01.ranktop::text').extract_first()
         if not news_id:
             continue
@@ -78,6 +78,7 @@ def format_to_md(data):
         return None
     head = f'## 微博实时热搜榜 {date.today()}\n\n'
     items = '<hr>\n\n'.join([f'- {id} {count} [{word_filter(content)}]({url}) \n\n\t{word_filter(detail)}\n' for id, url, content, count, detail in data])
+    # items = '\n\n'.join([f'- {id} {count} [{word_filter(content)}]({url})' for id, url, content, count, detail in data])
     foot = '\n'
     module = head + items + foot
     # with open('weibo.md', 'wb') as f:
@@ -469,8 +470,7 @@ class WeiboImage(BaseWeibo):
         return f'http://ww3.sinaimg.cn/large/{pid}'
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+def main():
     tasklist = [realtimehot]
     # tasklist = ['https://s.weibo.com/top/summary?cate=realtimehot']
     result = [crawl(task) for task in tasklist]
@@ -487,7 +487,25 @@ if __name__ == '__main__':
     weibo = Weibo()
     # weibo.add_post(format_to_md(*result))
     # weibo.add_post(f'微博实时热搜榜 {date.today()}')
-    weibo.add_post(text=f'微博实时热搜榜{weibo.get_at_list()}', image_path='out.jpg')
-    weibo.get_user_profile(1765825270)
-    weibo.get_user_fans(1765825270)
-    weibo.get_user_followers(1765825270)
+    weibo.add_post(text=f'微博实时热搜榜[doge][doge][doge]', image_path='out.jpg')
+    # weibo.add_post(text=f'微博实时热搜榜{weibo.get_at_list()}', image_path='out.jpg')
+    # weibo.get_user_profile(1765825270)
+    # weibo.get_user_fans(1765825270)
+    # weibo.get_user_followers(1765825270)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    is_running = True
+    while is_running:
+        try:
+            logging.info('weibo start @%s', datetime.now())
+            main()
+        except KeyboardInterrupt as e:
+            logging.info("KeyboardInterrupt")
+            is_running = False
+        except Exception as e:
+            logging.warning(traceback.format_exc())
+        finally:
+            logging.info('weibo stop @%s', datetime.now())
+            time.sleep(60*10)
