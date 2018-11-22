@@ -61,7 +61,7 @@ def send_msg_by_email(mail_to, msg, to_name=None, subject=None, attach_file=None
 
     try:
         # smtpObj = smtplib.SMTP('localhost')  # 本地发送
-        smtpObj = smtplib.SMTP()
+        smtpObj = smtplib.SMTP_SSL()
         smtpObj.connect(host=mail_host, port=mail_port)  # 连接第三方服务器
         smtpObj.login(user=mail_user, password=mail_pass)
         try:
