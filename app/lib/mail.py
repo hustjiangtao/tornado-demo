@@ -7,6 +7,8 @@
 import re
 import base64
 import smtplib
+import logging
+import traceback
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -16,23 +18,26 @@ from email.utils import formataddr
 
 from tornado import gen
 
+from app.config import MAIL
 
-@gen.coroutine
+
+logging.basicConfig(level=logging.INFO)
+
+
 def send_msg_by_email(mail_to, msg, to_name=None, subject=None, attach_file=None):
-    """send mail"""
+    """send mail sync"""
     if not mail_to:
-        raise gen.Return(False)
+        return False
 
-    # 发送邮箱
-    sender = '****@gmail.com'
-    mail_pass = '****'
-
-    # 第三方
-    mail_host = 'smtp.gamil.com'  # 邮箱服务器
-    mail_user = sender  # 用户名
-    mail_pass = mail_pass  # 密码
+    # 第三方服务器配置
+    mail_host = MAIL.get('server')  # 邮箱服务器
+    mail_port = MAIL.get('port')  # 邮箱服务器
+    mail_user = MAIL.get('username')  # 用户名
+    mail_pass = MAIL.get('password')  # 密码
     if not mail_pass:
         mail_pass = input('密码：')  # 手动输入密码
+    # 发送邮箱
+    sender = mail_user
 
     if not msg:
         msg = '你好'  # 消息内容
@@ -57,7 +62,7 @@ def send_msg_by_email(mail_to, msg, to_name=None, subject=None, attach_file=None
     try:
         # smtpObj = smtplib.SMTP('localhost')  # 本地发送
         smtpObj = smtplib.SMTP()
-        smtpObj.connect(host=mail_host, port=25)  # 连接第三方服务器
+        smtpObj.connect(host=mail_host, port=mail_port)  # 连接第三方服务器
         smtpObj.login(user=mail_user, password=mail_pass)
         try:
             smtpObj.sendmail(sender, mail_to, message.as_string())
@@ -72,6 +77,13 @@ def send_msg_by_email(mail_to, msg, to_name=None, subject=None, attach_file=None
         result = True
     except smtplib.SMTPException:
         result = False
+        logging.info(traceback.format_exc())
 
+    return result
+
+
+@gen.coroutine
+def send_msg_by_email_async(mail_to, msg, to_name=None, subject=None, attach_file=None):
+    """send mail async"""
+    result = send_msg_by_email(mail_to, msg, to_name, subject, attach_file)
     raise gen.Return(result)
-    # return result
