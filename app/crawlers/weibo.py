@@ -256,7 +256,7 @@ class BaseWeibo:
         password = WEIBO.get('pass')
         req = opener.open(url, generate_form_data(nonce, pubkey, servertime, rsakv, username, password))
         redirect_result = req.read()
-        login_pattern = r'location.replace\(\\\'(.*?)\\\'\)'
+        login_pattern = r'location.replace\(\\?[\'\"](.*?)\\?[\'\"]\)'
         # print(redirect_result)
         login_url = re.search(login_pattern, str(redirect_result)).group(1)
         # print(login_url)
