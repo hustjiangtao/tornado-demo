@@ -52,8 +52,8 @@ class ConvertMarkdown:
 
     def get_full_html(self, body):
         """get full html"""
-        # static_url_prefix = 'http://demo.hujiangtao.cn/static/mdl/css/doc/'
-        static_url_prefix = ''
+        static_url_prefix = 'http://demo.hujiangtao.cn/static/mdl/css/doc/'
+        # static_url_prefix = ''
         html = f'''
             <html lang="zh-cn">
             <head>
