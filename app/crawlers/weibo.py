@@ -19,6 +19,7 @@ import requests
 from app.lib.mail import send_msg_by_email
 from app.scripts.convert_md import convert_md, convert_full_html
 
+from app.config import BASE_DIR
 from app.config import WEIBO
 
 
@@ -29,6 +30,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
     'Referer': f'{domain}'  # 必须设定referer，否则会被重定向
 }
+out_jpg_path = os.path.join(BASE_DIR, 'crawlers/out.jpg')
 
 
 def crawl(url):
@@ -105,7 +107,7 @@ def convert_html_to_image(html):
     options = {
         "encoding": 'UTF-8',
     }
-    imgkit.from_string(html, 'out.jpg', options=options)
+    imgkit.from_string(html, out_jpg_path, options=options)
 
 
 def convert_url_to_image(url):
@@ -128,7 +130,7 @@ class BaseWeibo:
 
     """base handler for weibo"""
 
-    __COOKIE_FILE = 'cookiejar.dat'
+    __COOKIE_FILE = os.path.join(BASE_DIR, 'crawlers/cookiejar.dat')
 
     def __init__(self):
         self.login()
@@ -477,7 +479,7 @@ def main():
     logging.info('got %s news.', len(*result))
     format_result = format_to_html(*result)
     # logging.info(format_result)
-    # send_msg(msg=format_result, attach_file=[{"filename": 'out.jpg', "body": open('out.jpg', 'rb').read()}])
+    # send_msg(msg=format_result, attach_file=[{"filename": 'out.jpg', "body": open(out_jpg_path, 'rb').read()}])
 
     # convert to image
     convert_html_to_image(html=format_result)
@@ -487,8 +489,8 @@ def main():
     weibo = Weibo()
     # weibo.add_post(format_to_md(*result))
     # weibo.add_post(f'微博实时热搜榜 {date.today()}')
-    weibo.add_post(text=f'微博实时热搜榜[doge][doge][doge]', image_path='out.jpg')
-    # weibo.add_post(text=f'微博实时热搜榜{weibo.get_at_list()}', image_path='out.jpg')
+    weibo.add_post(text=f'微博实时热搜榜[doge][doge][doge]', image_path=out_jpg_path)
+    # weibo.add_post(text=f'微博实时热搜榜{weibo.get_at_list()}', image_path=out_jpg_path)
     # weibo.get_user_profile(1765825270)
     # weibo.get_user_fans(1765825270)
     # weibo.get_user_followers(1765825270)

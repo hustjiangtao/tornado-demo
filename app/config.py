@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 basedir = os.path.abspath(os.path.dirname(__file__))
 load_dotenv(os.path.join(basedir, '../', '.env'))
 
+# base
+BASE_DIR = basedir
+
 # sql
 SQL = {
     "mysql": os.environ.get('SQLALCHEMY_DATABASE_URI_MYSQL'),
@@ -35,6 +38,7 @@ WEIBO = {
 
 
 __all__ = (
+    BASE_DIR,
     SQL,
     MAIL,
     WEIBO,
