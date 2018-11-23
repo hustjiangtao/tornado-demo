@@ -173,23 +173,30 @@ class BaseWeibo:
         return opener
 
     @staticmethod
-    def __build_url_request(url, data):
+    def __build_url_request(url, data, headers):
         """
         build a url request
         :param url: url
         :param data: data
+        :param headers: headers
         :return: obj of urllib2 request
         """
-        return urllib2.Request(url, urllib.parse.urlencode(data).encode("utf-8"))
+        return urllib2.Request(url, data, headers)
 
-    def send_http_request(self, url, data):
+    def send_http_request(self, url, data, headers=None):
         """
         send http request for url with data
         :param url: url to request
         :param data: data
         :return: response content if success else None
         """
-        req = self.__build_url_request(url, data)
+        # ensure params data urlencode
+        if isinstance(data, (dict, list, tuple)):
+            data = urllib.parse.urlencode(data).encode("utf-8")
+        # ensure headers default dict
+        if not headers:
+            headers = {}
+        req = self.__build_url_request(url, data, headers)
         # print(req.get_full_url())
         try:
             resp = self.__opener.open(req)
@@ -433,6 +440,77 @@ class Weibo(BaseWeibo):
 
         return result
 
+    def upload(self, image_path):
+        return UploadImg().upload_jpeg_image(image_path=image_path, uid=self.__uid)
+
+
+class UploadImg(BaseWeibo):
+
+    """upload img to weibo directly with image file"""
+
+    VIEW_URL = "http://ww2.sinaimg.cn/mw1024/%s.jpg"
+    APIURL = 'http://picupload.service.weibo.com/interface/pic_upload.php?app=miniblog&data=1'
+    MAXPICNUM = 9
+    MAXSIZE = 20971520
+
+    @staticmethod
+    def __get_upload_url(uid=None, nick=None):
+        import random
+        params = {
+            "url": f'weibo.com/u/{uid}' if uid else 0,
+            "markpos": 1,
+            "logo": 1,
+            "nick": nick if nick else 0,
+            "marks": 1,
+            "mime": 'image/jpeg',
+            "ct": random.random(),
+        }
+        return UploadImg.APIURL + "&" + urllib.parse.urlencode(params)
+
+    @staticmethod
+    def __get_upload_headers(data):
+        headers = {
+            "Content-type": "application/octet-stream",
+            "Referer": "http://js.t.sinajs.cn/t6/home/static/swf/MultiFilesUpload.swf?version=1c4459ee3b69aae4",
+            "X-Requested-With": "ShockwaveFlash/17.0.0.188",
+            "Accept-Encoding": "gzip, deflate",
+            "Connection": "keep-alive",
+            "Content-Length": len(data),
+            "Host": 'picupload.service.weibo.com'
+        }
+        return headers
+
+    def upload_jpeg_image(self, image_path, uid=None, nick=None):
+        logging.info("upload image...")
+
+        f = open(image_path, 'rb')
+        data = f.read()
+        f.close()
+        if len(data) > UploadImg.MAXSIZE:
+            logging.info("image size to large!")
+            return None
+
+        headers = self.__get_upload_headers(data)
+        image_url = self.__get_upload_url(uid=uid, nick=nick)
+
+        html = self.send_http_request(url=image_url, data=data, headers=headers)
+        # logging.info(html)
+        matches = re.search('.*"code":"(.*?)".*"pid":"(.*?)"', str(html))
+        if matches.group(1) == "A00006":
+            logging.info("upload success!")
+            pid = matches.group(2)
+            logging.info("image id : " + pid)
+            return pid
+        else:
+            logging.error("post fail!")
+            logging.error(html)
+            return None
+
+    @staticmethod
+    def get_weibo_image_url(pid):
+        """get full size weibo image url by pid"""
+        return UploadImg.VIEW_URL % pid
+
 
 class WeiboImage(BaseWeibo):
 
@@ -494,6 +572,7 @@ def main():
     # weibo.get_user_profile(1765825270)
     # weibo.get_user_fans(1765825270)
     # weibo.get_user_followers(1765825270)
+    # logging.info(UploadImg.get_weibo_image_url(weibo.upload()))
 
 
 if __name__ == '__main__':
