@@ -199,7 +199,7 @@ class BaseWeibo:
         req = self.__build_url_request(url, data, headers)
         # print(req.get_full_url())
         try:
-            resp = self.__opener.open(req)
+            resp = self.__opener.open(req, timeout=30)
             result = resp.read()
             # logging.info(result)
         except Exception as e:
