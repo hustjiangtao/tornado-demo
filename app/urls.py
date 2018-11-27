@@ -4,9 +4,13 @@
 """url handlers for web server"""
 
 
+import os
+
 from tornado.web import RedirectHandler
 from tornado.web import url
 from tornado.web import StaticFileHandler
+
+from app.config import basedir
 
 from app.handlers.test import TestHandler
 from app.handlers.health import HealthHandler
@@ -32,6 +36,7 @@ from app.handlers.doc import doc
 from app.handlers.doc import doc_index
 from app.handlers.doc import doc_cms_add
 from app.handlers.doc import doc_cms_edit
+from app.handlers.mv import mv_index
 
 from app.settings import SETTINGS
 
@@ -91,6 +96,12 @@ __DOC_URL_HANDLERS = [
     url(r"/doc/(\d+)", doc.DocHandler, name="doc_detail"),
 ]
 
+__MV_STATIC_PATH = os.path.join(basedir, 'tmp-mdl', 'mv')
+__MV_URL_HANDLERS = [
+    url(r"/mv/index", mv_index.MvIndexHandler, name="mv_index"),
+    url(r"/mv/(.*)", StaticFileHandler, dict(path=__MV_STATIC_PATH), name='mv_static'),  # mv static files
+]
+
 
 URL_HANDLERS.extend(__BASE_URL_HANDLERS)
 URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
@@ -98,3 +109,4 @@ URL_HANDLERS.extend(__BSP_URL_HANDLERS)
 URL_HANDLERS.extend(__BSP_STATS_API_HANDLERS)
 URL_HANDLERS.extend(__MM_URL_HANDLERS)
 URL_HANDLERS.extend(__DOC_URL_HANDLERS)
+URL_HANDLERS.extend(__MV_URL_HANDLERS)
