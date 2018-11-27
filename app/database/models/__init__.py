@@ -18,6 +18,8 @@ from app.database.models.bookmark import BookmarkStats as BookmarkStatsModel
 from app.database.models.mm import Mm as MmModel
 from app.database.models.mm import MmStats as MmStatsModel
 from app.database.models.doc import Doc as DocModel
+from app.database.models.mv import Mv as MvModel
+from app.database.models.mv import MvStats as MvStatsModel
 
 __all__ = (
     'DemoModel',
@@ -29,6 +31,8 @@ __all__ = (
     'MmModel',
     'MmStatsModel',
     'DocModel',
+    'MvModel',
+    'MvStatsModel',
 )
 
 

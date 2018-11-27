@@ -10,7 +10,7 @@ from app.handlers.base_handler import BaseHandler
 from app.lib.do_cache import do_temp_cache
 
 from app.database.user import user_db
-from app.database.doc import doc_db
+from app.database.mv import mv_db
 
 
 class MvIndexHandler(BaseHandler):
@@ -23,18 +23,16 @@ class MvIndexHandler(BaseHandler):
         offset = self.get_query_argument('offset', None) or 0
         limit = self.get_query_argument('limit', None) or 100
 
-        # docs = doc_db.get_sorted_docs_by_read(offset=offset, limit=limit)
-        # user_ids = {x.get('author') for x in docs}
-        # users = user_db.get_users_by_ids(ids=user_ids)
-        # user_name_dict = {x.get('id'): x.get('name') for x in users}
-        # items_dict = defaultdict(list)
-        # if docs:
-        #     for x in docs:
-        #         x['author'] = user_name_dict.get(x.get('author')) or '无名达人'
-        #         items_dict[x.get('category')].append(x)
-        #     result = dict(sorted(items_dict.items(), key=lambda x: x[0]))
-        # else:
-        #     result = {}
+        mvs = mv_db.get_sorted_mvs_by_rate(offset=offset, limit=limit)
+        user_ids = {x.get('creator') for x in mvs}
+        users = user_db.get_users_by_ids(ids=user_ids)
+        user_name_dict = {x.get('id'): x.get('name') for x in users}
+        if mvs:
+            for x in mvs:
+                x['creator'] = user_name_dict.get(x.get('creator')) or '无名达人'
+        # print(mvs)
+        mv_list = list(map(self.__get_mv_obj, mvs))
+        # print(mv_list)
 
         result = {
             # banner count = 5, (1 large, 4 small)
@@ -283,3 +281,60 @@ class MvIndexHandler(BaseHandler):
 
     def options(self):
         self.write('GET')
+
+    @classmethod
+    def __get_mv_obj(cls, obj):
+        """
+        get mv display obj
+        :param obj: dict, mv obj
+        :return: dict
+        """
+        if not all([obj, isinstance(obj, dict)]):
+            return {}
+
+        result = {
+            "vid_data": {
+                "create_time": cls.__convert_datetime_to_approximate_form(obj.get('create_time')),
+                "source_ori": obj.get('source'),
+                "view_count": obj.get('click'),
+            },
+            "vid_detail": {
+                "thumb_sm": obj.get('cover_url'),
+                "thumb_lg": obj.get('cover_url'),
+                "title": obj.get('name'),
+                "detail_url": obj.get('url'),
+                "play_url": 'video-detail.html',
+            },
+            "vid_author": {
+                "name": obj.get('creator'),
+            },
+        }
+        return result
+
+    @staticmethod
+    def __convert_datetime_to_approximate_form(date_time):
+        """
+        get display time
+        :param date_time: datetime
+        :return: str
+        """
+        from datetime import datetime
+
+        if not isinstance(date_time, datetime):
+            return None
+
+        time_delta = datetime.now() - date_time
+
+        if time_delta.days > 28:
+            return datetime.strftime(datetime.now(), "%Y-%m-%d")
+
+        if time_delta.days > 1:
+            return u"%d天前" % time_delta.days
+
+        if time_delta.seconds >= 3600:
+            return u"%d小时前" % (time_delta.seconds / 3600)
+
+        if time_delta.seconds >= 60:
+            return u"%d分钟前" % (time_delta.seconds / 60)
+
+        return u"%d秒前" % time_delta.seconds
