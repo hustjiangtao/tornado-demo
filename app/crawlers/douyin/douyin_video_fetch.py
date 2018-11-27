@@ -10,6 +10,8 @@ import logging
 import requests
 from collections import OrderedDict
 
+from app.crawlers.douyin.fetch_douyin_to_sql import fetch_handler
+
 
 # 需要爬取的用户信息(用户ID:(标签，版区，昵称))
 USER_INFO = {
@@ -110,8 +112,54 @@ def get_all_user_videos():
                     video_duration=video.get('duration')
                     video_desc = aweme.get('desc')
                     video_timestamp=aweme.get('create_time')
+                    video_width=video.get('play_addr').get('width')
+                    video_height=video.get('play_addr').get('height')
                     # print 'get video+++', video_id, video_url, video_image_url, video_timestamp
-                    get_video_details_and_save(uid, video_id, video_url, video_image_url, video_timestamp, video_duration, video_desc)
+
+                    # download video
+                    video_content = None
+                    try:
+                        response=requests.get(url=video_url, headers=HEADERS)
+                        if response.status_code!=200:
+                            continue
+                        video_content = response.content
+                    except Exception as e:
+                        logging.error(traceback.format_exc())
+                    if not video_content:
+                        continue
+                    video_view_url = fetch_handler.save_video_to_target_path(name=video_desc, content=video_content)
+                    if not video_view_url:
+                        continue
+
+                    # download cover image
+                    img_content = None
+                    try:
+                        response=requests.get(url=video_image_url, headers=HEADERS)
+                        if response.status_code!=200:
+                            continue
+                        img_content = response.content
+                    except Exception as e:
+                        logging.error(traceback.format_exc())
+                    if not img_content:
+                        continue
+                    cover_image_url = fetch_handler.save_image_to_target_path(name=video_desc, content=img_content)
+
+                    video_info_dict = {
+                        "name": video_desc,
+                        "url": video_view_url,
+                        "ori_url": video_url,
+                        "cover_url": cover_image_url,
+                        "info": video_desc,
+                        "source": 'douyin',
+                        "duration": video_duration,
+                        "size": len(content),
+                        "width": video_width,
+                        "height": video_height,
+                    }
+                    result = fetch_handler.save_video_to_sql(video=video_info_dict)
+                    if result:
+                        logging.info('save video to sql complete...id=%s', result)
+                    # get_video_details_and_save(uid, video_id, video_url, video_image_url, video_timestamp, video_duration, video_desc)
             has_more = content.get("has_more", 0)
             max_cursor = content.get("max_cursor", 0)
 
