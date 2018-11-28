@@ -10,49 +10,41 @@ from app.crawlers.spider_world.www_douyin_com import douyin_crawl
 class FetchHandler:
 
     @classmethod
-    def save_image_to_target_path(cls, name, content):
-        import os
+    def save_file_and_get_file_url(cls, file_content, file_type, file_extension=None):
+        """
+        save file and get static url for image or video
+        :param file_type: file type, eg: img, video
+        :return: str, file url without prefix
+        """
+        from pathlib import Path
         from datetime import date
-        from app.config import basedir
+        from app.config import STATIC_DIR
+
+        file_extensions = {
+            "img": 'jpg',
+            "video": 'mp4',
+        }
 
         today = date.today()
-        static_dir = os.path.join(basedir, 'tmp-mdl')
-        file_dir_subfix = f'/mv/imgs/{today.year}/{today.month}/{today.day}'
+        static_dir = Path(STATIC_DIR.get('base'))
+        file_prefix = f'mv/{file_type}/{today.year}/{today.month}/{today.day}/'
 
-        file_dir = os.path.join(static_dir, file_dir_subfix)
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
+        if not (static_dir / file_prefix).exists():
+            (static_dir / file_prefix).mkdir(parents=True)
 
-        name = cls.get_random_string(16)
-        file_path = f'{file_dir}/{name}.jpg'
-        with open(file_path, 'wb') as f:
-            f.write(content)
+        file_url = file_prefix + cls.get_random_string(16) + '.' + (file_extension or file_extensions.get(file_type))
+        with (static_dir / file_url).open('wb') as f:
+            f.write(file_content)
 
-        file_url = f'{file_dir_subfix}/{name}.jpg'
-        return file_url
+        return f'/{file_url}'
+
+    @classmethod
+    def save_image_to_target_path(cls, name, content):
+        return cls.save_file_and_get_file_url(file_content=content, file_type='img')
 
     @classmethod
     def save_video_to_target_path(cls, name, content):
-        import os
-        from datetime import date
-        from app.config import basedir
-
-        today = date.today()
-        static_dir = os.path.join(basedir, 'tmp-mdl')
-        file_dir_subfix = f'mv/video/{today.year}/{today.month}/{today.day}'
-
-        file_dir = os.path.join(static_dir, file_dir_subfix)
-        if not os.path.exists(file_dir):
-            os.makedirs(file_dir)
-
-        name = cls.get_random_string(16)
-        file_path = f'{file_dir}/{name}.mp4'
-        print(file_path)
-        with open(file_path, 'wb') as f:
-            f.write(content)
-
-        file_url = f'/{file_dir_subfix}/{name}.mp4'
-        return file_url
+        return cls.save_file_and_get_file_url(file_content=content, file_type='video')
 
     def save_video_to_sql(self, video):
         from app.database.mv import mv_db

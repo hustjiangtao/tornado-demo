@@ -14,6 +14,12 @@ load_dotenv(os.path.join(basedir, '../', '.env'))
 # base
 BASE_DIR = basedir
 
+# static
+STATIC_DIR = {
+    "base": os.environ.get('STATIC_DIR'),
+    "mv": os.environ.get('STATIC_DIR') + '/mv',
+}
+
 # sql
 SQL = {
     "mysql": os.environ.get('SQLALCHEMY_DATABASE_URI_MYSQL'),
@@ -39,6 +45,7 @@ WEIBO = {
 
 __all__ = (
     BASE_DIR,
+    STATIC_DIR,
     SQL,
     MAIL,
     WEIBO,

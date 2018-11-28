@@ -10,7 +10,7 @@ from tornado.web import RedirectHandler
 from tornado.web import url
 from tornado.web import StaticFileHandler
 
-from app.config import basedir
+from app.config import basedir, STATIC_DIR
 
 from app.handlers.test import TestHandler
 from app.handlers.health import HealthHandler
@@ -99,7 +99,8 @@ __DOC_URL_HANDLERS = [
 __MV_STATIC_PATH = os.path.join(basedir, 'tmp-mdl', 'mv')
 __MV_URL_HANDLERS = [
     url(r"/mv/index", mv_index.MvIndexHandler, name="mv_index"),
-    url(r"/mv/(.*)", StaticFileHandler, dict(path=__MV_STATIC_PATH), name='mv_static'),  # mv static files
+    # url(r"/mv/(.*)", StaticFileHandler, dict(path=__MV_STATIC_PATH), name='mv_static'),  # mv static files
+    url(r"/mv/(.*)", StaticFileHandler, dict(path=STATIC_DIR.get('mv')), name='mv_static_ext'),  # mv static files ext
 ]
 
 

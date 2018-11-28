@@ -124,7 +124,7 @@ class MvIndexHandler(BaseHandler):
                 },
             ],
             # lasted count = 9
-            "lasted_list": [
+            "lasted_list": mv_list or [
                 {
                     "vid_data": {
                         "create_time": 'A Months ago',
