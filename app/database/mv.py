@@ -141,7 +141,10 @@ class MvDB(BaseDB):
         mv = self.fetch_first(query)
         if mv:
             # result = mv.to_dict(include=query_params)
-            result = mv.to_dict()
+            # result = mv.to_dict()
+            # result.update(mv.sum_stats)
+            # 合并统计数据
+            result = {**mv.to_dict(), **mv.sum_stats}
         else:
             result = {}
 
@@ -162,7 +165,7 @@ class MvDB(BaseDB):
         mvs = self.fetch_all(query, offset=offset, limit=limit)
         if mvs:
             # result = [x.to_dict(include=query_params) for x in mms]
-            result = [x.to_dict() for x in mvs]
+            result = [{**x.to_dict(), **x.sum_stats} for x in mvs]
         else:
             result = []
 
@@ -185,7 +188,7 @@ class MvDB(BaseDB):
         mvs = self.fetch_all(query, offset=offset, limit=limit)
         if mvs:
             # result = [x.to_dict(include=query_params) for x in mvs]
-            result = [x.to_dict() for x in mvs]
+            result = [{**x.to_dict(), **x.sum_stats} for x in mvs]
         else:
             result = []
 
@@ -204,7 +207,7 @@ class MvDB(BaseDB):
         mvs = self.fetch_all(query, offset=offset, limit=limit)
         if mvs:
             # result = [x.to_dict(include=query_params) for x in mvs]
-            result = [x.to_dict() for x in mvs]
+            result = [{**x.to_dict(), **x.sum_stats} for x in mvs]
         else:
             result = []
 
