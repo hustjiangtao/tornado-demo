@@ -4,9 +4,6 @@
 """fetch douyin video to sql & display on mv"""
 
 
-from app.crawlers.spider_world.www_douyin_com import douyin_crawl
-
-
 class FetchHandler:
 
     @classmethod
