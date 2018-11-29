@@ -168,263 +168,142 @@
         </div>
         <!-- Main Navigation -->
 
-        <!-- Main Section -->
-        <div id="main-section">
+        <!-- Inner page Bar -->
+        <div id="page-bar">
             <div class="container">
-                <div class="row overflow-hidden">
-
-                    {% set banner_list = result.get('banner_list')[:5] %}
-                    {% for idx, vid in enumerate(banner_list) %}
-                    {% set vid_data = vid.get('vid_data') %}
-                    {% set vid_detail = vid.get('vid_detail') %}
-                    {% set vid_author = vid.get('vid_author') %}
-                    <div class="col-md-{{ 3 * (2 if not idx else 1) }} col-sm-{{ 6 * (2 if not idx else 1) }} md-grid">
-                        <div class="vid-img-holder wow pulse" data-wow-duration="{{ 1 * (1 if not idx else 0.5) }}s" {% if idx>1 %}data-wow-delay="{{ 0.1 * (idx-1) }}s"{% end %}>
-                            <div class="top-shadow">
-                                <span>{{ vid_data.get('create_time') }}</span>
-                                <span>From <a href="#"><i class="fa fa-youtube-play"></i></a> </span>
-                                <span><i class="fa fa-eye"></i>{{ vid_data.get('view_count') }}</span>
-                            </div>
-                            <a href="{{ vid_detail.get('detail_url') }}">
-                                <img class="img-responsive hidden-sm hidden-xs" src="{{ vid_detail.get('thumb_sm') }}" alt="video_thumb">
-                                <img class="img-responsive hidden-md hidden-lg" src="{{ vid_detail.get('thumb_lg') }}" alt="video_thumb">
-                                <span class="play-icon">
-                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                </span>
-                            </a>
-                            <h3 class="vid-author">
-                                <span>
-                                    By <a href="#" title="Posts by admin" rel="author">{{ vid_author.get('name') }}</a>
-                                </span>
-                                <a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a>
-                            </h3>
-                            <div class="bottom-shadow"></div>
-                            <div class="overlay-div"></div>
+                <div class="row">
+                    <div class="col-md-9 col-sm-8 col-xs-12">
+                        <div class="page-title">
+                            <h1 class="text-uppercase">Video Detail</h1>
                         </div>
                     </div>
-                    {% end %}
-
+                    <div class="col-md-3 col-sm-4 col-xs-12 text-right">
+                        <ul class="breadcrumb">
+                            <li>
+                                <a href="index.html"><i class="fi ion-ios-home"></i>Home</a>
+                            </li>
+                            <li class="active">Video Detail</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Main Section -->
+        <!-- Inner page Bar -->
 
         <!-- Secondary Section -->
-        <div id="secondary-section">
+        <div id="video-detail">
             <div class="container">
                 <div class="row">
                     <div class="col-md-9 col-sm-8">
-                        <div class="latst-vid secondary-vid">
-                            <div class="vid-heading overflow-hidden">
-                                <span class="wow fadeInUp" data-wow-duration="0.8s">Latest albums</span>
-                                <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
-                            </div>
-                            <div class="row auto-clear">
-                                <div class="vid-container">
-
-                                    {% set vid_list = result.get('lasted_list')[:9] %}
-                                    {% for idx, vid in enumerate(vid_list) %}
-                                    {% set vid_data = vid.get('vid_data') %}
-                                    {% set vid_detail = vid.get('vid_detail') %}
-                                    {% set vid_author = vid.get('vid_author') %}
-                                    <div class="col-md-4 col-sm-6">
-                                        <div class="latest-vid-img-container">
-                                            <div class="vid-img">
-                                                <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="video image">
-                                                <a href="{{ vid_detail.get('detail_url') }}" class="play-icon play-small-icon">
-                                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                                </a>
-                                                <div class="overlay-div"></div>
-                                            </div>
-                                            <div class="vid-text">
-                                                <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
-                                                <h1><a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a></h1>
-                                                <p class="vid-info-text">
-                                                    <span>{{ vid_data.get('create_time') }}</span>
-                                                    <span>&#47;</span>
-                                                    <span>
-                                                        From <a href="#"><i class="fa fa-youtube-play"></i></a>
-                                                    </span>
-                                                    <span>&#47;</span>
-                                                    <span>{{ vid_data.get('view_count') }} views</span>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% end %}
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="most-viewd secondary-vid">
-                            <div class="vid-heading overflow-hidden">
-                                <span class="wow fadeInUp" data-wow-duration="0.8s">Most Viewed Album</span>
-                                <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
-                            </div>
+                        <div class="vid-detail-container">
                             <div class="row">
-                                <div class="vid-container">
 
-                                    {% set vid_list = result.get('most_viewd_list')[:9] %}
-                                    {% for idx, vid in enumerate(vid_list) %}
-                                    {% set vid_data = vid.get('vid_data') %}
-                                    {% set vid_detail = vid.get('vid_detail') %}
-                                    {% set vid_author = vid.get('vid_author') %}
-                                    <div class="col-md-4 col-sm-6">
-                                        <div class="latest-vid-img-container">
-                                            <div class="vid-img">
-                                                <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="video image">
-                                                <a href="{{ vid_detail.get('detail_url') }}" class="play-icon play-small-icon">
-                                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                                </a>
-                                                <div class="overlay-div"></div>
-                                            </div>
-                                            <div class="vid-text">
-                                                <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
-                                                <h1><a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a></h1>
-                                                <p class="vid-info-text">
-                                                    <span>{{ vid_data.get('create_time') }}</span>
-                                                    <span>&#47;</span>
-                                                    <span>
-                                                        From <a href="#"><i class="fa fa-youtube-play"></i></a>
-                                                    </span>
-                                                    <span>&#47;</span>
-                                                    <span>{{ vid_data.get('view_count') }} views</span>
-                                                </p>
-                                            </div>
+                                {% set vid = result.get('vid') %}
+                                {% set vid_data = vid.get('vid_data') %}
+                                {% set vid_detail = vid.get('vid_detail') %}
+                                {% set vid_author = vid.get('vid_author') %}
+                                <div class="col-sm-12">
+                                    <div class="vid-player">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <iframe class="embed-responsive-item" src="{{ vid_detail.get('play_url') }}"></iframe>
                                         </div>
                                     </div>
-                                    {% end %}
+                                    <div class="vid-text">
+                                        <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
+                                        <h1>{{ vid_detail.get('title') }}</h1>
+                                    </div>
+                                    <div class="video-info-bar">
+                                        <ul class="list-inline list-unstyled info-ul">
+                                            <li><i class="fa fa-calendar"></i>{{ vid_data.get('create_time') }}</li>
+                                            <li><i class="fa fa-eye"></i>{{ vid_data.get('view_count') }}</li>
+                                            <li><i class="fa fa-thumbs-up"></i>{{ vid_data.get('view_count') }}</li>
+                                            <li class="pull-right sharing-drop"><button class="btn"></button></li>
+                                        </ul>
+                                        <ul class="list-unstyled list-inline pull-right text-right sharing-bar">
+                                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="video-detail-text">
+                                        <p>{{ vid_detail.get('desc') }}</p>
+                                    </div>
+                                    <div id="comment-frm-container">
+                                        <div class="vid-heading overflow-hidden">
+                                            <span class="wow fadeInUp" data-wow-duration="0.8s">Leave a comment</span>
+                                            <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
+                                        </div>
+                                        <form class="comment-form">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <input type="text" name="comment-user-name" class="form-control" id="cmnt-user-name" placeholder="NAME" required>
+                                                        <div class="input-top-line"></div>
+                                                        <div class="input-bottom-line"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <input type="email" name="comment-user-email" class="form-control" id="cmnt-user-email" placeholder="EMAIL" required>
+                                                        <div class="input-top-line"></div>
+                                                        <div class="input-bottom-line"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <textarea name="comment-user-message" id="cmnt-user-msg" rows="4" class="form-control" placeholder="MESSAGE" required></textarea>
+                                                        <div class="input-top-line"></div>
+                                                        <div class="input-bottom-line"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <button type="submit" class="btn btn-snd">
+                                                        Post Comment
+                                                    </button>
+                                                </div>
 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="sports secondary-vid">
-                            <div class="vid-heading overflow-hidden">
-                                <span class="wow fadeInUp" data-wow-duration="0.8s">sports albums</span>
-                                <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
-                            </div>
-                            <div class="row">
-                                <div class="vid-container">
-
-                                    {% set vid_list = result.get('sports_list')[:4] %}
-                                    {% for idx, vid in enumerate(vid_list) %}
-                                    {% set vid_data = vid.get('vid_data') %}
-                                    {% set vid_detail = vid.get('vid_detail') %}
-                                    {% set vid_author = vid.get('vid_author') %}
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="latest-vid-img-container">
-                                            <div class="vid-img">
-                                                <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="video image">
-                                                <a href="{{ vid_detail.get('detail_url') }}" class="play-icon play-small-icon">
-                                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                                </a>
-                                                <div class="overlay-div"></div>
                                             </div>
-                                            <div class="vid-text">
-                                                <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
-                                                <h1><a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a></h1>
-                                                <p class="vid-info-text">
-                                                    <span>{{ vid_data.get('create_time') }}</span>
-                                                    <span>&#47;</span>
-                                                    <span>
-                                                        From <a href="#"><i class="fa fa-youtube-play"></i></a>
-                                                    </span>
-                                                    <span>&#47;</span>
-                                                    <span>{{ vid_data.get('view_count') }} views</span>
-                                                </p>
+                                        </form>
+                                    </div>
+                                    <div class="related-item">
+                                        <div class="vid-heading overflow-hidden">
+                                            <span class="wow fadeInUp" data-wow-duration="0.8s">
+                                                Related Videos
+                                            </span>
+                                            <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s">
                                             </div>
                                         </div>
-                                    </div>
-                                    {% end %}
+                                        <div class="row">
+                                            <div class="vid-container">
 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="hd secondary-vid">
-                            <div class="vid-heading overflow-hidden">
-                                <span class="wow fadeInUp" data-wow-duration="0.8s">Hd Video Albums</span>
-                                <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
-                            </div>
-                            <div class="row">
-                                <div class="vid-container">
-
-                                    {% set vid_list = result.get('hd_list')[:4] %}
-                                    {% for idx, vid in enumerate(vid_list) %}
-                                    {% set vid_data = vid.get('vid_data') %}
-                                    {% set vid_detail = vid.get('vid_detail') %}
-                                    {% set vid_author = vid.get('vid_author') %}
-                                    <div class="col-sm-12">
-                                        <div class="vid-img-holder">
-                                            <div class="top-shadow">
-                                                <span>{{ vid_data.get('create_time') }}</span>
-                                                <span>From <a href="#"><i class="fa fa-vimeo"></i></a> </span>
-                                                <span><i class="fa fa-eye"></i>{{ vid_data.get('view_count') }}</span>
-                                            </div>
-                                            <a href="{{ vid_detail.get('detail_url') }}">
-                                                <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="video_thumb">
-                                                <span class="play-icon">
-                                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                                </span>
-                                            </a>
-                                            <h3 class="vid-author">
-                                                <span>
-                                                    By <a href="#" title="Posts by admin" rel="author">{{ vid_author.get('name') }}</a>
-                                                </span>
-                                                <a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a>
-                                            </h3>
-                                            <div class="bottom-shadow"></div>
-                                            <div class="overlay-div"></div>
-                                        </div>
-                                    </div>
-                                    {% end %}
-
-                                </div>
-                                <div class="vid-container">
-                                    <div class="col-sm-12">
-                                        <div class="threeD-videos">
-                                            <div class="vid-heading overflow-hidden">
-                                                <span class="wow fadeInUp" data-wow-duration="0.8s">3D Video Album</span>
-                                                <div class="hding-bottm-line wow zoomIn" data-wow-duration="0.8s"></div>
-                                            </div>
-                                            <div class="bottom-vid-img-container threeD-videos-container">
-
-                                                {% set vid_list = result.get('3d_list')[:2] %}
+                                                {% set vid_list = result.get('related_list') %}
                                                 {% for idx, vid in enumerate(vid_list) %}
                                                 {% set vid_data = vid.get('vid_data') %}
                                                 {% set vid_detail = vid.get('vid_detail') %}
                                                 {% set vid_author = vid.get('vid_author') %}
-                                                <div class="row">
-                                                    <div class="bottom-vid">
-                                                        <div class="col-md-5 col-sm-9">
-                                                            <div class="bottom-vid-img">
-                                                                <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="hd video image">
-                                                                <a href="{{ vid_detail.get('detail_url') }}" class="play-icon play-small-icon">
-                                                                    <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
-                                                                </a>
-                                                                <div class="overlay-div"></div>
-                                                            </div>
+                                                <div class="col-md-4 col-sm-6">
+                                                    <div class="latest-vid-img-container">
+                                                        <div class="vid-img">
+                                                            <img class="img-responsive" src="{{ vid_detail.get('thumb_sm') }}" alt="video image">
+                                                            <a href="{{ vid_detail.get('detail_url') }}" class="play-icon play-small-icon">
+                                                                <img class="img-responsive play-svg svg" src="images/play-button.svg" alt="play" onerror="this.src='images/play-button.png'">
+                                                            </a>
+                                                            <div class="overlay-div"></div>
                                                         </div>
-                                                        <div class="col-md-7 col-sm-9">
-                                                            <div class="bottom-vid-text">
-                                                                <h1 class="sm-heading"><a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a></h1>
-                                                                <p class="border-bottom">
-                                                                    {{ vid_detail.get('desc') }}
-                                                                </p>
-                                                                <div class="hd-vid-info">
-                                                                    <p class="hd-vid-auth-name">
-                                                                        By <a href="#">{{ vid_author.get('name') }}</a>
-                                                                    </p>
-                                                                    <p class="hd-vid-info-text text-right">
-                                                                        <span>{{ vid_data.get('create_time') }}</span>
-                                                                        <span>&#47;</span>
-                                                                        <span>
-                                                                            From <a href="#"><i class="fa fa-vimeo"></i></a>
-                                                                        </span>
-                                                                        <span>&#47;</span>
-                                                                        <span>{{ vid_data.get('view_count') }} views</span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
+                                                        <div class="vid-text">
+                                                            <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
+                                                            <h1><a href="{{ vid_detail.get('detail_url') }}">{{ vid_detail.get('title') }}</a></h1>
+                                                            <p class="vid-info-text">
+                                                                <span>{{ vid_data.get('create_time') }}</span>
+                                                                <span>&#47;</span>
+                                                                <span>
+                                                                    From <a href="#"><i class="fa fa-youtube-play"></i></a>
+                                                                </span>
+                                                                <span>&#47;</span>
+                                                                <span>{{ vid_data.get('view_count') }} views</span>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>

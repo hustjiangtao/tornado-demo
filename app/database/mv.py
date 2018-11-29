@@ -4,8 +4,6 @@
 """mv db"""
 
 
-from datetime import date
-
 from sqlalchemy import desc
 
 from app.database.base import BaseDB

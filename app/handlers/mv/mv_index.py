@@ -282,8 +282,7 @@ class MvIndexHandler(BaseHandler):
     def options(self):
         self.write('GET')
 
-    @classmethod
-    def __get_mv_obj(cls, obj):
+    def __get_mv_obj(self, obj):
         """
         get mv display obj
         :param obj: dict, mv obj
@@ -294,7 +293,7 @@ class MvIndexHandler(BaseHandler):
 
         result = {
             "vid_data": {
-                "create_time": cls.__convert_datetime_to_approximate_form(obj.get('create_time')),
+                "create_time": self.__convert_datetime_to_approximate_form(obj.get('create_time')),
                 "source_ori": obj.get('source'),
                 "view_count": obj.get('click'),
             },
@@ -302,8 +301,10 @@ class MvIndexHandler(BaseHandler):
                 "thumb_sm": obj.get('cover_url'),
                 "thumb_lg": obj.get('cover_url'),
                 "title": obj.get('name'),
-                "detail_url": obj.get('url'),
-                "play_url": 'video-detail.html',
+                "desc": obj.get('info'),
+                # "detail_url": 'video-detail.html',
+                "detail_url": self.reverse_url('mv_detail', obj.get('id')),
+                "play_url": obj.get('url'),
             },
             "vid_author": {
                 "name": obj.get('creator'),

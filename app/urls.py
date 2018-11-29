@@ -36,7 +36,8 @@ from app.handlers.doc import doc
 from app.handlers.doc import doc_index
 from app.handlers.doc import doc_cms_add
 from app.handlers.doc import doc_cms_edit
-from app.handlers.mv import mv_index
+from app.handlers.mv import (mv,
+                             mv_index)
 
 from app.settings import SETTINGS
 
@@ -99,6 +100,7 @@ __DOC_URL_HANDLERS = [
 __MV_STATIC_PATH = os.path.join(basedir, 'tmp-mdl', 'mv')
 __MV_URL_HANDLERS = [
     url(r"/mv/index", mv_index.MvIndexHandler, name="mv_index"),
+    url(r"/mv/(\d+)", mv.MvHandler, name="mv_detail"),
     # url(r"/mv/(.*)", StaticFileHandler, dict(path=__MV_STATIC_PATH), name='mv_static'),  # mv static files
     url(r"/mv/(.*)", StaticFileHandler, dict(path=STATIC_DIR.get('mv')), name='mv_static_ext'),  # mv static files ext
 ]
