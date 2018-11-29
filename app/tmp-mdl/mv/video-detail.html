@@ -278,7 +278,7 @@
                                         <div class="row">
                                             <div class="vid-container">
 
-                                                {% set vid_list = result.get('related_list') %}
+                                                {% set vid_list = result.get('related_list', []) %}
                                                 {% for idx, vid in enumerate(vid_list) %}
                                                 {% set vid_data = vid.get('vid_data') %}
                                                 {% set vid_detail = vid.get('vid_detail') %}
@@ -321,7 +321,7 @@
                             <div class="sidebar-vid most-liked">
                                 <h1 class="sidebar-heading">Most Liked</h1>
 
-                                {% set vid_list = result.get('sidebar_most_liked_list')[:4] %}
+                                {% set vid_list = result.get('sidebar_most_liked_list', [])[:4] %}
                                 {% for idx, vid in enumerate(vid_list) %}
                                 {% set vid_data = vid.get('vid_data') %}
                                 {% set vid_detail = vid.get('vid_detail') %}
@@ -344,7 +344,7 @@
                             <div class="sidebar-vid most-viewd">
                                 <h1 class="sidebar-heading">Most Viewed</h1>
 
-                                {% set vid_list = result.get('sidebar_most_viewd_list')[:2] %}
+                                {% set vid_list = result.get('sidebar_most_viewd_list', [])[:2] %}
                                 {% for idx, vid in enumerate(vid_list) %}
                                 {% set vid_data = vid.get('vid_data') %}
                                 {% set vid_detail = vid.get('vid_detail') %}
@@ -368,7 +368,7 @@
                                 <h1 class="sidebar-heading">Tags</h1>
                                 <ul class="list-inline list-unstyled">
 
-                                    {% set tags = result.get('sidebar_tag_list') %}
+                                    {% set tags = result.get('sidebar_tag_list', []) %}
                                     {% for idx, tag in enumerate(tags) %}
                                     <li><a href="#">{{ tag }}</a></li>
                                     {% end %}

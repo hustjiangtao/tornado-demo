@@ -90,24 +90,29 @@ class MvHandler(BaseHandler):
         """detail info page"""
         item = mv_db.get_mv_by_id(_id=_id)
 
-        related = mv_db.get_sorted_mvs_by_rate(offset=0, limit=3)
-        user_ids = {x.get('creator') for x in related}
-        user_ids.add(item.get('creator'))
+        related_mvs = mv_db.get_sorted_mvs_by_rate(offset=0, limit=3, order_by='rate')
+        most_viewed_mvs = mv_db.get_sorted_mvs_by_rate(offset=0, limit=2, order_by='rate')
+        most_liked_mvs = mv_db.get_sorted_mvs_by_rate(offset=0, limit=2, order_by='like')
+
+        all_mvs = [*related_mvs, *most_viewed_mvs, *most_liked_mvs, item]
+        user_ids = {x.get('creator') for x in all_mvs}
         users = user_db.get_users_by_ids(ids=user_ids)
         user_name_dict = {x.get('id'): x.get('name') for x in users}
-        if related:
-            for x in related:
+        if all_mvs:
+            for x in all_mvs:
                 x['creator'] = user_name_dict.get(x.get('creator')) or '无名达人'
-        mv_list = list(map(self.__get_mv_obj, related))
 
-        item['creator'] = user_name_dict.get(item.get('creator')) or '无名达人'
         current_vid = self.__get_mv_obj(item)
+        related_list = list(map(self.__get_mv_obj, related_mvs))
+        most_viewed_list = list(map(self.__get_mv_obj, most_viewed_mvs))
+        most_liked_list = list(map(self.__get_mv_obj, most_liked_mvs))
+        tags_list = ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy']
 
         result = {
             # current vid
             "vid": current_vid,
             # related count = 3
-            "related_list": mv_list or [
+            "related_list": related_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -128,7 +133,7 @@ class MvHandler(BaseHandler):
                 } for i in range(1, 3)
             ],
             # sidebar_most_liked count = 4
-            "sidebar_most_liked_list": [
+            "sidebar_most_liked_list": most_liked_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -150,7 +155,7 @@ class MvHandler(BaseHandler):
                 } for i in range(1, 5)
             ],
             # sidebar_most_viewd count = 2
-            "sidebar_most_viewd_list": [
+            "sidebar_most_viewd_list": most_viewed_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -172,7 +177,7 @@ class MvHandler(BaseHandler):
                 } for i in range(1, 3)
             ],
             # sidebar_tag count = ~
-            "sidebar_tag_list": ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
+            "sidebar_tag_list": tags_list or ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
         }
 
         data = {

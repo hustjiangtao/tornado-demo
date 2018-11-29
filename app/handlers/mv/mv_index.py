@@ -23,108 +23,114 @@ class MvIndexHandler(BaseHandler):
         offset = self.get_query_argument('offset', None) or 0
         limit = self.get_query_argument('limit', None) or 100
 
-        mvs = mv_db.get_sorted_mvs_by_rate(offset=offset, limit=limit)
-        user_ids = {x.get('creator') for x in mvs}
+        lasted_mvs = mv_db.get_mvs(offset=offset, limit=limit, order_by='create_time')
+        most_viewed_mvs = mv_db.get_sorted_mvs_by_rate(offset=offset, limit=limit, order_by='rate')
+        most_liked_mvs = mv_db.get_sorted_mvs_by_rate(offset=offset, limit=limit, order_by='like')
+
+        all_mvs = [*lasted_mvs, *most_viewed_mvs, *most_liked_mvs]
+        user_ids = {x.get('creator') for x in all_mvs}
         users = user_db.get_users_by_ids(ids=user_ids)
         user_name_dict = {x.get('id'): x.get('name') for x in users}
-        if mvs:
-            for x in mvs:
+        if all_mvs:
+            for x in all_mvs:
                 x['creator'] = user_name_dict.get(x.get('creator')) or '无名达人'
-        # print(mvs)
-        mv_list = list(map(self.__get_mv_obj, mvs))
-        # print(mv_list)
+
+        lasted_list = list(map(self.__get_mv_obj, lasted_mvs))
+        most_viewed_list = list(map(self.__get_mv_obj, most_viewed_mvs))
+        most_liked_list = list(map(self.__get_mv_obj, most_liked_mvs))
+        tags_list = ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy']
 
         result = {
             # banner count = 5, (1 large, 4 small)
-            "banner_list": [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '4481',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/main-vid-image-md-1.jpg',
-                        "thumb_lg": 'images/main-vid-image-smmd-1.jpg',
-                        "title": 'Gladiators Fighting',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-                {
-                    "vid_data": {
-                        "create_time": 'A month ago',
-                        "source_ori": 'dailymotion',
-                        "view_count": '4000',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/main-vid-image-mds-1.jpg',
-                        "thumb_lg": 'images/main-vid-image-sm-1.jpg',
-                        "title": 'Awesome Film Performance',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-                {
-                    "vid_data": {
-                        "create_time": 'A month ago',
-                        "source_ori": 'youtube',
-                        "view_count": '4000',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/main-vid-image-mds-2.jpg',
-                        "thumb_lg": 'images/main-vid-image-sm-2.jpg',
-                        "title": 'Awesome Film Performance',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-                {
-                    "vid_data": {
-                        "create_time": 'A month ago',
-                        "source_ori": 'vimeo',
-                        "view_count": '4000',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/main-vid-image-mds-3.jpg',
-                        "thumb_lg": 'images/main-vid-image-sm-3.jpg',
-                        "title": 'Awesome Film Performance',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-                {
-                    "vid_data": {
-                        "create_time": 'A month ago',
-                        "source_ori": 'dailymotion',
-                        "view_count": '4000',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/main-vid-image-mds-4.jpg',
-                        "thumb_lg": 'images/main-vid-image-sm-4.jpg',
-                        "title": 'Awesome Film Performance',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-            ],
+            # "banner_list": [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '4481',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/main-vid-image-md-1.jpg',
+            #             "thumb_lg": 'images/main-vid-image-smmd-1.jpg',
+            #             "title": 'Gladiators Fighting',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            #     {
+            #         "vid_data": {
+            #             "create_time": 'A month ago',
+            #             "source_ori": 'dailymotion',
+            #             "view_count": '4000',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/main-vid-image-mds-1.jpg',
+            #             "thumb_lg": 'images/main-vid-image-sm-1.jpg',
+            #             "title": 'Awesome Film Performance',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            #     {
+            #         "vid_data": {
+            #             "create_time": 'A month ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '4000',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/main-vid-image-mds-2.jpg',
+            #             "thumb_lg": 'images/main-vid-image-sm-2.jpg',
+            #             "title": 'Awesome Film Performance',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            #     {
+            #         "vid_data": {
+            #             "create_time": 'A month ago',
+            #             "source_ori": 'vimeo',
+            #             "view_count": '4000',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/main-vid-image-mds-3.jpg',
+            #             "thumb_lg": 'images/main-vid-image-sm-3.jpg',
+            #             "title": 'Awesome Film Performance',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            #     {
+            #         "vid_data": {
+            #             "create_time": 'A month ago',
+            #             "source_ori": 'dailymotion',
+            #             "view_count": '4000',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/main-vid-image-mds-4.jpg',
+            #             "thumb_lg": 'images/main-vid-image-sm-4.jpg',
+            #             "title": 'Awesome Film Performance',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            # ],
             # lasted count = 9
-            "lasted_list": mv_list or [
+            "lasted_list": lasted_list or [
                 {
                     "vid_data": {
                         "create_time": 'A Months ago',
@@ -144,7 +150,7 @@ class MvIndexHandler(BaseHandler):
                 } for i in range(1, 10)
             ],
             # most_viewd count = 6
-            "most_viewd_list": [
+            "most_viewd_list": most_viewed_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -164,68 +170,68 @@ class MvIndexHandler(BaseHandler):
                 } for i in range(7, 13)
             ],
             # sports count = 4
-            "sports_list": [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": f'images/sport-vid-img-{i}.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                } for i in range(1, 5)
-            ],
+            # "sports_list": [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": f'images/sport-vid-img-{i}.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     } for i in range(1, 5)
+            # ],
             # hd count = 1
-            "hd_list": [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": 'images/hd-vid-img-1.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                },
-            ],
+            # "hd_list": [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": 'images/hd-vid-img-1.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     },
+            # ],
             # 3d count = 2
-            "3d_list": [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": f'images/hd-vid-sm-img-{i}.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "desc": 'abcdddd',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                } for i in range(1, 3)
-            ],
+            # "3d_list": [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": f'images/hd-vid-sm-img-{i}.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "desc": 'abcdddd',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     } for i in range(1, 3)
+            # ],
             # sidebar_most_liked count = 4
-            "sidebar_most_liked_list": [
+            "sidebar_most_liked_list": most_liked_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -247,7 +253,7 @@ class MvIndexHandler(BaseHandler):
                 } for i in range(1, 5)
             ],
             # sidebar_most_viewd count = 2
-            "sidebar_most_viewd_list": [
+            "sidebar_most_viewd_list": most_viewed_list or [
                 {
                     "vid_data": {
                         "create_time": '4 Months ago',
@@ -269,7 +275,7 @@ class MvIndexHandler(BaseHandler):
                 } for i in range(1, 3)
             ],
             # sidebar_tag count = ~
-            "sidebar_tag_list": ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
+            "sidebar_tag_list": tags_list or ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
         }
 
         data = {

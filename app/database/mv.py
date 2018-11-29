@@ -148,18 +148,23 @@ class MvDB(BaseDB):
 
         return result
 
-    def get_mvs(self, offset=None, limit=None):
+    def get_mvs(self, offset=None, limit=None, order_by=None):
         """
         get mvs
         :param offset: offset
         :param limit: limit
+        :param order_by: order by, (id, type, creator, source, create_time)
         :return: list
         """
         if any([offset is None, limit is None]):
             return []
+        if order_by and order_by not in ('id', 'type', 'creator', 'source', 'create_time'):
+            return []
 
         # query_params = ('id', 'name', 'url', 'type', 'info', 'source', 'create_time')
         query = self.db_session.query(MvModel)
+        if order_by and hasattr(MvModel, order_by):
+            query = query.order_by(desc(getattr(MvModel, order_by)))
         mvs = self.fetch_all(query, offset=offset, limit=limit)
         if mvs:
             # result = [x.to_dict(include=query_params) for x in mms]
@@ -169,20 +174,23 @@ class MvDB(BaseDB):
 
         return result
 
-    def get_sorted_mvs_by_rate(self, offset=None, limit=None):
+    def get_sorted_mvs_by_rate(self, offset=None, limit=None, order_by='rate'):
         """
         get mvs sorted by rate
         :param offset: offset
         :param limit: limit
+        :param order_by: order by, (rate, click, like, dislike), default rate
         :return: list
         """
         if any([offset is None, limit is None]):
+            return []
+        if order_by and order_by not in ('rate', 'click', 'like', 'dislike'):
             return []
 
         # query_params = ('id', 'name', 'url', 'type', 'info', 'source', 'create_time', 'sum_stats')
         query = self.db_session.query(MvModel)
         query = query.outerjoin(MvStatsModel, MvStatsModel.id == MvModel.id)
-        query = query.order_by(desc(MvStatsModel.rate), MvModel.id)
+        query = query.order_by(desc(getattr(MvStatsModel, order_by)), MvModel.id)
         mvs = self.fetch_all(query, offset=offset, limit=limit)
         if mvs:
             # result = [x.to_dict(include=query_params) for x in mvs]
