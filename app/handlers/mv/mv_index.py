@@ -17,7 +17,7 @@ class MvIndexHandler(BaseHandler):
 
     """mv handler"""
 
-    # @do_temp_cache(3600, with_user=False)
+    @do_temp_cache(60*10, with_user=False)
     def get(self):
         """video index page"""
         offset = self.get_query_argument('offset', None) or 0

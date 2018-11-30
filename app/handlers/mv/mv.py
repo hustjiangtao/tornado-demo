@@ -85,7 +85,7 @@ class MvHandler(BaseHandler):
         self.render_json(code=code, data=data)
 
     # @authenticated
-    # @do_temp_cache(7*3600, with_user=False)
+    @do_temp_cache(60*10, with_user=False)
     def get(self, _id):
         """detail info page"""
         item = mv_db.get_mv_by_id(_id=_id)
