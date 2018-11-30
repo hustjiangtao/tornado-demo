@@ -205,7 +205,11 @@
                                 <div class="col-sm-12">
                                     <div class="vid-player">
                                         <div class="embed-responsive embed-responsive-16by9">
-                                            <iframe class="embed-responsive-item" src="{{ vid_detail.get('play_url') }}"></iframe>
+{#                                            <iframe class="embed-responsive-item" src="{{ vid_detail.get('play_url') }}"></iframe>#}
+                                            <video controls="controls" autoplay="autoplay">
+                                                <source src="{{ vid_detail.get('play_url') }}" type="video/mp4" />
+                                                您的浏览器不支持 video 标签。
+                                            </video>
                                         </div>
                                     </div>
                                     <div class="vid-text">
