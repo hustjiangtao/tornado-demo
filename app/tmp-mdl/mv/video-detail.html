@@ -28,6 +28,11 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- video-js -->
+    <link href="https://vjs.zencdn.net/7.3.0/video-js.css" rel="stylesheet">
+    <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
+    <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
 </head>
 
 <body>
@@ -203,14 +208,23 @@
                                 {% set vid_detail = vid.get('vid_detail') %}
                                 {% set vid_author = vid.get('vid_author') %}
                                 <div class="col-sm-12">
-                                    <div class="vid-player">
-                                        <div class="embed-responsive embed-responsive-16by9">
+                                    <div class="vid-player player">
+                                        <video id="my-video" class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered"
+                                               controls preload="auto" poster="{{ vid_detail.get('thumb_sm') }}" data-setup="{}">
+                                            <source src="{{ vid_detail.get('play_url') }}" type='video/mp4'>
+{#                                            <source src="MY_VIDEO.webm" type='video/webm'>#}
+                                            <p class="vjs-no-js">
+                                                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                                                <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                                            </p>
+                                        </video>
+{#                                        <div class="embed-responsive embed-responsive-16by9" id="chimee-containe">#}
 {#                                            <iframe class="embed-responsive-item" src="{{ vid_detail.get('play_url') }}"></iframe>#}
-                                            <video controls="controls" autoplay="autoplay">
-                                                <source src="{{ vid_detail.get('play_url') }}" type="video/mp4" />
-                                                您的浏览器不支持 video 标签。
-                                            </video>
-                                        </div>
+{#                                            <video controls="controls" autoplay="autoplay">#}
+{#                                                <source src="{{ vid_detail.get('play_url') }}" type="video/mp4" />#}
+{#                                                您的浏览器不支持 video 标签。#}
+{#                                            </video>#}
+{#                                        </div>#}
                                     </div>
                                     <div class="vid-text">
                                         <p><span>By</span> <a href="#">{{ vid_author.get('name') }}</a></p>
@@ -578,6 +592,8 @@
 <script src="js/jquery.validate.js"></script>
 <script src="js/owl.carousel.min.js"></script>
 <script src="js/custom.js"></script>
+<!-- video-js -->
+<script src="https://vjs.zencdn.net/7.3.0/video.js"></script>
 
 <script type="text/javascript">
   $().ready(function() {
