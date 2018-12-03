@@ -112,72 +112,76 @@ class MvHandler(BaseHandler):
             # current vid
             "vid": current_vid,
             # related count = 3
-            "related_list": related_list or [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": f'images/hd-vid-sm-img-{i}.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "desc": 'abcdddd',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                } for i in range(1, 3)
-            ],
+            "related_list": related_list,
+            # "related_list": related_list or [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": f'images/hd-vid-sm-img-{i}.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "desc": 'abcdddd',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     } for i in range(1, 3)
+            # ],
             # sidebar_most_liked count = 4
-            "sidebar_most_liked_list": most_liked_list or [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                        "comment_count": '10',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": f'images/most-liked-img-s{i}.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "desc": 'abcdddd',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                } for i in range(1, 5)
-            ],
+            "sidebar_most_liked_list": most_liked_list,
+            # "sidebar_most_liked_list": most_liked_list or [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #             "comment_count": '10',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": f'images/most-liked-img-s{i}.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "desc": 'abcdddd',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     } for i in range(1, 5)
+            # ],
             # sidebar_most_viewd count = 2
-            "sidebar_most_viewd_list": most_viewed_list or [
-                {
-                    "vid_data": {
-                        "create_time": '4 Months ago',
-                        "source_ori": 'youtube',
-                        "view_count": '410',
-                        "comment_count": '10',
-                    },
-                    "vid_detail": {
-                        "thumb_sm": f'images/most-viewd-{i}.jpg',
-                        "thumb_lg": '',
-                        "title": 'Gladiators Fighting',
-                        "desc": 'abcdddd',
-                        "detail_url": 'video-detail.html',
-                        "play_url": 'video-detail.html',
-                    },
-                    "vid_author": {
-                        "name": 'Admin',
-                    },
-                } for i in range(1, 3)
-            ],
+            "sidebar_most_viewd_list": most_viewed_list,
+            # "sidebar_most_viewd_list": most_viewed_list or [
+            #     {
+            #         "vid_data": {
+            #             "create_time": '4 Months ago',
+            #             "source_ori": 'youtube',
+            #             "view_count": '410',
+            #             "comment_count": '10',
+            #         },
+            #         "vid_detail": {
+            #             "thumb_sm": f'images/most-viewd-{i}.jpg',
+            #             "thumb_lg": '',
+            #             "title": 'Gladiators Fighting',
+            #             "desc": 'abcdddd',
+            #             "detail_url": 'video-detail.html',
+            #             "play_url": 'video-detail.html',
+            #         },
+            #         "vid_author": {
+            #             "name": 'Admin',
+            #         },
+            #     } for i in range(1, 3)
+            # ],
             # sidebar_tag count = ~
-            "sidebar_tag_list": tags_list or ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
+            "sidebar_tag_list": tags_list,
+            # "sidebar_tag_list": tags_list or ['3D', 'Animals &amp; Birds', 'HD', 'Horror', 'Art', 'Self', 'HD Songs', 'Comedy'],
         }
 
         data = {
