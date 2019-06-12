@@ -7,8 +7,8 @@ A demo based on Python3.6 + Tornado
 The project is build mainly using:
 
 - Python 3.6.5
-- Tornado 5.1
-- SQLAlchemy 1.2.10
+- Tornado 6.0.2
+- SQLAlchemy 1.2.15
 - SQLite3
 - Redis
 
@@ -28,14 +28,10 @@ The Directory Structure is as bellow.
 ├── static
 │   ├── css
 │   ├── img
-│   ├── js
-│   └── upload
+│   └── js
 └── templates
     ├── demo
-    ├── functools
     ├── module
-    ├── post
-    ├── upload
     └── user
 
 19 directories
@@ -110,6 +106,46 @@ Including pip source, python packages, packages for development and other requir
 
 Details about python packages and environment requires.
 
+## Usage
+
+### Alembic
+
+Migrate databases
+auto makemigrations & migrate by manage.py
+
+- `makemigrations`: generate sql files to migrate
+- `migrate`: apply to sql server
+
+```bash
+cd tornado-demo
+python manage.py makemigrations "init db"
+python manage.py migrate
+```
+
+### tornado server
+
+start server by pipenv or docker-compose
+
+- pipenv
+
+```bash
+cd tornado-demo
+pipenv install [-r requirements.txt]
+pipenv run python run.py [--port=80000] [--debug=True]
+pipenv run python manage.py makemigrations "init db"
+pipenv run python manage.py migrate
+```
+
+- docker-compose
+
+```bash
+cd tornado-demo
+docker-compose build
+docker-compose up -d
+docker-compose run web python manage.py makemigrations "init db"
+docker-compose run web python manage.py migrate
+```
+
 ## LICENSE
 
-License file. [Apache License - 2.0]
+License file. [GPL-3]

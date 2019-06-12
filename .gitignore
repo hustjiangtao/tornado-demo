@@ -109,3 +109,4 @@ venv.bak/
 *.yaml
 *.ini
 fabfile.py
+*.DS_Store

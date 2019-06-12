@@ -66,7 +66,7 @@ class DemoHandler(BaseHandler):
 
         self.render_json(code=code, data=data)
 
-    @authenticated
+    # @authenticated
     def get(self):
         """demo info page"""
         _id = self.get_json_argument('id', None)

@@ -1,4 +1,0 @@
-sqlite:
-  sqlite:////Users/jiangtao/Desktop/test.db
-mysql:
-  mysql+pymysql://root:12333@localhost:3306/bsp?charset=utf8mb4

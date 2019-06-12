@@ -4,13 +4,8 @@
 """url handlers for web server"""
 
 
-import os
-
 from tornado.web import RedirectHandler
 from tornado.web import url
-from tornado.web import StaticFileHandler
-
-from app.config import basedir, STATIC_DIR
 
 from app.handlers.test import TestHandler
 from app.handlers.health import HealthHandler
@@ -18,98 +13,20 @@ from app.handlers.demo import demo
 from app.handlers.auth import register
 from app.handlers.auth import auth
 from app.handlers.user import user
-from app.handlers.post import post_list
-from app.handlers.post import post
-from app.handlers.tools import chat
-from app.handlers.tools import upload
-from app.handlers.album import album
-from app.handlers.blog import blog
-from app.handlers.blog import about
-from app.handlers.blog import contact
-from app.handlers.bookmark import bookmark_index
-from app.handlers.bookmark import bookmark_view
-from app.handlers.bookmark import bookmark_detail
-from app.handlers.bookmark import bookmark_stats
-from app.handlers.mm import mm_explore
-from app.handlers.mm import mm_stats
-from app.handlers.doc import doc
-from app.handlers.doc import doc_index
-from app.handlers.doc import doc_cms_add
-from app.handlers.doc import doc_cms_edit
-from app.handlers.mv import (mv,
-                             mv_index)
-
-from app.settings import SETTINGS
 
 
 URL_HANDLERS = []
 
 
 __BASE_URL_HANDLERS = [
-    (r"/", RedirectHandler, dict(url='/bookmark/index', permanent=False)),
-    (r"/test", TestHandler),
-    (r"/health", HealthHandler),
-    (r"/demo", demo.DemoHandler),
-    (r"/register", register.RegisterHandler),
-    (r"/auth", auth.AuthHandler),
-    (r"/user", user.UserHandler),
-    (r"/posts", post_list.PostListHandler),
-    (r"/post", post.PostHandler),
-    (r"/chat-index", chat.ChatIndexHandler),
-    (r"/chat", chat.ChatHandler),
-    (r"/upload", upload.UploadHandler),
-    (r"/album", album.AlbumHandler),
-]
-
-
-__MDL_BLOG_URL_HANDLERS = [
-    (r"/index", post_list.PostListHandler),
-    (r"/blog", blog.BlogHandler),
-    (r"/about", about.AboutHandler),
-    (r"/contact", contact.ContactHandler),
-]
-
-
-__BSP_URL_HANDLERS = [
-    url(r"/bookmark/index", bookmark_index.IndexHandler, name="bookmark_index"),
-    url(r"/bookmark/view", bookmark_view.ViewHandler, name="bookmark_view"),
-    url(r"/bookmark", bookmark_detail.BookmarkDetailHandler, name="bookmark_detail"),
-]
-
-
-__BSP_STATS_API_HANDLERS = [
-    url(r"/bookmark/stats/click", bookmark_stats.ClickHandler, name="bookmark_stats_click"),
-    url(r"/mm/stats/click", mm_stats.ClickHandler, name="mm_stats_click"),
-]
-
-
-__MM_URL_HANDLERS = [
-    url(r"/mm/explore", mm_explore.ExploreHandler, name="mm_explore"),
-    # url(r"/mm/(.*\.(jpg|png|gif))", StaticFileHandler, dict(path=SETTINGS['ext_static_path']), name='mm_url'),
-    url(r"/mm/(.*)", StaticFileHandler, dict(path=SETTINGS['ext_static_path']), name='mm_url'),
-]
-
-
-__DOC_URL_HANDLERS = [
-    url(r"/cms/doc/(\d+)", doc_cms_edit.DocCMSEditHandler, name="doc_cms_edit"),
-    url(r"/cms/doc/add", doc_cms_add.DocCMSAddHandler, name="doc_cms_add"),
-    url(r"/doc/index", doc_index.DocIndexHandler, name="doc_index"),
-    url(r"/doc/(\d+)", doc.DocHandler, name="doc_detail"),
-]
-
-__MV_STATIC_PATH = os.path.join(basedir, 'tmp-mdl', 'mv')
-__MV_URL_HANDLERS = [
-    url(r"/mv/index", mv_index.MvIndexHandler, name="mv_index"),
-    url(r"/mv/(\d+)", mv.MvHandler, name="mv_detail"),
-    # url(r"/mv/(.*)", StaticFileHandler, dict(path=__MV_STATIC_PATH), name='mv_static'),  # mv static files
-    url(r"/mv/(.*)", StaticFileHandler, dict(path=STATIC_DIR.get('mv')), name='mv_static_ext'),  # mv static files ext
+    url(r"/", RedirectHandler, dict(url='/health', permanent=False)),
+    url(r"/test", TestHandler),
+    url(r"/health", HealthHandler),
+    url(r"/demo", demo.DemoHandler),
+    url(r"/register", register.RegisterHandler),
+    url(r"/auth", auth.AuthHandler),
+    url(r"/user", user.UserHandler),
 ]
 
 
 URL_HANDLERS.extend(__BASE_URL_HANDLERS)
-URL_HANDLERS.extend(__MDL_BLOG_URL_HANDLERS)
-URL_HANDLERS.extend(__BSP_URL_HANDLERS)
-URL_HANDLERS.extend(__BSP_STATS_API_HANDLERS)
-URL_HANDLERS.extend(__MM_URL_HANDLERS)
-URL_HANDLERS.extend(__DOC_URL_HANDLERS)
-URL_HANDLERS.extend(__MV_URL_HANDLERS)

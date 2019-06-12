@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: backend_tornado
+    command: python run.py --port=8000 --debug=False
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"

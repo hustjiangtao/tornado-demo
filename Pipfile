@@ -7,9 +7,7 @@ name = "pypi"
 [packages]
 tornado = "*"
 sqlalchemy = "*"
-pyyaml = "*"
 ujson = "*"
-chatterbot = "*"
 redis = "*"
 fire = "*"
 alembic = "*"
@@ -23,17 +21,9 @@ python-dotenv = "*"
 
 [dev-packages]
 "fabric3" = "*"
-pandas = "*"
-nltk = "*"
 wordcloud = "*"
 pillow = "*"
-pyperclip = "*"
-matplotlib = "*"
-gensim = "*"
 pylint = "*"
-"flake8" = "*"
-"autopep8" = "*"
-pygments = "*"
 
 [requires]
 python_version = "3.6"

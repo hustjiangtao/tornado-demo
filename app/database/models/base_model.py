@@ -11,6 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import TIMESTAMP
+from sqlalchemy import func
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
@@ -36,12 +37,14 @@ class MetaModel:
     """Base meta setting for sql obj"""
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment='记录ID')
-    create_time = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
+    create_time = Column(TIMESTAMP, nullable=False, server_default=func.now(), comment='创建时间')
+    update_time = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now(), comment='更新时间')
+    # create_time = Column(TIMESTAMP, nullable=False, server_default=text('CURRENT_TIMESTAMP()'), comment='创建时间')
     # create_time = Column(TIMESTAMP, server_default=text("(datetime('now','localtime'))"),
     #                      comment='创建时间')
-    update_time = Column(TIMESTAMP, nullable=False,
-                         server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
-                         comment='更新时间')
+    # update_time = Column(TIMESTAMP, nullable=False,
+    #                      server_default=text('CURRENT_TIMESTAMP() on update CURRENT_TIMESTAMP()'),
+    #                      comment='更新时间')
 
     @declared_attr
     def __tablename__(cls):
@@ -80,9 +83,9 @@ class MetaModel:
 
 
 class Engine:
-    from app.config import SQL
+    from config import SQL
 
-    sql = SQL.get('mysql')
+    sql = SQL.get('db')
     engine = create_engine(f'{sql}', encoding='utf8', echo=False)
 
 
