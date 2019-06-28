@@ -5,7 +5,7 @@
 
 
 from app.database.base import BaseDB
-from app.database.models import DemoModel
+from app.database.models.model import Demo as DemoModel
 
 
 class DemoDB(BaseDB):

@@ -5,7 +5,7 @@
 
 
 from app.database.base import BaseDB
-from app.database.models import UserModel
+from app.database.models.model import User as UserModel
 
 
 class UserDB(BaseDB):
